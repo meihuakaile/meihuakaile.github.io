@@ -7,7 +7,7 @@ title: 卖姑娘的小火柴
 subtitle:
 description:
 author: 历历
-language: zh-Hans
+language: zh-CN
 timezone:
 
 # URL
@@ -81,4 +81,6 @@ theme: next
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
-  type:
+  type: git
+  repo: https://github.com/meihuakaile/meihuakaile.github.io.git
+  branch: master
