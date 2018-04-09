@@ -1,29 +1,26 @@
 ---
 title: caffe 数据库LMDB的读写
-tags: ['caffe数据库', 'lmdb']
+date: "2018/04/08"
+tags: ['caffe', 'lmdb']
 categories: ['cnn图片数据处理、显示']
 copyright: true
 ---
 读写的图片都是灰度图，rgb图类似  
 
-一、读数据（图片的channel是2，其实是两张图片）：
+### 读数据库（图片的channel是2，其实是两张图片）
 
 Datum是caffe里定义的一种存数据的结构。所以使用它时必须在开头import caffe。
 
 它的属性有：
+<ul>
+<li>channels：图片的通道。如彩色图用3，灰度图用1.但是也许你想把它定义中其他数字，让它每个通道都是一个单张的图，这个例子就是2，每个通道是一张灰度图。</li>
+<li>height：图片（即data）的高</li>
+<li>width：图片（即data）的宽</li>
+<li>data：图片的数据（像素值）</li>
+<li>label：图片的label。如caffe的mnist里label是0~9的数字。</li>
+</ul>
 
-channels：图片的通道。如彩色图用3，灰度图用1.但是也许你想把它定义中其他数字，让它每个通道都是一个单张的图，这个例子就是2，每个通道是一张灰度图。
-
-height：图片（即data）的高
-
-width：图片（即data）的宽
-
-data：图片的数据（像素值）
-
-label：图片的label。如caffe的mnist里label是0~9的数字。
-
-    
-    
+```python 
     import sys
     sys.path.insert(0,"../../python")#为了import caffe
     import numpy as np
@@ -54,19 +51,15 @@ label：图片的label。如caffe的mnist里label是0~9的数字。
                 ax = fig.add_subplot(122)
                 ax.imshow(x[1], cmap='gray')
                 pyplot.show()
-
-  
-
-二、写LMDB数据库（例子中把两张图片作为一张图的两个channel）：
+```
+### 写数据库（例子中把两张图片作为一张图的两个channel）
 
 caffe，以及faster rcnn写lmdb时都习惯把图片的名字写到txt文件中，通过txt去加载图片。思路大概如此。
 
 我这个例子txt存的是：图片1名字   图片2名字    label
 
 例如mnist的例子可以是：图片名字   label（代表这张图是0~9的哪个数字）
-
-    
-    
+```python 
     import numpy as np
     import lmdb
     import Image as img
@@ -133,9 +126,7 @@ caffe，以及faster rcnn写lmdb时都习惯把图片的名字写到txt文件中
                 
                 # The encode is only essential in Python 3
                 txn.put(str_id.encode('ascii'), datum.SerializeToString())
-                
-
-  
-注意：数据库的读是按照key的排序读的，key的顺序并不是按照写的顺序，是字典序。所以写数据库时key必须重新写，如果把图片名字作为key读数据库出来的图片
-就是按照图片的字典序（不是写的顺序）。str_id是key  
+```
+注意：数据库的读是按照key的字典序读的，而不是按照写的顺序，所以写数据库时key必须重新写。
+如果把图片名字作为key，读出来的图片仍是按照图片名字的字典序（不是写的顺序），因此之前的对图片名字打乱后再存入txt的操作就失去了意义。str_id是key  
 

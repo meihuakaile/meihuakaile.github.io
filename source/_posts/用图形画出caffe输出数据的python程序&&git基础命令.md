@@ -1,14 +1,13 @@
 ---
 title: 用图形画出caffe输出数据的python程序&&git基础命令
-tags: ['caffe', '图片']
+date: "2018/04/08"
+tags: ['python', '图片处理', 'caffe']
 categories: ['cnn图片数据处理、显示']
 copyright: true
 ---
 caffe的训练过程输出的数据用图形显示出来。先上效果图：
 
-![](https://img-blog.csdn.net/20160505220839809?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center)
+![](/images/16.png)
 
 图形说明：
 
