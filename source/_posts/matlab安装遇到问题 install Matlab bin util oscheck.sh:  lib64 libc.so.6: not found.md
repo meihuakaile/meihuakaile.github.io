@@ -1,7 +1,8 @@
 ---
 title: "matlab安装遇到问题/install/Matlab/bin/util/oscheck.sh: /lib64/libc.so.6: not found"
+date: "2018/04/08" 
 tags: ['matlab']
-categories: ['caffe安装&&faster rcnn安装问题&&解决']
+categories: ['caffe安装&&问题&&解决']
 copyright: true
 ---
 1./home/cl/install/Matlab/bin/util/oscheck.sh: /lib64/libc.so.6: not found  
