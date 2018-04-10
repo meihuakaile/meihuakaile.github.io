@@ -1,21 +1,16 @@
 ---
 title: faster rcnn源码理解（二）之AnchorTargetLayer（网络中的rpn_data）
-tags: ['faster rcnn源码理解']
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
-faster用python版本的 [ https://github.com/rbgirshick/py-faster-rcnn
-](https://github.com/rbgirshick/py-faster-rcnn)
+faster用python版本的 [ https://github.com/rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn)
 
-AnchorTargetLayer源码在 [ https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/lib/rpn/anchor_target_layer.py
-](https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/lib/rpn/anchor_target_layer.py)  
+AnchorTargetLayer源码在 [ https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/rpn/anchor_target_layer.py](https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/rpn/anchor_target_layer.py)  
 
-源码粘贴：
-
-    
-    
+### 源码
+```python
     # --------------------------------------------------------
     # Faster R-CNN
     # Copyright (c) 2015 Microsoft
@@ -298,53 +293,38 @@ rcnn/blob/master/lib/rpn/anchor_target_layer.py)
         assert gt_rois.shape[1] == 5
     
         return bbox_transform(ex_rois, gt_rois[:, :4]).astype(np.float32, copy=False)
-    
-
-总结笔记：  
+```
+### 代码讲解  
 rpn-data是AnchorTargetLayer  
 bottom长度为4；bottom[0],map；bottom[1],boxes,labels;bottom[2],im_fo;bottom[3],图片数据  
 self._feat_stride:网络中参数16  
-self._anchors：九个anchor的w h x_cstr y_cstr，对原始的wh做横向纵向变化，并放大缩小得到九个  
-self._num_anchors：anchor的个数  
-  
-  
-inds_inside：没有过界的anchors索引  
+self._anchors：九个anchor的w h x_cstr y_cstr，对原始的wh做横向纵向变化，并放大缩小的到九个  
+self._num_anchors：anchor的个数
+ 
+inds_inside：没有过界的anchors索引
 anchors：没有过界的anchors  
 argmax_overlaps：overlaps每行最大值索引  
-total_anchors： K*A，所有anchors个数，包括越界的  
-K: width*height  
+total_anchors： K × A，所有anchors个数，包括越界的  
+K: width × height  
 A: 9  
-  
-  
+
 gt_boxes:长度不定  
-  
-  
-bbox_overlaps： 返回:  
-overlaps: (len(inds_inside)* len(gt_boxes))  
-  
-  
-论文笔记：我们分配正标签给两类anchor：（i）与某个ground truth（GT）包围盒有最高的IoU（Intersection-over-Union，交集并集之比）重叠的anchor（也许不到0.7），（ii）与任意GT包围盒有大于0.7的IoU交叠的anchor。  
-labels:0,bg; 1,fg; -1, on care,(len(inds_inside));over_laps列最大值对应行坐标=1；
-over_laps行最大值 > 0.7,行=1； over_laps行最大值 < 0.3，行=0  
-正样本数量由他们控制：cfg.TRAIN.RPN_FG_FRACTION * cfg.TRAIN.RPN_BATCHSIZE（128），小于等于  
+
+bbox_overlaps： 返回overlaps: (len(inds_inside)* len(gt_boxes))  
+
+论文笔记
+我们分配正标签给两类anchor：
+（i）与某个ground truth（GT）包围盒有最高的IoU（Intersection-over-Union，交集并集之比）重叠的anchor（也许不到0.7）
+（ii）与任意GT包围盒有大于0.7的IoU交叠的anchor  
+
+labels:0,bg; 1,fg; -1, on care,(len(inds_inside)); over_laps列最大值对应行坐标=1；over_laps行最大值 > 0.7,行=1； over_laps行最大值 < 0.3，行=0  
+正样本数量由他们控制：cfg.TRAIN.RPN_FG_FRACTION × cfg.TRAIN.RPN_BATCHSIZE（128），小于等于  
 负样本数量。。。。。：cfg.TRAIN.RPN_BATCHSIZE - np.sum(labels == 1)  
 cfg.TRAIN.RPN_BATCHSIZE:  256，最终输出proposal数量控制  
+<strong>多的proposal被随机搞成-1了。。。。。。随机</strong>  
   
+bbox_inside_weights: label等于1的行，它的值等于cfg.TRAIN.RPN_BBOX_INSIDE_WEIGHTS（1.0）；其他等于0;(len(inds_inside), 4)；相当于损失函数中的pi*  
+cfg.TRAIN.RPN_POSITIVE_WEIGHT: -1.0  
+bbox_outside_weights：fg,bg=np.ones((1, 4)) × 1.0 / sum(fg+bg)，其他为0;(len(inds_inside), 4)  
   
-多的proposal被随机搞成-1了。。。。。。随机  
-  
-  
-bbox_inside_weights： label等于1的行，它的值等于cfg.TRAIN.RPN_BBOX_INSIDE_WEIGHTS（1.0）；其他
-等于0;(len(inds_inside), 4)；相当于损失函数中的pi*  
-  
-  
-cfg.TRAIN.RPN_POSITIVE_WEIGHT:  -1.0  
-  
-  
-bbox_outside_weights：fg,bg=np.ones((1, 4)) * 1.0 /
-sum(fg+bg)，其他为0;(len(inds_inside), 4)  
-  
-  
-_unmap： 建立一个total_anchors*第一个参数列的数组；全用fill填充；再把inds_inside对应的行用第一个参数对应的行填充  
-  
-
+_unmap： 建立一个total_anchors × 第一个参数列的数组；全用fill填充；再把inds_inside对应的行用第一个参数对应的行填充

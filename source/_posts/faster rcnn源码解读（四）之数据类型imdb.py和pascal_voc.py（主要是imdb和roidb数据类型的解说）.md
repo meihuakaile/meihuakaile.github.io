@@ -1,20 +1,16 @@
 ---
 title: faster rcnn源码解读（四）之数据类型imdb.py和pascal_voc.py（主要是imdb和roidb数据类型的解说）
-tags: ['faster rcnn源码理解']
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
-faster用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn
-](https://github.com/rbgirshick/py-faster-rcnn)
+faster用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn)
 
-imdb.py源码地址： [ https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/lib/datasets/imdb.py ](https://github.com/rbgirshick/py-
-faster-rcnn/blob/master/lib/datasets/imdb.py)
+imdb.py源码地址： [ https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/datasets/imdb.py ](https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/datasets/imdb.py)
 
-imdb源码：
-
-    
-    
+### imdb源码
+```python
     # --------------------------------------------------------
     # Fast R-CNN
     # Copyright (c) 2015 Microsoft
@@ -35,10 +31,10 @@ imdb源码：
     
         def __init__(self, name):
             self._name = name
-            self._num_classes = 0#<span style="font-family: Arial, Helvetica, sans-serif;">类别的长度</span>
-            self._classes = []#<span style="font-family: Arial, Helvetica, sans-serif;">类别定义</span>
-            self._image_index = []#<span style="font-family: Arial, Helvetica, sans-serif;">a list of image name（read from eg：</span><span style="font-family: Arial, Helvetica, sans-serif;">root/data + /VOCdevkit2007/VOC2007/ImageSets/Main/{image_set}.txt）</span><span style="font-family: Arial, Helvetica, sans-serif;">
-    </span>        self._obj_proposer = 'selective_search'
+            self._num_classes = 0#类别的长度
+            self._classes = []#类别定义
+            self._image_index = []#a list of image name（read from eg：root/data + /VOCdevkit2007/VOC2007/ImageSets/Main/{image_set}.txt）
+            self._obj_proposer = 'selective_search'
             self._roidb = None#gt_roidb（cfg.TRAIN.PROPOSAL_METHOD=gt导致了此操作）
             self._roidb_handler = self.default_roidb
             # Use this dict for storing dataset specific config options
@@ -268,86 +264,49 @@ imdb源码：
         def competition_mode(self, on):
             """Turn competition mode on or off."""
             pass
-    
+```
+### 代码讲解
+get_imdb->factory->pascal_voc->(继承)imdb
 
-  
-  
-
-get_imdb->factory->pascal_voc->(  继承  )imdb
-
-factory
+#### factory
 
 year = ['2007', '2012']
-
 split = ['train', 'val', 'trainval', 'test']
 
-imdb
+#### imdb
 
 image_set: split
-
 devkit_path: config.DATA_DIR(root/data/) + VOCdevkit + year
-
 data_path: devkit_path + '/' + 'VOC' + year
+image_index: a list read image name from 如，root/data + /VOCdevkit2007/VOC2007/ImageSets/Main/{image_set}.txt
 
-image_index: a list read image name from
+roidb: gt_roidb得到（cfg.TRAIN.PROPOSAL_METHOD=gt导致了此操作）
+classes： 类别定义
+num_classes： 类别的长度
+class_to_ind：  {类别名：类别索引}字典
 
-例如，  root/data + /VOCdevkit2007/VOC2007/ImageSets/Main/{image_set}.txt
+num_images(): image_index'length，数据库中图片个数
+image_path_at（index）： 得到第index图片的地址， data_path \+ '/' +'JPEGImages' + image_index[index] + image_ext(.jpg)
 
-roidb: gt_roidb  得到（  cfg.TRAIN.PROPOSAL_METHOD=gt  导致了此操作）
+在train_faster_rcnn_alt_opt.py的imdb.set_proposal_method之后一旦用imdb.roidb都会用gt_roidb读取xml中的内容中得到部分信息
+xml的地址： data_path + '/' + 'Annotations' + '/' + index + '.xml'
+(root/data/) + VOCdevkit + year  + '/' + 'VOC' + year + '/' + 'Annotations' +'/' + index + '.xml'
 
-classes  ： 类别定义
+#### roidb
+get_training_roidb： 对得到的roi做是否反转（参见roidb的flipped，为了扩充数据库）和到roidb.py的prepare_roidb中计算得到roidb的其他数据
+一张图有一个roidb  ，每个roidb是一个字典
+boxes: four rows. the proposal. left-up, right-down
+gt_overlaps: len（box）× 类别数（即，每个box对应的类别。初始化时，从xml读出来的类别对应类别值是1.0，被压缩保存）
+gt_classes: 每个box的类别索引
+flipped: true,代表图片被水平反转，改变了boxes里第一、三列的值（所有原图都这样的操作，imdb.image_index × 2）(cfg.TRAIN.USE_FLIPPED会导致此操作的发生，见train.py 116行)
+seg_areas： box的面积
 
-num_classes  ： 类别的长度
-
-class_to_ind  ：  {  类别名：类别索引  }  字典
-
-  
-
-num_images  （）  : image_index'length  ，数据库中图片个数
-
-image_path_at  （  index  ）： 得到第  index  图片的地址，  data_path \+ '/' +
-'JPEGImages' + image_index[index] + image_ext(.jpg)
-
-在  train_faster_rcnn_alt_opt.py  的  imdb.set_proposal_method  之后一旦用
-imdb.roidb  都会用  gt_roidb  读取  xml  中的内容中得到部分信息
-
-xml  的地址：  data_path + '/' + 'Annotations' + '/' + index + '.xml'
-
-(root/data/) + VOCdevkit + year  + '/' + 'VOC' + year + '/' + 'Annotations' +
-'/' + index + '.xml'
-
-get_training_roidb  ： 对得到的  roi  做是否反转（参见  roidb  的  flipped  ，为了扩充数据库）和到
-roidb.py  的  prepare_roidb  中计算得到  roidb  的其他数据
-
-一张图有一个  roidb  ，每个  roidb  是一个字典
-
-roidb:
-
-boxes: four rows.the proposal.left-up,right-down
-
-gt_overlaps: len  （  box  ）  *  类别数（即，每个  box  对应的类别。初始化时，从  xml  读出来的类别对应类别值是
-1.0  ，被压缩保存）
-
-gt_classes:  每个  box  的类别索引
-
-flipped: true,  代表图片被水平反转，改变了  boxes  里第一、三列的值（所有原图都这样的操作，  imdb.image_index*2
-）  (cfg.TRAIN.USE_FLIPPED  会导致此操作的发生，见  train.py 116  行  )
-
-seg_areas  ：  box  的面积
-
-（下面的值在  roidb.py  的  prepare_roidb  中得到）
-
-image  ：  image_path_at  （  index  ），此  roi  的图片地址
-
-width  ：此图片的宽
-
-height  ： 高
-
-max_classes: box  的类别  =labels  （  gt_overlaps  行最大值索引）
-
-max_overlaps:  （  gt_overlaps  行最大值）（  max_overlaps=0  ，  max_classes=0
-，即都是背景，否则不正确）
-
-output_dir  ：  ROOT_DIR + 'output' + EXP_DIR('faster_rcnn_alt_opt') +
-imdb.name("voc_2007_trainval" or "voc_2007_test")
+#### prepare_roidb中得到
+（下面的值在roidb.py的prepare_roidb中得到）
+image： image_path_at（index），此roi的图片地址
+width：此图片的宽
+height：高
+max_classes: box的类别=labels（gt_overlaps行最大值索引）
+max_overlaps: （gt_overlaps行最大值）（max_overlaps=0，max_classes=0，即都是背景，否则不正确）
+output_dir： ROOT_DIR + 'output' + EXP_DIR('faster_rcnn_alt_opt') + imdb.name("voc_2007_trainval" or "voc_2007_test")
 

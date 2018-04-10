@@ -1,19 +1,17 @@
 ---
 title: fast-rcnn的例子执行和selective search中遇到的问题及解决（二）
-tags: ['fast rcnn', 'selective search']
+date: "2018/04/08"
+tags: ['深度学习', 'fast rcnn', 'selective search']
 categories: ['faster rcnn', 'fast rcnn问题解决&&安装']
 copyright: true
 ---
-1.出现了EnvironmentError: MATLAB command 'matlab' not found.Please add 'matlab'
-to yourPATH.这种错误，说明没把matlab的路径添加到环境变量中，  
-解决：下面的语句设置环境变量：  
-export PATH=$PATH:"/home/cl/install/MATLAB/bin"  
+1.出现了EnvironmentError: MATLAB command 'matlab' not found.Please add 'matlab' to yourPATH.这种错误
+原因：没有把matlab的路径添加到环境变量中  
+解决：设置环境变量 export PATH=$PATH:"/home/cl/install/MATLAB/bin"  
 
-  
 
-2.这个问题在selective search的执行过程中出的问题。github上的那个用python调用MATLAB的例子。在执行那句调用MATLAB时报
-的错。问题是你的MATLAB没起来。解决方案如下。  
-
+2.这个问题在selective search的执行过程中出的问题。github上的那个用python调用MATLAB的例子。在执行那句调用MATLAB时报的错。
+原因：MATLAB没起来。
 问题：
 ```python
 selective_search_rcnn({'/home/cl/examples/images/00001.jpg'},
@@ -37,7 +35,7 @@ File "/usr/lib/python2.7/subprocess.py", line 1327, in _execute_child
 raise child_exception  
 OSError: [Errno 2] No such file or directory  
 ```
-解决：在~/.bashrc中添加你的matlab的bin路径（例如，我的是export
-PATH=$PATH:"/home/cl/install/Matlab/bin"）。我记得source是没有用的，需要重启才可以  
+解决：在~/.bashrc中添加你的matlab的bin路径（例如，我的是exportPATH=$PATH:"/home/cl/install/Matlab/bin"）。
+记得source是没有用的，需要重启才可以  
   
 

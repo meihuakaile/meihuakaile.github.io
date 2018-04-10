@@ -1,13 +1,12 @@
 ---
 title: faster rcnn的源码理解（一）SmoothL1LossLayer论文与代码的结合理解
-tags: ['faster rcnn源码理解']
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
-源码：
-
-    
-    
+### 源码
+```c++
     // ------------------------------------------------------------------
     // Fast R-CNN
     // Copyright (c) 2015 Microsoft
@@ -125,50 +124,32 @@ copyright: true
     INSTANTIATE_LAYER_GPU_FUNCS(SmoothL1LossLayer);
     
     }  // namespace caffe
-
-  
-
+```
+### 代码讲解
 SmoothL1LossLayer  计算一张图片的损失函数，对应于下图的加号右边部分
 
-![](https://img-blog.csdn.net/20160519205140724?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center)
+![](/images/21.png)
 
-i  是  mini-batch  的  anchor  的索引。
-
+i  是mini-batch的anchor的索引。
 Pi  是目标的预测概率。
-
-有物体时  pi*  为  1  ，否则为  0
-
+有物体时pi\*为1，否则为  0
 ti  是一个向量，预测坐标
+ti\*  是一个向量，是gt包围盒的坐标
 
-ti*  是一个向量，是  gt  包围盒的坐标
+![](/images/22.png)  
 
-![](https://img-blog.csdn.net/20160519205203099?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center)  
+bottom[0]  预测坐标，对应于下图的ti
+bottom[1]target  坐标，对应于下图的ti\*
+bottom[2]inside  有物体(fg)时为1，否则为0，对应于下图的pi\*
+bottom[3]outside 没有前景（fg）也没有后景（bg）的为0，其他为1/（bg+fg），对应于加号右边的系数部分（但其实这个地方我本人还是不懂，因为论文上说的系数都是一些固定的值，如 入 =10。初始代码一直在更新，估计又换了别的方法。不论如何，在现在的代码中  outside  是乘以了后面的结果）
 
-bottom[0]  预测坐标，对应于下图的  ti
+Lreg的公式就是下图，另x=ti - ti\*
 
-bottom[1]target  坐标，对应于下图的  ti*
+![](/images/23.png)
 
-bottom[2]inside  ，有物体  (fg)  时为  1  ，否则为  0  ，对应于下图的  pi*
+Pi × Leg(ti, ti\*)  表明只有有fg（20个物体类别）的才有回归损失
 
-bottom[3]outside  ，没有前景（  fg  ）也没有后景（  bg  ）的为  0  ，其他为  1/  （  bg+fg
-），对应于加号右边的系数部分（但其实这个地方我本人还是不懂，因为论文上说的系数都是一些固定的值，如入  =10
-。初始代码一直在更新，估计又换了别的方法。不论如何，在现在的代码中  outside  是乘以了后面的结果）
-
-Lreg的公式就是下图  ，另x=ti - ti*
-
-![](https://img-blog.csdn.net/20160519205253349?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center)
-
-Pi*Leg(ti, ti*)  表明只有有  fg  （  20  个物体类别）的才有回归损失
-
-![](https://img-blog.csdn.net/20160519205307928?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center)  
+![](/images/24.png)  
 
   
 

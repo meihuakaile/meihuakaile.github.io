@@ -1,20 +1,18 @@
 ---
 title: faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py
-tags: ['faster rcnn源码理解']
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
-faster用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn
-](https://github.com/rbgirshick/py-faster-rcnn)
+faster用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn)
 
-train_faster_rcnn_alt_opt.py源码在 [ https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py
-](https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py)  
+train_faster_rcnn_alt_opt.py源码在 [ https://github.com/rbgirshick/py-faster-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py
+](https://github.com/rbgirshick/py-faster-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py)  
 
 faster rcnn训练的开始是：faster_rcnn_alt_opt.sh。下面命令是训练的，还有它的参数说明。
 
-1\.  调用最初脚本的说明
+###  调用最初脚本的说明
 ```
 
 cd $FRCN_ROOT
@@ -22,15 +20,12 @@ cd $FRCN_ROOT
 # ./experiments/scripts/faster_rcnn_alt_opt.sh  GPU  NET  DATASET [options args to {train,test}_net.py]
 
 # GPU_ID is the GPU you want to train on
-
 # NET in {ZF, VGG_CNN_M_1024, VGG16} is the network arch to use
-
 # DATASET is only pascal_voc for now
 ```
+### 源码
 train_faster_rcnn_alt_opt.py的源码：  
-
-    
-    
+```python
     #!/usr/bin/env python
     
     # --------------------------------------------------------
@@ -366,36 +361,32 @@ train_faster_rcnn_alt_opt.py的源码：
         shutil.copy(fast_rcnn_stage2_out['model_path'], final_path)
         print 'Final model: {}'.format(final_path)
     
+```
+### 部分参数说明
+train_faster_rcnn_alt_opt.py  的部分参数说明:
 
-  
+* net_name:      {ZF, VGG_CNN_M_1024, VGG16}
+* pretrained_model:      data/imagenet_models/${net_name}.v2.caffemodel
+* cfg_file:     experiments/cfgs/faster_rcnn_alt_opt.yml
+* imdb_name:     "voc_2007_trainval" or "voc_2007_test"
+* cfg.TRAIN.HAS_RPN = True  表示用  xml  提供的  propoal
+* cfg是配置文件，它的默认值放在上面的cfg_file里，其他还可以自己写配置文件之后与默认配置文件融合。
 
-# train_faster_rcnn_alt_opt.py  的部分参数说明
+####  net_name
+net_name是用get_solvers()找到网络。还要用到cfg的参数  MODELS_DIR  ，
+例子是join(MODELS_DIR， net_name， 'faster_rcnn_alt_opt','stage1_rpn_solver60k80k.pt')
 
-net_name:      {ZF, VGG_CNN_M_1024, VGG16}
-pretrained_model:      data/imagenet_models/${net_name}.v2.caffemodel
-cfg_file:     experiments/cfgs/faster_rcnn_alt_opt.yml
-imdb_name:     "voc_2007_trainval" or "voc_2007_test"
-cfg.TRAIN.HAS_RPN = True  表示用  xml  提供的  propoal
-cfg是配置文件，它的默认值放在上面的cfg_file里，其他还可以自己写配置文件之后与默认配置文件融合。
+####  imdb_name
+imdb_name在factory中被拆成‘2007’（year）和‘trainval’/‘test’（split）到类pascal_voc中产生相应的imdb
 
-2.1 net_name  是用  get_solvers()  找到网络。还要用到  cfg  的参数  MODELS_DIR  ，
-例子是  join  （  MODELS_DIR  ，  net_name  ，  'faster_rcnn_alt_opt','stage1_rpn_solver60k80k.pt'  ）
-
-2.2 imdb_name  在  factory  中被拆成‘  2007  ’（  year  ）和‘  trainval  ’  /  ‘  test
-’（  split  ）到类  pascal_voc  中产生相应的  imdb
-
-2.3  整个  step  的大致流程：
-
+####   整个step的大致流程
+```
 (ImageNet model)->stage1_rpn_train->rpn_test
-
-|(proposal_path)
-
-(ImageNetmodel)->stage1_fast_rcnn_train-> stage2_rpn_train-> rpn_test->
-stage2_fast_rcnn_train
-
-2.4  数据  imdb  和  roidb
-
-roidb  原本是  imdb  的一个属性，但  imdb  其实是为了计算  roidb  存在的，他所有的其他属性和方法都是为了计算  roidb
+                                      |(proposal_path)
+                      (ImageNetmodel)->stage1_fast_rcnn_train-> stage2_rpn_train-> rpn_test->stage2_fast_rcnn_train
+```
+####   数据imdb和roidb
+roidb原本是imdb的一个属性，但imdb其实是为了计算roidb存在的，他所有的其他属性和方法都是为了计算roidb
 
   
 

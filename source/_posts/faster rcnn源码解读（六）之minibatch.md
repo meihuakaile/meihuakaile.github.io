@@ -1,21 +1,16 @@
 ---
 title: faster rcnn源码解读（六）之minibatch
-tags: ['faster rcnn源码理解']
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
-faster rcnn用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn
-](https://github.com/rbgirshick/py-faster-rcnn)
+faster rcnn用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn)
 
-minibatch源码： [ https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/lib/roi_data_layer/minibatch.py
-](https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/lib/roi_data_layer/minibatch.py)
+minibatch源码： [ https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/minibatch.py](https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/minibatch.py)
 
-源码：
-
-    
-    
+### 源码
+```python
     # --------------------------------------------------------
     # Fast R-CNN
     # Copyright (c) 2015 Microsoft
@@ -218,43 +213,29 @@ rcnn/blob/master/lib/roi_data_layer/minibatch.py)
                               edgecolor='r', linewidth=3)
                 )
             plt.show()
-    
+```
+### 代码讲解
+solver.step(1)->reshape-》forward->_get_next_minbatch->_get_next_minbatch_inds->(前面在layers里,现在进入minibatch组建真正的blob)get_minibatch  
 
-  
-solver.step(1)-》reshape-》forward-》_get_next_minbatch-》_get_next_minbatch_inds-
-》(前面在layers里,现在进入minibatch组建真正的blob)get_minibatch  
+cfg.TRAIN.SCALES： 图片被缩放的target_size列表
+random_scale_inds：列表的随机索引组成的numpy，大小是roidb的长度
+cfg.PIXEL_MEANS： 原始图片会集体减去该值达到mean
+im_scales  ： 每张图片的缩放率
 
-4.1 cfg.TRAIN.SCALES  ： 图片被缩放的  target_size  列表
+缩放率的求法:  
+```python
+im_scales = target_size/min(width, height)
+if im_scales * max(width, height) > cfg.TRAIN.MAX_SIZE:
+    im_scales = cfg.TRAIN.MAX_SIZE * max(width, height)
+```
 
-4.2 random_scale_inds  ：列表的随机索引组成的  numpy  ，大小是  roidb  的长度
+prep_im_for_blob： util的blob.py中；用于将图片平均后缩放。
+im_list_to_blob(ims)： 将以list形式存放的图片数据处理成(batch elem, channel, height, width)的im_blob形式，height，width用的是此次计算所有图片的最大值
 
-4.3 cfg.PIXEL_MEANS  ： 原始图片会集体减去该值达到  mean
+blob是一个字典, 与name_to_top对应，方便把blob数据放进top: 
+* data, 一个batch处理过的所有图片数据，即上面的im_blob
+* im_info, [im_blob.shape[2], im_blob.shape[3], im_scales[0]]
+* gt_boxes, 是前四列是  box  的值，第五列是  box  的类别。
+* box, =原box*im_scales
 
-4.4 im_scales  ： 每张图片的缩放率
-
-缩放率的求法：  im_scales = target_size/min(width, height);
-
-if im_scales*max(width, height) > cfg.TRAIN.MAX_SIZE
-
-im_scales = cfg.TRAIN.MAX_SIZE * max(width, height)
-
-4.5 prep_im_for_blob  ：  util  的  blob.py  中；用于将图片平均后缩放。
-
-4.6 im_list_to_blob(ims):  将以  list  形式存放的图片数据处理成  (batch elem, channel,
-height, width)  的  im_blob  形式，  height  ，  width  用的是此次计算所有图片的最大值
-
-4.7 blob  是一个字典：  data  ，一个  batch  的处理过的所有图片数据，即上面的  im_blob  ；
-
-im_info  ，  [im_blob.shape[2], im_blob.shape[3], im_scales[0]]
-
-gt_boxes  ， 是前四列是  box  的值，第五列是  box  的类别。
-
-box=  原  box*im_scales
-
-blob  与  name_to_top  对应，方便把  blob  数据放进  top
-
-！！！  minibatch.py  中  34  行的代码表明，  batchsize  即  cfg.TRAIN.IMS_PER_BATCH  只能是
-1
-
-  
-
+**！！！  minibatch.py  中  34  行的代码表明，  batchsize  即  cfg.TRAIN.IMS_PER_BATCH  只能是1**

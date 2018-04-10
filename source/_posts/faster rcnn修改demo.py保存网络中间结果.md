@@ -1,7 +1,8 @@
 ---
 title: faster rcnn修改demo.py保存网络中间结果
-tags: ['faster rcnn中间层显示']
-categories: ['faster rcnn']
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn中间层显示']
+categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
 faster rcnn用python版本 [ https://github.com/rbgirshick/py-faster-rcnn
@@ -13,27 +14,21 @@ faster rcnn用python版本 [ https://github.com/rbgirshick/py-faster-rcnn
 rcnn/blob/master/tools/demo.py ](https://github.com/rbgirshick/py-faster-
 rcnn/blob/master/tools/demo.py)
 
-图有点多，贴一个图的本分结果出来：
+### 样例
+图有点多，贴一个图的部分结果出来：
 
-![](https://img-blog.csdn.net/20160517211251173?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center)  
+![](/images/17.jpeg)  
 
-上图是原图，下面第一张是网络中命名为“conv1_1”的结果图；第二张是命名为“rpn_cls_prob_reshape”的结果图；第三张是“rpnoutp
-ut”的结果图
+上图是原图；
+下面第一张是网络中命名为“conv1_1”的结果图；
+第二张是命名为“rpn_cls_prob_reshape”的结果图；
+第三张是“rpnoutput”的结果图
 
-![](https://img-blog.csdn.net/20160517211320908?watermark/2/text/aHR0cDovL2Jsb
-2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravi
-ty/Center) ![](https://img-blog.csdn.net/20160517211417572?watermark/2/text/aH
-R0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissol
-ve/70/gravity/Center) ![](https://img-blog.csdn.net/20160517211457221?watermar
-k/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFC
-MA==/dissolve/70/gravity/Center)
+![](/images/18.jpeg) ![](/images/19.jpeg) ![](/images/20.jpeg)
 
+### 修改后的代码
 看一下我修改后的代码：
-
-    
-    
+```python
     #!/usr/bin/env python
     
     # --------------------------------------------------------
@@ -224,15 +219,13 @@ MA==/dissolve/70/gravity/Center)
             demo(net, im_name)
     
         #plt.show()
-
+```
+### 代码讲解
 1.在data下手动创建“feature_picture”文件夹就可以替换原来的demo使用了。
 
 2.上面代码主要添加方法是：save_feature_picture，它会对网络测试的某些阶段的数据处理然后保存。
 
-3.某些阶段是因为：if k.find("conv")>-1 or k.find("pool")>-1 or
-k.find("rpn")>-1这行代码（110行），保证网络层name有这三个词的才会被保存，因为其他层无法用图片
-
-保存，如全连接（参数已经是二维的了）等层。
+3.某些阶段是因为：if k.find("conv")>-1 or k.find("pool")>-1 or k.find("rpn")>-1这行代码（110行），保证网络层name有这三个词的才会被保存，因为其他层无法用图片保存，如全连接（参数已经是二维的了）等层。
 
 4.放开174行print_param(net)的注释，就可以看到网络参数的输出。
 
@@ -240,11 +233,6 @@ k.find("rpn")>-1这行代码（110行），保证网络层name有这三个词的
 
 6.另外部分网络的层name中有非法字符不能作为图片名字，我在代码的111行只是把‘字符/’剔除掉了，所以建议网络名字不要又其他字符。  
 
-图片下载和代码下载方式：
+### 图片下载和代码下载
 
-    
-    
     git clone https://github.com/meihuakaile/faster-rcnn.git
-
-  
-

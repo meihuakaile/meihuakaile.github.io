@@ -1,20 +1,16 @@
 ---
-title: faster rcnn源码解读（五）之layer（网络里的input-data）
-tags: ['faster rcnn源码理解']
+title: "faster rcnn源码解读（五）之layer（网络里的input-data）"
+date: "2018/04/08"
+tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
 ---
-faster rcnn用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn
-](https://github.com/rbgirshick/py-faster-rcnn)
+faster rcnn用python版本的  [ https://github.com/rbgirshick/py-faster-rcnn](https://github.com/rbgirshick/py-faster-rcnn)
 
-layer源码地址： [ https://github.com/rbgirshick/py-faster-
-rcnn/blob/master/lib/roi_data_layer/layer.py ](https://github.com/rbgirshick
-/py-faster-rcnn/blob/master/lib/roi_data_layer/layer.py)
+layer源码地址： [ https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/layer.py ](https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/layer.py)
 
-源码：
-
-    
-    
+### 源码
+```python
     # --------------------------------------------------------
     # Fast R-CNN
     # Copyright (c) 2015 Microsoft
@@ -211,39 +207,33 @@ rcnn/blob/master/lib/roi_data_layer/layer.py ](https://github.com/rbgirshick
                 minibatch_db = [self._roidb[i] for i in db_inds]
                 blobs = get_minibatch(minibatch_db, self._num_classes)
                 self._queue.put(blobs)
-    
-
+```
+### 代码讲解
 下面的roidb都只是一次batch的  
 
-3.1 setup  在  caffe.SGDSolver  时调用；  setup  的  top  （  list  猜测是  c++  的
-vector  ）的每个项是  caffe._caffe.Blob
+3.1 setup  在caffe.SGDSolver时调用；setup的top（list猜测是c++的vector）的每个项是caffe._caffe.Blob
+（猜测，输出的Top shape就是上面的top,在setup中被shape；top[0],1 3 [600] 1000;top[1],1 3;top[2], 1 4)（疑问，在forward中blob的数据shape被重置，有时大小甚至会不定）
 
-（猜测，输出的  Top shape  就是上面的  top,  在  setup  中被  shape  ；  top[0],1 3 [600]
-1000;top[1],1 3;top[2], 1 4)  （疑问，在  forward  中  blob  的数据  shape
-被重置，有时大小甚至会不定）
+3.2 name_to_top: {'gt_boxes': 2, 'data': 0, 'im_info': 1}  字典的value值是top的对应索引
 
-3.2 name_to_top: {'gt_boxes': 2, 'data': 0, 'im_info': 1}  字典的  value  值是  top
-的对应索引
+3.3 solver.step(1)  会调用layer的reshape、forward
 
-3.3 solver.step(1)  会调用  layer  的  reshape  、  forward
+3.4 self._perm： 把roidb的索引打乱，造成图片的shuffle，打乱的索引存储的地方
 
-3.4 self._perm  ： 把  roidb  的索引打乱，造成图片的  shuffle  ，打乱的索引存储的地方
+3.5 cfg.TRAIN.IMS_PER_BATCH：（猜测，每次取图片的数量）
 
-3.5 cfg.TRAIN.IMS_PER_BATCH  ： （猜测，每次取图片的数量）
+3.6 self._cur： 相当于一个指向_perm的指针，每次取走图片后，他会跟着变化
 
-3.6 self._cur  ： 相当于一个指向  _perm  的指针，每次取走图片后，他会跟着变化
+3.7 db_inds： 本次取得图片的索引
 
-3.7 db_inds  ： 本次取得图片的索引
+3.8 def _get_next_minibatch_inds(self)： 取得本次图片的索引，即db_inds
 
-3.8 def _get_next_minibatch_inds(self)  ： 取得本次图片的索引，即  db_inds
+3.9 minibatch_db： 本次的 roidb
 
-3.9 minibatch_db  ： 本次的  roidb
+3.10 _num_classes： 网络里的类别数值  21
 
-3.10 _num_classes  ： 网络里的类别数值  21
+3.11 forward（）： 得到blob并处理放进top
 
-3.11 forward  （）： 得到  blob  并处理放进  top
-
-solver.step(1)-》reshape-》forward-》_get_next_minbatch-》_get_next_minbatch_inds-
-》(前面在layers里,现在进入minibatch组建真正的blob)get_minibatch  
+solver.step(1)->reshape->forward -> _get_next_minbatch->_get_next_minbatch_inds-> (前面在layers里,现在进入minibatch组建真正的blob)get_minibatch
   
 
