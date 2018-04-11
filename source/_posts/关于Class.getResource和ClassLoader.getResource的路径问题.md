@@ -11,8 +11,6 @@ copyright: true
 [ http://blog.csdn.net/netbug_nb/article/details/46121037
 ](http://blog.csdn.net/netbug_nb/article/details/46121037) （有详细例子）
 
-总结：
-
 ### Class.getResource（“”）
 括号中最前面加不加/的效果不同，总结是有/就会取根目录下找，没有就在当前路径下找。
 

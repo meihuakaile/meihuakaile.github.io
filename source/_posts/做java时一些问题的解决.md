@@ -2,7 +2,7 @@
 title: 做java时一些问题的解决
 date: "2018/04/08"
 tags: []
-categories: ['java', '问题解决&&安装']
+categories: ['java']
 copyright: true
 ---
 1、java.lang.classnotfoundexception（这个是在做hadoop时遇到）  
