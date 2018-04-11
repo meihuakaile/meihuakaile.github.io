@@ -1,26 +1,20 @@
 ---
 title: spring 自定义注解实现日志统一处理
+date: "2018/04/08"
 tags: ['spring 自定义注解', '日志统一处理']
-categories: [java, spring]
+categories: [spring]
 copyright: true
 ---
 需求：
-
 通过注解的方式 统一处理controller和service的日志（实现上可能不太严谨，主要是实现流程）
 
 原理：
-
 先自定义注解。用aop切面拦截方法的使用，看是否有对应的自定义的注解，如果有，在切面中进行日志的统一打印，可以获取到加了注解方法的类名、方法名、参数。
 
-如果想每个方法传进来不同信息，可以在自定义注解里写上参数，这样在使用时就可以带进来不同信息。例如，spring自带的注解@Resource（name=“”）
-。
+如果想每个方法传进来不同信息，可以在自定义注解里写上参数，这样在使用时就可以带进来不同信息。例如，spring自带的注解@Resource（name=“”）。
 
 #####  1.controller、service自定义注解
-
-  
-
-    
-    
+```java
     package com.qunar.fresh.annotation;
      
     import java.lang.annotation.ElementType;
@@ -59,13 +53,11 @@ copyright: true
     public @interface ServiceLog {
         String description() default "";
     }
-
+```
 可以通过需求加多个如同description的注解。  
 
 #####  2.写aop进行切面
-
-    
-    
+```java
     package com.qunar.fresh.aop;
      
     import com.qunar.fresh.annotation.ControllerLog;
@@ -144,24 +136,17 @@ copyright: true
         return "";
      }
     }
-
+```
 只写了before，如果有需求还可以写上after等。  
 
 #####  3.xml配置
-
-    
-    
+```xml
     <aop:aspectj-autoproxy proxy-target-class="true"/>
-
-需要注意的是，如果项目的spring-
-mvc.xml和applicationContext.xml是两个文件，而你的切面是同时面向controller和service的，
-
-两个配置文件里都需要加上这行配置。
+```
+**_需要注意的是，如果项目的spring-mvc.xml和applicationContext.xml是两个文件，而你的切面是同时面向controller和service的，两个配置文件里都需要加上这行配置。**_
 
 #####  4.使用
-
-    
-    
+```java
     package com.qunar.fresh.controller;
      
     import com.qunar.fresh.annotation.ControllerLog;
@@ -231,12 +216,10 @@ mvc.xml和applicationContext.xml是两个文件，而你的切面是同时面向
         log.info("hello {}", name);
      }
     }
-
+```
 这样，当浏览器输入：  [ http://localhost:8080/test/one/who
 ](http://localhost:8080/test/one/who) 时，会有如下输出日志：  
-
-    
-    
+```
     INFO com.qunar.fresh.aop.LogAop - 测试用aop统一处理日志操作: com.qunar.fresh.controller.TestController类的test()方法被请求，参数为： [who]
     INFO com.qunar.fresh.aop.LogAop - 测试aop统一处理service日志输出操作: com.qunar.fresh.service.impl.TestServiceImpl类的printHello()方法被请求，参数为： [who]
-
+```

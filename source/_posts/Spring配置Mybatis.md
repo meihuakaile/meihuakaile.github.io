@@ -2,11 +2,11 @@
 title: Spring配置Mybatis
 date: 2018-02-01 16:52:13
 tags: [database, mybatis]
+categories: [spring]
+copyright: true
 ---
-
-
 　　mybatis的使用有多种办法。如果使用了spring，可以使用最简单的办法，在spring的配置文件中引入mapper.xml和mybatis.xml（本文也只讲解了这种方法）。
-# 使用spring+mybatis依赖包：
+# 使用spring+mybatis依赖包
 ```xml
 <mybatisspring.version>1.3.1</mybatisspring.version>
 <mybatis.version>3.4.4</mybatis.version>
@@ -28,19 +28,19 @@ tags: [database, mybatis]
     <version>${mysql.version}</version>
 </dependency>
 ```
-
 # mybatis.xml
 　　首先，一个mybatis.xml文件做部分配置，如[MyBatis.xml配置](/2018/03/29/Mybatis-xml配置/)
 # mapper.xml
 　　之后还需要mapper.xml，可能需要多个，一般和dao层类对应。
-　　mapper.xml中需要注意的是namespace，目前见到比较常用的两种办法：
-　　（方法一）、在外面写一个接口类，namespace写成这个接口类的名字，接口类的方法写成mapper里的sql id，在service层直接通过接口名+方法名(namespace+sql id)使用。<strong>有多个参数时，用@Param("name") 标记多个参数，name是mapper中使用这个参数时的名字。</strong>
-　　（方法二）、第一种方法比较局限，dao层是一个接口，主要实现在mapper中，如果想在dao层中加别的代码（一般也不建议加别的逻辑）就无法实现。
-　　第二种方法是得到spring配置中的sqlSession，通过它的selectOne等方法执行mapper，这时候mapper的namespace可以是自己取得名字，selectOne的第一个参数是namespace+sql id，第二个参数是sql语句需要的参数。
+mapper.xml中需要注意的是namespace，目前见到比较常用的两种办法：
+* 在外面写一个接口类，namespace写成这个接口类的名字，接口类的方法写成mapper里的sql id，在service层直接通过接口名+方法名(namespace+sql id)使用。<strong>有多个参数时，用@Param("name") 标记多个参数，name是mapper中使用这个参数时的名字。</strong>
+* 第一种方法比较局限，dao层是一个接口，主要实现在mapper中，如果想在dao层中加别的代码（一般也不建议加别的逻辑）就无法实现。
 
-# spring配置mybatis。
-　　1、上面的sqlSession是下面代码中的sqlSessionTemplate的实例。
-　　2、下面代码中的
+第二种方法是得到spring配置中的sqlSession，通过它的selectOne等方法执行mapper，这时候mapper的namespace可以是自己取得名字，selectOne的第一个参数是namespace+sql id，第二个参数是sql语句需要的参数。
+
+# spring配置mybatis
+1、上面的sqlSession是下面代码中的sqlSessionTemplate的实例。
+2、下面代码中的
 ```xml
 <property name="configLocation" value="classpath:mybatis.xml"/>
 <property name="mapperLocations" value="classpath*:mapper/*.xml"/>
@@ -50,7 +50,7 @@ tags: [database, mybatis]
 jdbc.properties：
 ``` 
 driverClassName=com.mysql.jdbc.Driver
-mysql.url=jdbc:mysql://localhost:3306/atp_orders_test?autoReconnect=true&connectTimeout=10000&socketTimeout=60000&useUnicode=true&characterEncoding=UTF-8
+mysql.url=jdbc:mysql://localhost:3306/test?autoReconnect=true&connectTimeout=10000&socketTimeout=60000&useUnicode=true&characterEncoding=UTF-8
 mysql.uname=chenliclchen
 mysql.passWord=1234
 ```

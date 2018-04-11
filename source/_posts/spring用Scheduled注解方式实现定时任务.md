@@ -1,22 +1,19 @@
 ---
 title: spring用Scheduled注解方式实现定时任务
-tags: ['spring注解', 'spring定时任务', 'Scheduled']
-categories: [java, spring]
+date: "2018/04/08"
+tags: ['spring 自定义注解', '定时任务', 'Scheduled']
+categories: [spring]
 copyright: true
 ---
-#####  1.spring配置文件中写：
-
-    
-    
+#####  1.spring配置文件
+```xml
     <!-spring扫描注解包的配置-->
     <context:component-scan base-package="XXX" />
     <!—开启这个配置，spring才能识别@Scheduled注解 -->
     <task:annotation-driven/>
-
+```
 #####  2.定时任务的类
-
-    
-    
+```java
     import lombok.extern.slf4j.Slf4j;
     /**
     * TestQuartz
@@ -37,6 +34,5 @@ copyright: true
             log.info("hours");
         }
     }
-
+```
 这样项目启动之后，每分钟会输出“everyMinute”，每天19点输出“hours”。  
-

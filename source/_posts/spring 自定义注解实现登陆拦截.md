@@ -1,7 +1,8 @@
 ---
 title: spring 自定义注解实现登陆拦截
-tags: ['spring', '登陆验证', '自定义注解']
-categories: [java, spring]
+date: "2018/04/08"
+tags: ['spring 自定义注解', '登陆验证']
+categories: [spring]
 copyright: true
 ---
 需求：  
@@ -15,11 +16,8 @@ copyright: true
 （4）在controller的类或者方法上加上步骤一中的的自定义注解就可以轻易实现是否需要登陆校验了。  
   
 例子：  
-
-#####  1.自定义注解：
-
-    
-    
+#####  1.自定义注解
+```java
     package com.qunar.fresh.annotation;
     
     import java.lang.annotation.ElementType;
@@ -38,14 +36,10 @@ copyright: true
     public @interface LoginRequired {
     
     }
-
+```
 @Target({ElementType.METHOD, ElementType.TYPE}) 表示类和方法都可以加此注解  
-  
-
-#####  2.写一个拦截器：
-
-    
-    
+#####  2.写一个拦截器
+```java
     package com.qunar.fresh.interceptor;
     
     import com.qunar.fresh.annotation.LoginRequired;
@@ -106,41 +100,34 @@ copyright: true
      	}
      }
     }
-
+```
 在isLogin方法中写上是否登陆的验证。  
   
-原理是先通过myHandlerMethod.getBean();得到bean，再通过bean.getClass().getAnnotation(LoginR
-equired.class);的返回值确定是否有LoginRequired（即步骤1）中的自定义注解。  
-通过myHandlerMethod.getMethod();也可以得到得到method。通过method.getAnnotation(LoginRequir
-ed.class);得到次方法是否有自定义注解。  
-  
-也可以通过下面的方法得到是否有LoginRequired 自定义注解。  
-  
+原理是先通过myHandlerMethod.getBean()得到bean，
+再通过bean.getClass().getAnnotation(LoginRequired.class)的返回值确定是否有LoginRequired（即步骤1）中的自定义注解。  
+通过myHandlerMethod.getMethod()也可以得到method。
+通过method.getAnnotation(LoginRequired.class)得到此方法是否有自定义注解。  
 
-    
-    
+也可以通过下面的方法得到是否有LoginRequired 自定义注解。  
+```java
     HandlerMethod handlerMethod = (HandlerMethod) handler;
     if (!handlerMethod.getBeanType().isAnnotationPresent(LoginRequired.class)
      && !handlerMethod.getMethod().isAnnotationPresent(LoginRequired.class)) {
      	return false;
     }
     return true;
-
-#####  3.配置springmvc文件：
-
-    
-    
+```
+#####  3.配置springmvc文件
+```xml
     <mvc:interceptors>
     	<mvc:interceptor>
      		<mvc:mapping path="/**"/>
      		<ref bean="authInterceptor"/>
      	</mvc:interceptor>
     </mvc:interceptors>
-
-#####  4.使用例子：
-
-    
-    
+```
+#####  4.使用例子
+```java
     package com.qunar.fresh.controller;
     
     import com.qunar.fresh.annotation.LoginRequired;
@@ -163,6 +150,6 @@ ed.class);得到次方法是否有自定义注解。
      	return "test";
      }
     }
-
+```
 这样，访问以/test开头的所有url都会有是否登陆的验证。
 
