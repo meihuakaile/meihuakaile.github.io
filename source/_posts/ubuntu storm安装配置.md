@@ -1,7 +1,8 @@
 ---
 title: ubuntu storm安装配置
+date: "2018/04/08"
 tags: ['ubuntu', 'storm安装配置']
-categories: ['']
+categories: ['hadoop']
 copyright: true
 ---
 一、安装准备：
@@ -9,8 +10,7 @@ copyright: true
 JDK、ssh、python。安装都比较简单，我之前做别的时候已经安装，此处不再详述。
 
 ssh的安装和服务启动可以参见我的另一个讲 [ hadoop安装的文章
-](http://blog.csdn.net/u010668907/article/details/49159031)
-。而且我的storm集群和hadoop相同，都是配置在三台虚拟机上的，用户组及用户名和hadoop那个一样，都要求用户名是hadoop
+](/2018/04/08/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试)。而且我的storm集群和hadoop相同，都是配置在三台虚拟机上的，用户组及用户名和hadoop那个一样，都要求用户名是hadoop
 
 二、安装zookeeper集群（三台虚拟机）
 

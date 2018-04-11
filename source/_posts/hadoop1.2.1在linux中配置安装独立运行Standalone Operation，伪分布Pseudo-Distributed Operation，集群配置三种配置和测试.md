@@ -1,5 +1,5 @@
 ---
-title: hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试
+title: 'hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试'
 date: "2018/04/08"
 tags: ['hadoop']
 categories: ['hadoop']

@@ -1,10 +1,10 @@
 ---
 title: ubuntu下的所有解压文件命令
-tags: ['ubuntu', '压缩']
+date: "2018/04/08"
+tags: ['ubuntu压缩']
 categories: ['ubuntu']
-copyright: true
 ---
-tar  
+#### tar  
 
 解包：tar xvf FileName.tar  
 
@@ -12,7 +12,7 @@ tar
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-gz  
+#### gz  
 
 解压1：gunzip FileName.gz  
 
@@ -20,7 +20,7 @@ gz
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-tar.gz 和 .tgz  
+#### tar.gz 和 .tgz  
 
 解压：tar zxvf FileName.tar.gz  
 
@@ -28,7 +28,7 @@ tar.gz 和 .tgz
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-bz2  
+#### bz2  
 
 解压1：bzip2 -d FileName.bz2  
 
@@ -38,7 +38,7 @@ bz2
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-tar.bz2  
+#### tar.bz2  
 
 解压：tar jxvf FileName.tar.bz2  
 
@@ -46,7 +46,7 @@ tar.bz2
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-bz  
+#### bz  
 
 解压1：bzip2 -d FileName.bz  
 
@@ -54,7 +54,7 @@ bz
 
 压缩：未知 .
 
-tar.bz  
+#### tar.bz  
 
 解压：tar jxvf FileName.tar.bz  
 
@@ -62,7 +62,7 @@ tar.bz
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-Z  
+#### Z  
 
 解压：uncompress FileName.Z  
 
@@ -74,7 +74,7 @@ Z
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-zip  
+#### zip  
 
 解压：unzip FileName.zip  
 
@@ -82,7 +82,7 @@ zip
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-rar  
+#### rar  
 
 解压：rar x FileName.rar  
 
@@ -90,7 +90,7 @@ rar
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-lha  
+#### lha  
 
 解压：lha -e FileName.lha  
 
@@ -98,21 +98,19 @@ lha
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-rpm  
+#### rpm  
 
 解包：rpm2cpio FileName.rpm | cpio -div
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~ .
 
-deb
+#### deb
 
 解包：ar p FileName.deb data.tar.gz | tar zxf -
 
 ~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.~.
 
-tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar
-.ace .lha .lzh .lzx .lzs .arc .sda .sfx .lnx .zoo .cab .kar .cpt .pit .sit
-.sea  
+tar .tgz .tar.gz .tar.Z .tar.bz .tar.bz2 .zip .cpio .rpm .deb .slp .arj .rar.ace .lha .lzh .lzx .lzs .arc .sda .sfx .lnx .zoo .cab .kar .cpt .pit .sit.sea  
 
 解压：sEx x FileName.*
 

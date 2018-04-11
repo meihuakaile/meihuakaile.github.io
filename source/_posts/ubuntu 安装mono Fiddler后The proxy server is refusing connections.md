@@ -1,6 +1,7 @@
 ---
-title: ubuntu 安装mono Fiddler后The proxy server is refusing connections
-tags: ['proxy server', 'mono', '火狐']
+title: 'ubuntu 安装mono Fiddler后The proxy server is refusing connections'
+date: "2018/04/08"
+tags: ['fiddler 火狐 proxy server']
 categories: ['ubuntu', '问题解决&&安装']
 copyright: true
 ---
