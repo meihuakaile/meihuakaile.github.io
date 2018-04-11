@@ -1,10 +1,11 @@
 ---
 title: "hadoop时遇到遇到ERROR security.UserGroupInformation: PriviledgedActionException as:xxxx cause:java.io.I"
-tags: []
+date: "2018/04/08"
+tags: ['hadoop']
 categories: ['hadoop']
 copyright: true
 ---
-在windows下的eclipse里操纵ubuntu远程跑hadoop项目遇到问题：
+hadoop 1.X版本在windows下的eclipse里操纵ubuntu远程跑hadoop项目遇到问题：
 ```
 16:52:22 WARN util.NativeCodeLoader: Unable to load native-hadoop library for
 your platform... using builtin-java classes where applicable
@@ -36,16 +37,16 @@ at firsthadoop.org.eg.WordCount.main(WordCount.java:142)
   
 
 解决：
-    hadoop-core-1.0.2.jar的org.apache.hadoop.fs.FileUtil文件中找到以下部分，注释掉checkReturnValue方法中的下面代码有段需要注释：
+    hadoop-core-1.0.2.jar的org.apache.hadoop.fs.FileUtil文件中找到以下部分，注释掉checkReturnValue方法中的下面代码：
 ```java
       private static void checkReturnValue(boolean rv, File p,
         FsPermission permission) throws IOException {
         /*
-    //win7 connect to linux hadoop
-    if (!rv) {
+        //win7 connect to linux hadoop
+        if (!rv) {
           throw new IOException("Failed to set permissions of path: " + p +" to " +  String.format("o", permission.toShort()));
         }
-    */
+        */
       }
 ```
   
