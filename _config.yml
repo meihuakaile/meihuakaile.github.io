@@ -12,7 +12,7 @@ timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://meihuakaile.github.io
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -84,3 +84,11 @@ deploy:
   type: git
   repo: https://github.com/meihuakaile/meihuakaile.github.io.git
   branch: master
+
+# pet
+#https://blog.csdn.net/qq_33699981/article/details/72716951
+live2d:
+  enable: true
+  model: live2d-widget-model-haru
+  bottom: -60
+  mobileShow: false

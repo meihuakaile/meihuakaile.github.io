@@ -1,68 +1,45 @@
 ---
-title: 朴素贝叶斯（二）实现NBCorpus分类（附代码和数据）
-tags: ['机器学习', '朴素贝叶斯', 'NBCorpus']
+title: '朴素贝叶斯（二）实现NBCorpus分类（附代码和数据）'
+date: "2018/04/08"
+tags: ['机器学习', '朴素贝叶斯']
 categories: ['机器学习']
 copyright: true
 ---
-理论可参考 ： [ 朴素贝叶斯（一） ](http://blog.csdn.net/u010668907/article/details/79399972)
-
-公式： ![](http://wiki.corp.qunar.com/confluence/download/thumbnails/191162695/im
-age2018-2-28_11-53-25.png?version=1&modificationDate=1519790006000&api=v2)
+### 公式复习
+理论可参考 ： [ 朴素贝叶斯（一） ](/2018/04/08/朴素贝叶斯（一）)
+公式： ![](/images/43.png)
 （P(x)为常数，可忽略不考虑）
+平滑： ![](/images/44.png)
+N<sub>y<sub>k</sub></sub>是类别为y<sub>k</sub>的样本个数，n是特征的维数，N<sub>y<sub>k</sub>,x<sub>i</sub></sub>是类别为y<sub>k</sub>的样本中，特征的值是x<sub>i</sub>的样本个数，α是平滑值。
 
-平滑： ![](http://wiki.corp.qunar.com/confluence/download/thumbnails/191162695/im
-age2018-2-28_11-57-47.png?version=1&modificationDate=1519790267000&api=v2)
-
-N  y  k  是类别为  y  k  的样本个数，n是特征的维数，  N  y  k  ,  x  i  是类别为  y  k
-的样本中，第i维特征的值是  x  i  的样本个数，  α  是平滑值。
-
-  
-
+### 分词公式整理
 在对NBCorpus词分类时，带入上面的公式可得：
+某词属于某类别的概率 = （该类别该词的个数  + 1/ 该类别词的总数 + 所有类别所有不重复单词总数） ×（该类别样本个数 / 所有类别总样本个数） /（所有类别该词个数 / 所有类别所有词个数）
 
-某词属于某类别的概率 = （该类别该词的个数  + 1/ 该类别词的总数 + 所有类别所有不重复单词总数） ×（该类别样本个数 / 所有类别总样本个数） /
-（所有类别该词个数 / 所有类别所有词个数）
-
-所有类别该词个数 / 所有类别所有词个数   就是上面公式的P(x) ，它的值与类别无关，值相同，所有把它去掉，公式变成：
-
+* 所有类别该词个数 / 所有类别所有词个数   就是上面公式的P(x) ，它的值与类别无关，值相同，所有把它去掉，公式变成：
 _ ** （该类别该词的个数  + 1/ 该类别词的总数 + 所有类别所有不重复单词总数） ×（该类别样本个数 / 所有类别总样本个数） ** _
+* （该类别样本个数 / 所有类别总样本个数） 就是上面公式的P(y<sub>k</sub>)，即先验概率。没有使用平滑。
+* （该类别该词的个数  + 1/ 该类别词的总数 + 所有类别所有不重复单词总数） 就是上面公式的P(x|y<sub>k</sub>)，就是可能性。使用了平滑，分子加的1，分母加的所有类别所有不重复单词总数  都是平滑值。
 
-（该类别样本个数 / 所有类别总样本个数） 就是上面公式的P(yk)，即先验概率。没有使用平滑。
+如果按照上面的公式，就和上面的例子一样，对于测试的样本里的每个属性计算出属于每个类别的概率，对于每个类别每个属性的概率相乘。但是，小数越乘越小，最终可能会导致数据会丢失成0，无法比较。解决办法是对公式加ln操作，把乘法变成加法，且不破坏单调性。
 
-（该类别该词的个数  + 1/ 该类别词的总数 + 所有类别所有不重复单词总数） 就是上面公式的P(x|yk)，就是可能性。使用了平滑，分子加的1，分母加的
-所有类别所有不重复单词总数  都是平滑值。
+### 分词简单例子
+![](/images/45.png)
+![](/images/46.png)
+![](/images/47.png)
 
-如果按照上面的公式，就和上面的例子一样，对于测试的样本里的每个属性计算出属于每个类别的概率，对于每个类别每个属性的概率相乘。但是，小数越乘越小，最终可能会导
-致数据会丢失成0，无法比较。解决办法是对公式加ln操作，把乘法变成加法，且不破坏单调性。
-
-分词简单例子：
-
-![](http://wiki.corp.qunar.com/confluence/download/attachments/191162695/image
-2018-2-28_14-8-11.png?version=1&modificationDate=1519798091617&api=v2)
-
-![](http://wiki.corp.qunar.com/confluence/download/attachments/191162695/image
-2018-2-28_14-8-22.png?version=1&modificationDate=1519798102000&api=v2)
-
-![](http://wiki.corp.qunar.com/confluence/download/attachments/191162695/image
-2018-2-28_14-8-35.png?version=1&modificationDate=1519798115335&api=v2)
-
-上面的词量比较少，没有进行ln操作。但是如果词量太大，举例最后的计算变成 ln(3/4 * (3/7)^3 * 1/14 * 1/14 ) =
-ln(3/4) + 3*ln(3/7) + ln(1/14) + ln(1/14) 。
-
+上面的词量比较少，没有进行ln操作。但是如果词量太大，举例最后的计算转变成 
+![](/images/48.png)
+### 数据及代码
 数据下载地址：http://download.csdn.net/download/u010668907/10263175
-
 。。。。无语了，想上传全部的NBCorpus库，csdn一直说已经存在，整体的库后续再说吧，上面的链接里的是做下面算法计算的那部分，够用了。
-
 下面的代码里加了ln操作，否则计算之后每个类别都是0，无法比较
-
-    
-    
+```python
     # -*- coding:utf-8 -*-
     # __author__='chenliclchen'
     from __future__ import division
     import os
     import pickle
-    
     
     # 统计每个类别每个单词出现的次数
     # （该类别文档数） / （所有类别文档数）
@@ -172,7 +149,5 @@ ln(3/4) + 3*ln(3/7) + ln(1/14) + ln(1/14) 。
             sort_prob[item] = all_words_prob
             file.close()
         print filter(lambda x:max(sort_prob.values()) == sort_prob[x], sort_prob)[0]
-
+```
 最终的输出结果就是 ：AFRICA  
-  
-

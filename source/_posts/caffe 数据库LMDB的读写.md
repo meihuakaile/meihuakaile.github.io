@@ -85,7 +85,7 @@ caffe，以及faster rcnn写lmdb时都习惯把图片的名字写到txt文件中
             list = line.split()
             file_content.append([list[0], list[1], list[2]])
             flag += 1 
-        if not shuffle == None:<span style="font-family: Arial, Helvetica, sans-serif;">#为了打乱数据顺序</span>
+        if not shuffle == None: #为了打乱数据顺序
             random.shuffle(file_content)
         return file_content
     
@@ -122,7 +122,7 @@ caffe，以及faster rcnn写lmdb时都习惯把图片的名字写到txt文件中
                 data[1] = img_file2
                 datum.data = data.tostring() #data
                 datum.label = int(label)#label
-                str_id = "%08d" %(i) + "_" + content[i][0] #'{:08}'.format(i)   #顺序+图片名字作为key
+                str_id = "%08d" %(i) + "_" + content[i][0] #'{:08}'.format(i) #顺序+图片名字作为key
                 
                 # The encode is only essential in Python 3
                 txn.put(str_id.encode('ascii'), datum.SerializeToString())

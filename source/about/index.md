@@ -1,6 +1,8 @@
 ---
 title: 历历
 date: 2018-03-28 16:42:28
+comments: false
+toc: false
 ---
 ## 关于我
 一个什么都学的菜鸟
