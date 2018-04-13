@@ -4,7 +4,10 @@ date: "2018/04/08"
 tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
+top: 6
 ---
+<img src="49.jpg">
+<!--more-->
 ### 源码
 ```c++
     // ------------------------------------------------------------------
@@ -128,7 +131,7 @@ copyright: true
 ### 代码讲解
 SmoothL1LossLayer  计算一张图片的损失函数，对应于下图的加号右边部分
 
-![](/images/21.png)
+![](21.png)
 
 i  是mini-batch的anchor的索引。
 Pi  是目标的预测概率。
@@ -136,7 +139,7 @@ Pi  是目标的预测概率。
 ti  是一个向量，预测坐标
 ti\*  是一个向量，是gt包围盒的坐标
 
-![](/images/22.png)  
+![](22.png)  
 
 bottom[0]  预测坐标，对应于下图的ti
 bottom[1]target  坐标，对应于下图的ti\*
@@ -145,11 +148,11 @@ bottom[3]outside 没有前景（fg）也没有后景（bg）的为0，其他为1
 
 Lreg的公式就是下图，另x=ti - ti\*
 
-![](/images/23.png)
+![](23.png)
 
 Pi × Leg(ti, ti\*)  表明只有有fg（20个物体类别）的才有回归损失
 
-![](/images/24.png)  
+![](24.png)  
 
   
 

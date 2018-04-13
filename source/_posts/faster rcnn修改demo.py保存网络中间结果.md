@@ -17,14 +17,14 @@ rcnn/blob/master/tools/demo.py)
 ### 样例
 图有点多，贴一个图的部分结果出来：
 
-![](/images/17.jpeg)  
+![](17.jpeg)  
 
 上图是原图；
 下面第一张是网络中命名为“conv1_1”的结果图；
 第二张是命名为“rpn_cls_prob_reshape”的结果图；
 第三张是“rpnoutput”的结果图
 
-![](/images/18.jpeg) ![](/images/19.jpeg) ![](/images/20.jpeg)
+![](18.jpeg) ![](19.jpeg) ![](20.jpeg)
 
 ### 修改后的代码
 看一下我修改后的代码：

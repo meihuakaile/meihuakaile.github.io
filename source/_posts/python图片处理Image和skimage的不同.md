@@ -40,7 +40,7 @@ copyright: true
 ```
 调用及输出：
 
-![](/images/1.png)  
+![](1.png)  
 
 Image读出来的是PIL什么的类型，
 skimage.io读出来的数据是numpy的格式。

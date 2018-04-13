@@ -7,7 +7,7 @@ copyright: true
 ---
 caffe的训练过程输出的数据用图形显示出来。先上效果图：
 
-![](/images/16.png)
+![](16.png)
 
 图形说明：
 

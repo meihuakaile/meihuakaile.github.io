@@ -34,7 +34,7 @@ copyright: true
         py.show()
 ```
 效果：
-![](/images/13.png)  
+![](13.png)  
 
 解释：
 ```python
@@ -79,7 +79,7 @@ copyright: true
         py.show()
 ```
 效果：
-![](/images/14.png)
+![](14.png)
 
 点击按钮，控制台输出“button is pressed!”
 
@@ -120,7 +120,7 @@ copyright: true
         py.show()
 ```
 效果：
-![](/images/15.png)
+![](15.png)
 
 注解：
 ```python

@@ -94,7 +94,7 @@ hadoop jar $HADOOP_HOME/hadoop-examples-1.2.1.jar grep input output 'dfs[a-z.]+'
 ps -e|grep ssh
 ```
 如看到如下二个进程则  OK
-![](/images/25.png)
+![](25.png)
 注！！！如果此处你的ssh-agent没有启动成功，执行：
 ```
 eval ‘ssh-agent’
@@ -119,9 +119,9 @@ $ ssh-keygen -t dsa –P '' -f ~/.ssh/id_dsa  (先不要着急执行，看下面
 * -f ~/.ssh/id_dsa  指定秘钥输出文件 
 
 其实在真正执行时，上面的那句命令会说太长无法执行，所以其实只输入前面“$ ssh-keygen -t dsa”即可，输入之后会有其他的提示，提示你输入密码时，**_直接回车就代表密码回空_**，具体如下：
-![](/images/26.png)
+![](26.png)
 之后可以看到  ~/.ssh  目录下多了二个文件：
-![](/images/27.png)
+![](27.png)
 将  ssh  公钥追加到  authorized_keys  后面，即可实现免密钥登陆。
 ```
 $ cat ~/.ssh/id_dsa.pub >> ~/.ssh/authorized_keys
@@ -231,7 +231,7 @@ $ hadoop --config ~/HadoopPseudoDistributeTest/conf namenode  -format
 
 4、运行jps命令看相应服务是否启动：
 
-![](/images/28.png)
+![](28.png)
 
 5、在伪分布式的模式下运行前面的例子
 将本地文件系统目录conf拷贝到分布式文件系统的input下（为了执行例子）  
@@ -250,7 +250,7 @@ $ hadoop --config ~/HadoopPseudoDistributeTest/conf namenode  -format
     hadoop fs –ls output   # 查看执行结果
 
 执行正确效果，在  HadoopPseudoDistributeTest  的目录下有input和output文件夹，output中存放两个文件：
-![](/images/29.png)  
+![](29.png)  
 6、停止daemon
 ```  
 stop-all.sh
@@ -365,7 +365,7 @@ slaves
 ```
 scp -r /home/hadoop/HadoopClusterTest 192.168.231.130:/home/hadoop/  
 ```
-![](/images/30.png)
+![](30.png)
 然后改变ip地址用相同命令拷到另一台里。这样三台电脑的配置就完成了。
 #### 运行
 下面是它的使用方法（9是我后期稍微熟练之后的开启hadoop的方法）：  
@@ -387,11 +387,11 @@ hadoop namenode -format
 $HADOOP_HOME/bin/start-all.sh
 ```
 然后在node1上执行下面的：
-![](/images/31.png)
+![](31.png)
 7、在node1上执行jps查看启动服务：
-![](/images/32.png)
+![](32.png)
 在node2、node3上jps查看：
-![](/images/33.png)  
+![](33.png)  
 8、浏览NameNode和JobTracker的网络接口，它们的地址默认为(我的node1为192.168.231.129)：
 
 NameNode - http://node1:50070/  

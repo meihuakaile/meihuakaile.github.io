@@ -4,6 +4,7 @@ date: "2018/04/08"
 tags: ['caffe', 'lmdb']
 categories: ['cnn图片数据处理、显示']
 copyright: true
+top: 1
 ---
 读写的图片都是灰度图，rgb图类似  
 
