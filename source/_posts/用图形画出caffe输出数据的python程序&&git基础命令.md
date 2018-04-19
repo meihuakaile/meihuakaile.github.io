@@ -1,5 +1,5 @@
 ---
-title: 用图形画出caffe输出数据的python程序&&git基础命令
+title: 用图形画出caffe输出数据的python程序 git基础命令
 date: "2018/04/08"
 tags: ['python', '图片处理', 'caffe']
 categories: ['cnn图片数据处理、显示']

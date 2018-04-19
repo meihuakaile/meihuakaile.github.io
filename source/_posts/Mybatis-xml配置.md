@@ -1,7 +1,8 @@
 ---
 title: Mybatis.xml配置
 date: 2018-03-29 15:49:38
-tags: [database, mybatis]
+tags: [mybatis]
+categories: ['mybatis']
 copyright: true
 ---
 

@@ -92,3 +92,6 @@ live2d:
   model: live2d-widget-model-haru
   bottom: -60
   mobileShow: false
+
+sitemap:
+  path: ./node_modules/hexo-generator-sitemap/sitemap.xml
