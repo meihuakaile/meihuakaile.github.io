@@ -95,3 +95,9 @@ live2d:
 
 sitemap:
   path: ./node_modules/hexo-generator-sitemap/sitemap.xml
+
+search:
+  path: search.xml
+  field: post
+  format: html
+  limit: 10000

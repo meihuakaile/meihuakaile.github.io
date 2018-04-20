@@ -2,7 +2,7 @@
 title: ubuntu 64位安装wps（亲测可用）
 date: "2018/04/08"
 tags: ['ubuntu wps安装']
-categories: ['ubuntu', '问题解决&&安装']
+categories: ['ubuntu']
 copyright: true
 ---
 ubuntu 14.04 64位安装wps  

@@ -90,7 +90,7 @@ Uptime:            4 hours 38 min 21 sec
 – character_set_connection：连接层字符集
 – character_set_results：查询结果字符集
 – character_set_database：当前选中数据库的默认字符集
-– character_set_system：系统元数据(字段名等)字符集
-– 还有以collation_开头的同上面对应的变量，用来描述字符序。
+– character_set\_system：系统元数据(字段名等)字符集
+– 还有以collation\_开头的同上面对应的变量，用来描述字符序。
 
 参考：https://www.2cto.com/database/201408/326102.html

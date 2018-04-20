@@ -1,0 +1,109 @@
+---
+title: 'linux常用命令'
+date: "2018/04/20"
+tags: [ubuntu]
+categories: [ubuntu]
+copyright: true
+---
+### 防火墙
+```
+sudo ufw status   #查看防火墙状态
+sudo ufw enable|disable   #开启/关闭防火墙 (默认设置是’disable’)
+```
+### SecureCRT上传下载
+rz上传  sz下载
+在SecureCRT中使用 rz -be 可以打开上传界面，把本地文件上传到服务器
+sz 文件1 文件2    可下载多个文件 文件在本地的保存地址看：options — session options — X/Y/Zmodem。
+rz 上传文件
+总结自：http://blog.csdn.net/lioncode/article/details/7921525 
+
+### vim搜索
+/字符串  第一个出现的字符串
+?字符串 最后出现的字符串
+n跳到下一个匹配  N跳到上一个匹配
+### zcat
+查看压缩文件。
+
+### alias
+主要是有些经常用又很长比较难记的命令。
+输入alias可以看到已有的别名。
+添加别名的两种办法：
+（1）打开 .bashrc文件 vim .bashrc 
+\# some more ls aliases
+alias ll='ls -alF'
+添加别名。如alias d2='ssh data2.cn'就是只输入d2就相当与输入了ssh登陆“data2.cn”的命令。
+
+（2）新建文件vim ~/.bash_aliases，然后添加：alias d2='ssh data2.cn'。最后退出输入source .bashrc就可以用了。
+
+详细可参看：http://blog.csdn.net/a746742897/article/details/52228422
+
+### 读取数据库中信息。
+mysql -h 127.0.0.1 -u root -p XXXX -P 3306 -e "select * from table"  > /tmp/test/txt
+-h 后面是主机； -u后面是用户名； -p后面是数据库名字 ； -P后面是端口号 ； -e就是mysql的select语句 ； 最后是重定向到一个文件。 
+
+参看：https://www.cnblogs.com/emanlee/p/4233602.html
+
+### 查看端口号占用
+```
+netstat -apn | grep 8080
+ps -ef | grep 8080   
+```
+pid是进程id（一般kill的时候用） ppid是父进程id  c是cpu占用率 其他看http://blog.csdn.net/lg632/article/details/52556139
+
+### 解压纯 .gz文件
+方法（1）：gunzip 文件       方法（2）：zcat输出 之后用 > 保存
+
+### date
+```
+date -d today +"%Y-%m-%d"   输出2017-12-08  按照格式“%Y-%m-%d”输出今天的日期。
+date +%Y-%m-%d --date="-1 day"  输出2017-12-07 按照格式“%Y-%m-%d”输出昨天的日期。 “-1”可以修改 “day”可以是month/year。
+date -d "last sunday" +%Y-%m-%d   输出上周日的日期。
+```
+加号“+”跟要输出的格式   -s 可以设置时间。
+参考：http://www.linuxidc.com/Linux/2016-11/137559.htm
+
+### if [ $? -ne 0 ];then
+$? -ne 0表示前面的命令的执行结果是不是0（0代表成功）   $?就是前面命令的执行结果。  
+另外切记，shell里的`` 是执行里面内容的命令。 -ne是不等时true； -eq是相等时true。
+
+### sort
+sort 命令对 File 参数指定的文件中的行排序，并将结果写到标准输出。如果 File 参数指定多个文件，那么 sort 命令将这些文件连接起来，并当作一个文件进行排序。
+
+### uniq
+uniq命令可以去除排序过的文件中的重复行，因此uniq经常和sort合用。也就是说，为了使uniq起作用，所有的重复行必须是相邻的。
+
+选项与参数：
+-i   ：忽略大小写字符的不同；
+-c  ：进行计数
+-u  ：只显示唯一的行
+13、例子sort+uniq
+### 经典！计算ip出现次数例子
+
+文件：
+178.60.128.31 www.google.com.hk  
+193.192.250.158 www.google.com  
+210.242.125.35 adwords.google.com  
+210.242.125.35 accounts.google.com.hk  
+210.242.125.35 accounts.google.com  
+210.242.125.35 accounts.l.google.com  
+64.233.181.49 www.google.com  
+212.188.10.167 www.google.com  
+23.239.5.106 www.google.com  
+64.233.168.41 www.google.com  
+62.1.38.89 www.google.com  
+62.1.38.89 chrome.google.com  
+193.192.250.172 www.google.com  
+212.188.10.241 www.google.com 
+命令：
+cat test.txt|awk '{print $1}'|sort|uniq -c  
+参考：http://james-lover.iteye.com/blog/2105795
+
+### dir=$( cd $(dirname $0) ; pwd -P )
+得到当前运行脚本实际物理地址，而非链接地址。
+$0就是当前运行脚本；dirname得到指定脚本所在的目录，在执行时相对的路径。pwd 的-P得到的实际物理地址，不是连接的地址；-L是链接地址，而非物理地址。
+
+### 1>/dev/null 2>&1
+（1）1>/dev/null 首先表示标准输出重定向到空设备文件，也就是不输出任何信息到终端，说白了就是不显示任何信息。
+（2）2>&1 接着，标准错误输出重定向等同于 标准输出，因为之前标准输出已经重定向到了空设备文件，所以标准错误输出也重定向到空设备文件。
+
+常用参看：https://www.cnblogs.com/yu2000/p/4089011.html
