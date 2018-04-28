@@ -91,9 +91,9 @@ array([0, 1, 2, 1])
 # 对数组中数据统计次数；返回数组下标是原始数组的值，返回数组的数据值是次数。例如上面数组a值1出现的次数是1次，因此返回数组index=1的值为1，index=2的值为2
 # 输入数组使用中发现的约束条件：一维数组、 必须是int整形。（个人理解，更适用于数组数据比较集中且从0/1开始的数）
 ```
-#####  np.random.uniform（start， end， size）
+#####  np.random.uniform（start， end[， size]）
 
-生成一个数值<strong>均匀分布</strong>在start，end间的长度大小是size的数组（ndarray类型）。 注意是>= start && < end ，前闭后开。  
+生成一个数值<strong>均匀分布</strong>在start，end间的长度大小是size的数组（ndarray类型）。 注意是>= start && < end ，前闭后开。 size默认是1 
 
 #####  np的flatten() vs ravel()
 
