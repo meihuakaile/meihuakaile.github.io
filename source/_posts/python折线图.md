@@ -4,7 +4,7 @@ tags:
   - python
   - matplotlib
 categories:
-  - python
+  - cnn图片数据处理、显示
 copyright: true
 date: 2018-04-24 00:00:00
 ---

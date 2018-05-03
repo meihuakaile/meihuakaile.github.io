@@ -1,5 +1,5 @@
 ---
-title: 'mysql'
+title: 'mysql 执行顺序、explain、索引'
 date: "2018/04/19"
 tags: [mysql]
 categories: ['mysql']
@@ -27,6 +27,7 @@ eg，explain select * from flight_qmq_pay_order_20171204 order by insert_time de
 ### sql执行顺序
 对于一条sql语句来说，执行顺序是这样的：
 1、from子句组装来自不同数据源的数据；
+(join条件筛选)
 2、where子句基于指定的条件对记录行进行筛选；
 3、group by子句将数据划分为多个分组；
 4、使用聚集函数进行计算；
@@ -35,6 +36,7 @@ eg，explain select * from flight_qmq_pay_order_20171204 order by insert_time de
 7、使用order by对结果集进行排序；
 8、select 集合输出。
 
+由于select在group by之后执行，如果select中出现count等函数都是针对group之后的分组计算。
 ### explain参数
 它主要是对mysql性能评估。下面加粗的字体是几个比较重要的参数。
 官网有它的所有参数解释：https://dev.mysql.com/doc/refman/5.7/en/explain-output.html

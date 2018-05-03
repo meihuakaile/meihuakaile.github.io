@@ -9,6 +9,16 @@ select * from table1 a inner join table2 b on a.id=b.id;
 
 注意mysql语句的执行顺序，正确的使用别名。
 
+### create table xxx as select...
+创建xxx表，并把select查询的内容直接作为信息插入到xxx表中。注意的是select的字段要记得起别名，否则新建表会自动起一些奇怪的名字。
+### case when then else end
+条件语法，常用于select时,如：
+```mysql
+CASE WHEN gender='1' THEN '男'
+WHEN gender='2' THEN '女'
+ELSE '人妖' 
+END
+```
 ### sql join
 ![](2.png)
 #### （ inner）join on
@@ -26,6 +36,18 @@ UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION A
 UNION 结果集中的列名总是等于 UNION 中第一个 SELECT 语句中的列名。
 优化建议：能使用union all，就不要使用union。因为union还要对数据进行排序后筛除重复的。比较费时。
 
+#### FULL
+full join 返回左右表所有的行，即使只有表没有相互匹配。
+不过mysql对full join不支持，可以用join+union的方式来代替。
+MySQL Full Join的实现 因为MySQL不支持FULL JOIN,下面是替代方法
+left join + union(可去除重复数据)+ right join
+```mysql
+select * from A left join B on A.id = B.id (where 条件）
+union
+select * 
+from A right join B on A.id = B.id （where条件);
+```
+
 ### in/exit
 以优化角度考虑，一般以小表驱动大表。in语句是先执行子语句，exit是后执行子语句；
 因此，如果子语句是小表就用in，是大表就用exit；
@@ -42,15 +64,15 @@ exit语法：select * from 表A where exists(select * from 表B where 表B.id=�
 linux命令mysql 的参数-e可以后面可以直接跟mysql语句。
 使用-e在终端执行使在导入/出命令前加上“set character_set_database=utf8;” 可以有效避免中文乱码。
 导入数据： 
-```
-LOAD DATA INFILE '/home/chenliclchen/mysql/tableExport.txt' INTO TABLE `atp_event`(
+```mysql
+LOAD DATA LOCAL INFILE '/home/chenliclchen/mysql/tableExport.txt' INTO TABLE `atp_event`(
 event_name, business, event_type, start_time, end_time, event_area, description); 
 ```
 导入数据出错参考：ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement
 导入中文乱码时参考：[导入数据乱码](/2018/04/19/ERROR 1290 HY000  The MySQL server is running with the --secure-file-priv option so it cannot execute this statement)
 
 导出数据： 
-```
+```mysql
 select * into outfile '/home/chenliclchen/mysql/t.txt' fields terminated by ',' from atp_event;  
 ```
 ### coalesce()
@@ -80,3 +102,8 @@ LEFT(str,len)
 
 RIGHT(str,len)
 返回字符串str的最右面len个字符。
+### length(str)
+返回字符串的长度。
+### substr(string, start, length)
+从start开始截取string字符串，截取长度length。
+从第一个开始截取start是1.
