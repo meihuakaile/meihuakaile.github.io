@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d611714d-3f1d-4318-9f65-bd45f35f96b3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md" />
-      <change type="MOVED" beforePath="$PROJECT_DIR$/source/_posts/mysql.md" afterPath="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/themes/next" afterPath="$PROJECT_DIR$/themes/next" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive笔记.md" afterPath="$PROJECT_DIR$/source/_posts/hive笔记.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/linux常用命令.md" afterPath="$PROJECT_DIR$/source/_posts/linux常用命令.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/mysql语句.md" afterPath="$PROJECT_DIR$/source/_posts/mysql语句.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/python折线图.md" afterPath="$PROJECT_DIR$/source/_posts/python折线图.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md" afterPath="$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -59,12 +53,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="mysql语句.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="mysql语句.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="-140">
-                <caret line="74" column="8" lean-forward="false" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="8" />
+              <first_editor relative-caret-position="140">
+                <caret line="88" column="21" lean-forward="false" selection-start-line="88" selection-start-column="21" selection-end-line="88" selection-end-column="21" />
                 <folding>
                   <marker date="1525342148439" expanded="true" signature="471:833" ph="select * fro... table1" />
                   <marker date="1525342148439" expanded="true" signature="834:858" ph="SELECT 语句的结果... " />
@@ -85,7 +79,7 @@
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
               <first_editor relative-caret-position="120">
-                <caret line="6" column="3" lean-forward="true" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
+                <caret line="6" column="3" lean-forward="false" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -93,18 +87,18 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="join on和 where 条件放置区别.md" pinned="false" current-in-tab="false">
+      <file leaf-file-name="join on和 where 条件放置区别.md" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="340">
-                <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
+              <first_editor relative-caret-position="200">
+                <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
                 <folding>
-                  <marker date="1525331764117" expanded="true" signature="351:369" ph="select * fro... user" />
-                  <marker date="1525331764117" expanded="true" signature="528:547" ph="select * fro... hotel" />
-                  <marker date="1525331764117" expanded="true" signature="1039:1090" ph="select * fro... user" />
-                  <marker date="1525331764117" expanded="true" signature="1354:1421" ph="select * fro... user" />
-                  <marker date="1525331764117" expanded="true" signature="1452:1517" ph="select * fro... user" />
+                  <marker date="1525352249906" expanded="true" signature="352:370" ph="select * fro... user" />
+                  <marker date="1525352249906" expanded="true" signature="529:548" ph="select * fro... hotel" />
+                  <marker date="1525352249906" expanded="true" signature="1040:1091" ph="select * fro... user" />
+                  <marker date="1525352249906" expanded="true" signature="1355:1422" ph="select * fro... user" />
+                  <marker date="1525352249906" expanded="true" signature="1453:1518" ph="select * fro... user" />
                 </folding>
               </first_editor>
               <second_editor />
@@ -218,12 +212,12 @@
         <option value="$PROJECT_DIR$/source/_drafts/决策树.md" />
         <option value="$PROJECT_DIR$/source/_drafts/python常用笔记.md" />
         <option value="$PROJECT_DIR$/source/_posts/python折线图.md" />
-        <option value="$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md" />
         <option value="$PROJECT_DIR$/source/_posts/mysql.md" />
         <option value="$PROJECT_DIR$/source/_posts/linux常用命令.md" />
         <option value="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" />
         <option value="$PROJECT_DIR$/source/_posts/hive笔记.md" />
         <option value="$PROJECT_DIR$/source/_posts/mysql语句.md" />
+        <option value="$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md" />
       </list>
     </option>
   </component>
@@ -238,7 +232,7 @@
     <handled-path value="$PROJECT_DIR$/node_modules" />
     <handled-path value="$PROJECT_DIR$/public/node_modules" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="-7" />
     <option name="width" value="1366" />
     <option name="height" value="712" />
@@ -331,7 +325,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-7" width="1366" height="712" extended-state="6" />
+    <frame x="0" y="-7" width="1366" height="712" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.17678301" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
@@ -750,23 +744,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="340">
-            <caret line="50" column="0" lean-forward="true" selection-start-line="50" selection-start-column="0" selection-end-line="50" selection-end-column="0" />
-            <folding>
-              <marker date="1525331764117" expanded="true" signature="351:369" ph="select * fro... user" />
-              <marker date="1525331764117" expanded="true" signature="528:547" ph="select * fro... hotel" />
-              <marker date="1525331764117" expanded="true" signature="1039:1090" ph="select * fro... user" />
-              <marker date="1525331764117" expanded="true" signature="1354:1421" ph="select * fro... user" />
-              <marker date="1525331764117" expanded="true" signature="1452:1517" ph="select * fro... user" />
-            </folding>
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/source/_drafts/python常用笔记.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -793,7 +770,7 @@
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="120">
-            <caret line="6" column="3" lean-forward="true" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
+            <caret line="6" column="3" lean-forward="false" selection-start-line="6" selection-start-column="3" selection-end-line="6" selection-end-column="3" />
             <folding />
           </first_editor>
           <second_editor />
@@ -814,8 +791,8 @@
     <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="-140">
-            <caret line="74" column="8" lean-forward="false" selection-start-line="74" selection-start-column="8" selection-end-line="74" selection-end-column="8" />
+          <first_editor relative-caret-position="140">
+            <caret line="88" column="21" lean-forward="false" selection-start-line="88" selection-start-column="21" selection-end-line="88" selection-end-column="21" />
             <folding>
               <marker date="1525342148439" expanded="true" signature="471:833" ph="select * fro... table1" />
               <marker date="1525342148439" expanded="true" signature="834:858" ph="SELECT 语句的结果... " />
@@ -824,6 +801,23 @@
               <marker date="1525342148439" expanded="true" signature="1240:1354" ph="select * fro... A" />
               <marker date="1525342148439" expanded="true" signature="1894:2064" ph="LOAD DATA LO... atp_event" />
               <marker date="1525342148439" expanded="true" signature="2365:2459" ph="select * int... atp_event" />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/join on和 where 条件放置区别.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="200">
+            <caret line="10" column="29" lean-forward="false" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+            <folding>
+              <marker date="1525352249906" expanded="true" signature="352:370" ph="select * fro... user" />
+              <marker date="1525352249906" expanded="true" signature="529:548" ph="select * fro... hotel" />
+              <marker date="1525352249906" expanded="true" signature="1040:1091" ph="select * fro... user" />
+              <marker date="1525352249906" expanded="true" signature="1355:1422" ph="select * fro... user" />
+              <marker date="1525352249906" expanded="true" signature="1453:1518" ph="select * fro... user" />
             </folding>
           </first_editor>
           <second_editor />

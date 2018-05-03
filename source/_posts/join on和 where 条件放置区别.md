@@ -8,7 +8,7 @@ copyright: true
 执行顺序：先on条件再 where条件筛选。
 on筛选之后会生成一个临时表；where在临时表上再进行筛选。
 （inner）join on时和where的效果一样。
-left/right on时与where效果不同。两表都为空时，显而易见left/right on时总会有结果出来，where可能会导致结果为空。
+left/right on时与where效果不同。两表都不为空时，显而易见left/right on时总会有结果出来，where可能会导致结果为空。
 本应放在on的条件放在了where时会失去left/right操作，效果会等同于（inner）join on
 ### 例子
 有两个表：
