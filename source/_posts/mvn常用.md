@@ -2,7 +2,7 @@
 title: 'maven常用'
 date: "2018/04/20"
 tags: [maven]
-categories: [maven]
+categories: [开发常用工具]
 copyright: true
 ---
 mvn --version == mvn -v
