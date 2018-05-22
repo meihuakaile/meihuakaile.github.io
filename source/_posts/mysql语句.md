@@ -11,7 +11,7 @@ select * from table1 a inner join table2 b on a.id=b.id;
 
 ### create table xxx as select...
 创建xxx表，并把select查询的内容直接作为信息插入到xxx表中。注意的是select的字段要记得起别名，否则新建表会自动起一些奇怪的名字。
-### case when then else end
+### case when then ... else ... end
 条件语法，常用于select时,如：
 ```mysql
 CASE WHEN gender='1' THEN '男'
@@ -75,12 +75,26 @@ event_name, business, event_type, start_time, end_time, event_area, description)
 ```mysql
 select * into outfile '/home/chenliclchen/mysql/t.txt' fields terminated by ',' from atp_event;  
 ```
-### coalesce()
+### coalesce(..., ....)
 返回第一个不为null的值
 
 ### count(null) 是0
 如图，来源于网络的例子
 ![](1.png)
+
+### group by
+group by 一般和聚合函数一起使用才有意义,比如 count sum avg等,使用group by的两个要素:
+   (1) 出现在select后面的字段 要么是是聚合函数中的,要么就是group by 中的.
+   (2) 要筛选结果 可以先使用where 再用group by 或者先用group by 再用having
+### DECIMAL
+`DECIMAL(P,D)`表示列可以存储D位小数的P位数。
+**_没有指定括号里的精度时，导入的小数会被截断_**。
+**_在hive里曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。_**
+### limit分页
+`LIMIT [offset,] rows`
+offset指定要返回的第一行的偏移量,rows第二个指定返回行的最大数目。初始行的偏移量是0(不是1)。
+`select * from table_name limit 10,5`  查询第11到第15条数据
+
 ### 日期
 #### DATE_FORMAT(date,format)
 date 参数是合法的日期。format 规定日期/时间的输出格式。

@@ -109,4 +109,12 @@ $0就是当前运行脚本；dirname得到指定脚本所在的目录，在执�
 ### cat /test/* > test.txt
 把test目录下的文件以行的方式追加到test.txt文件中。
 
+### ssh转接端口
+通过转接端口访问其他机器数据库
+`ssh -L host1:port1:host2:port2 host3`命令必须在host1上执行，host3必须有sshd
+-f 后台运行
+-N 不开shell
+-T 不分配tty
+http://mingxinglai.com/cn/2015/09/connect-mysql-via-ssh-tunnel/
+
 常用参看：https://www.cnblogs.com/yu2000/p/4089011.html

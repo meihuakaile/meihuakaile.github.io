@@ -82,3 +82,37 @@ column是数据库字段名，property是model字段名。
     <plugin interceptor="XXX"/>
 </plugins>
 ```
+
+### <choose>
+使用场景：在<where>标签里有需要`if...else if ...else`的需求
+```
+<where>
+    <choose>
+        <when test='...'>
+            and ...
+        </when>
+        <when test='...'>
+            and ...
+        </when>
+        <otherwise>
+            and ...
+        </otherwise>
+    </choose>
+</where>
+```
+但是在 test里不能用大于小于号，目前没有找到可以替代的用法。
+
+### #{}和${}区别
+(1)
+/# 将传入的数据都当成一个字符串，会对自动传入的数据加一个双引号。
+如：`order by #{user_id}`，如果传入的值是111,那么解析成sql时的值为`order by "111"`, 
+    如果传入的值是id，则解析成的sql为`order by "id"`.
+$ 将传入的数据直接显示生成在sql中。
+如：`order by ${user_id}`，如果传入的值是111,那么解析成sql时的值为`order by user_id`,
+  如果传入的值是id，则解析成的sql为`order by id`
+(2)
+/#方式能够很大程度防止sql注入。
+$方式无法防止Sql注入.
+(3)、$方式一般用于传入数据库对象，例如传入表名.
+(4)、一般能用#的就别用$.
+(5)、**_MyBatis排序时使用order by 动态参数时需要注意，用$而不是#_**

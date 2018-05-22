@@ -6,7 +6,7 @@ tags:
 categories:
   - hadoop
 copyright: true
-date: 2018-04-19 00:00:00
+date: 2018-04-19
 ---
 
 架构在Hadoop之上，提供简单的sql查询功能，可以**_将sql语句转换为MapReduce任务进行运行(增删改查)_**。
@@ -36,11 +36,14 @@ hive引入partition和bucket的概念，中文翻译分别为分区和桶，这�
 一个表可以拥有一个或者多个分区，每个分区以文件夹的形式单独存在表文件夹的目录下。
 分区是以字段的形式在表结构中存在，通过describe table命令可以查看到字段存在，但是该字段不存放实际的数据内容，仅仅是分区的表示。
 
-### 单分区/多分区
+### 创建单分区/多分区
 分区建表分为2种，一种是单分区，也就是说在表文件夹目录下只有一级文件夹目录。另外一种是多分区，表文件夹下出现多文件夹嵌套模式。
 
 a、单分区建表语句：create table day_table (id int, content string) partitioned by (dt string);单分区表，按天分区，在表结构中存在id，content，dt三列。
 b、双分区建表语句：create table day_hour_table (id int, content string) partitioned by (dt string, hour string);双分区表，按天和小时分区，在表结构中新增加了dt和hour两列。
+### 增加分区
+`alter table xxx add partition (dt='2018-05-22')`
+当外部表是分区表时，只有建立对应的分区，才能查到数据
 ### Buckets 桶
 对指定列计算 hash，根据 hash 值切分数据，目的是为了并行，每一个 Bucket 对应一个文件。将 user 列分散至 32 个 bucket，首先对 user 列的值计算 hash，对应 hash 值为 0 的 HDFS 目录为：/ warehouse /app/dt =20100801/ctry=US/part-00000；hash 值为 20 的 HDFS 目录为：/ warehouse /app/dt =20100801/ctry=US/part-00020
 
@@ -109,9 +112,61 @@ size()方法返回数组的长度。
 mapred.job.priority=VERY_HIGH | HIGH | NORMAL | LOW | VERY_LOW
 
 ### row_num()。
+从1开始，为每个分组的每条记录返回一个数字。
+1例如，`ROW_NUMBER() OVER (ORDER BY xlh DESC)` 是先按照xlh列降序，再为降序以后的每条记录返回一个序号。 
+2例
+数据库中有数据
+```
+empid       deptid      salary
+----------- ----------- ---------------------------------------
+1           10          5500.00
+2           10          4500.00
+3           20          1900.00
+4           20          4800.00
+5           40          6500.00
+6           40          14500.00
+7           40          44500.00
+8           50          6500.00
+9           50          7500.00
+```
+需求`根据部门分组，显示每个部门的工资等级`
+sql：`SELECT *, Row_Number() OVER (partition by deptid ORDER BY salary desc) rank FROM employee`
+结果：
+```
+empid       deptid      salary                                  rank
+----------- ----------- --------------------------------------- --------------------
+1           10          5500.00                                 1
+2           10          4500.00                                 2
+4           20          4800.00                                 1
+3           20          1900.00                                 2
+7           40          44500.00                                1
+6           40          14500.00                                2
+5           40          6500.00                                 3
+9           50          7500.00                                 1
+8           50          6500.00                                 2
+```
+例子参考：https://blog.csdn.net/biaorger/article/details/38523527
 
-作用是按指定的列进行分组生成行序列。在ROW_NUMBER(a,b) 时，若两条记录的a，b列相同，则行序列+1，否则重新计数。
-例子参考：https://blog.csdn.net/qq_31573519/article/details/78586205
+###  over partition by与group by 的区别
+后者是经典的使用，是对检索结果的保留行进行单纯分组，如果有sum函数，就是先分组再对每个分组求和；
+前者类似虽然也具有分组功能，但同时也具有其他的功能，如果有sum函数，是先分组，再累加，会把分组里累加的过程输出。
+```
+表：
+B  C  D  
+02 02 1
+02 02 13
+
+select b,c,sum(d) e from a group by b,c;   
+结果：
+B   C  E  
+02 02 13 
+SELECT b, c, d, SUM(d) OVER(PARTITION BY b,c ORDER BY d) e FROM a;  
+结果：
+B C E  
+02 02 1  
+02 02 13
+```
+从上面的例子中可以看到第二条语句的累加过程
 
 ### hive的默认数据分隔符^A
 hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
