@@ -83,7 +83,7 @@ column是数据库字段名，property是model字段名。
 </plugins>
 ```
 
-### <choose>
+### choose标签
 使用场景：在<where>标签里有需要`if...else if ...else`的需求
 ```
 <where>
@@ -104,9 +104,10 @@ column是数据库字段名，property是model字段名。
 
 ### #{}和${}区别
 (1)
-/# 将传入的数据都当成一个字符串，会对自动传入的数据加一个双引号。
+\# 将传入的数据都当成一个字符串，会对自动传入的数据加一个双引号。
 如：`order by #{user_id}`，如果传入的值是111,那么解析成sql时的值为`order by "111"`, 
     如果传入的值是id，则解析成的sql为`order by "id"`.
+
 $ 将传入的数据直接显示生成在sql中。
 如：`order by ${user_id}`，如果传入的值是111,那么解析成sql时的值为`order by user_id`,
   如果传入的值是id，则解析成的sql为`order by id`

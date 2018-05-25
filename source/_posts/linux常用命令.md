@@ -117,4 +117,9 @@ $0就是当前运行脚本；dirname得到指定脚本所在的目录，在执�
 -T 不分配tty
 http://mingxinglai.com/cn/2015/09/connect-mysql-via-ssh-tunnel/
 
+### 多行注释
+使用:<<BLOCK 和 BLOCK。BLOCK是任意字符串。
+更多参考：http://www.jb51.net/article/52377.htm
+反引号就是1旁边的键。
+
 常用参看：https://www.cnblogs.com/yu2000/p/4089011.html

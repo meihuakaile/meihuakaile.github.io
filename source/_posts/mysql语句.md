@@ -68,7 +68,8 @@ linux命令mysql 的参数-e可以后面可以直接跟mysql语句。
 LOAD DATA LOCAL INFILE '/home/chenliclchen/mysql/tableExport.txt' INTO TABLE `atp_event`(
 event_name, business, event_type, start_time, end_time, event_area, description); 
 ```
-导入数据出错参考：ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement
+**_如果指定local关键词，则表明从客户主机读文件。如果local没指定，文件必须位于服务器上。_**使用`load data local infile`而不是`load data infile`
+导入数据出错参考：[ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement](/2018/04/19/ERROR 1 HY000 Can't create or write to file 'user.txt' Errcode 13 - Permission denied)
 导入中文乱码时参考：[导入数据乱码](/2018/04/19/ERROR 1290 HY000  The MySQL server is running with the --secure-file-priv option so it cannot execute this statement)
 
 导出数据： 
