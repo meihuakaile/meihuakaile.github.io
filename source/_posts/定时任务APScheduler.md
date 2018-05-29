@@ -1,7 +1,7 @@
 ---
 title: 定时任务APScheduler
 tags: ['APScheduler']
-categories: ['python基础']
+categories: ['python']
 copyright: true
 ---
 # 定时任务APScheduler

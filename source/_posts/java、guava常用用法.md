@@ -1,5 +1,5 @@
 ---
-title: 'java&guava常用用法'
+title: 'java、guava常用用法'
 date: "2018/05/23"
 tags: [guava, util]
 categories: ['java']

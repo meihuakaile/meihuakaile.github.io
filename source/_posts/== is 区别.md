@@ -2,7 +2,7 @@
 title: '== is 区别'
 date: "2018/05/24"
 tags: [python]
-categories: [python基础]
+categories: [python]
 copyright: true
 ---
 == 比较的是数值，自定义对象由eq方法决定； is比较的是 地址。

@@ -1,7 +1,7 @@
 ---
 title: "python+crontab（os）"
 tags: ['os']
-categories: ['python基础']
+categories: ['python']
 copyright: true
 ---
 使用crontab定时执行python时，os.getcwd() 的返回结果是‘/root’(网上说还可能是'/home')，而不是python当前的目录。（网上说原因是cwd方法返回的是当前线程的路径，而线程是由crontab在执行的，因此，crontab里的文件都是绝对路径。）

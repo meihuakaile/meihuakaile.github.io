@@ -249,3 +249,4 @@ at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
 分析：orc的表是别人建的，无法确定当初建表的hive的版本。google.protobuf是一个作为协议的包，类似于序列化。因此猜测是不同版本的hive的orc不一样导致压缩数据和解压数据无法连起来。
 参考：http://www.cnblogs.com/smartloli/p/4288493.html
 更多hive看：https://www.iteblog.com/
+hive 安装：https://www.jianshu.com/p/6108e0aed204

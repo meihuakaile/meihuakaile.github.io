@@ -1,7 +1,7 @@
 ---
 title: python简单小记
 tags: ['python']
-categories: ['python基础']
+categories: ['python']
 copyright: true
 ---
 # 集合

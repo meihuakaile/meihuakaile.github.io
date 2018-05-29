@@ -1,7 +1,7 @@
 ---
 title: subprocess
 tags: ['subprocess']
-categories: ['python基础']
+categories: ['python']
 copyright: true
 ---
 python调用shell比较常用的是subprocess，其他可参看http://www.cnblogs.com/thinker-lj/p/3860123.html

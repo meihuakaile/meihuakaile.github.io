@@ -1,7 +1,7 @@
 ---
 title: flask练习
 tags: ['flask']
-categories: ['python基础']
+categories: ['python']
 copyright: true
 ---
 # template

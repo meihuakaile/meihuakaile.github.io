@@ -1,7 +1,7 @@
 ---
 title: python简单爬虫（二）
 tags: ['python', '爬虫']
-categories: ['python爬虫']
+categories: ['python']
 copyright: true
 ---
 首先必须要会用python中处理异常的语法。看了一个很好，字体感觉很舒服（

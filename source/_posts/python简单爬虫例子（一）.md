@@ -1,7 +1,7 @@
 ---
 title: python简单爬虫例子（一）
 tags: ['爬虫', 'python']
-categories: ['python爬虫']
+categories: ['python']
 copyright: true
 ---
 环境与上一篇一样windows，editplus，python-2.7.6（且我前面文章有介绍过配置过程）

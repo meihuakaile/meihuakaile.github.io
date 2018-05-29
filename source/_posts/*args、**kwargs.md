@@ -2,7 +2,7 @@
 title: "*args、**kwargs"
 date: "2018/05/24"
 tags: [args]
-categories: [python基础]
+categories: [python]
 copyright: true
 ---
 python2.7
