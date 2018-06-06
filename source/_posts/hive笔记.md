@@ -20,6 +20,13 @@ Hadoop是一个开源框架来存储和处理大型数据在分布式环境中�
 
 hive的安装需要安装MySQL,因为hive 默认的数据库是Derby数据库，其与MySQL数据库比较存在缺陷。
 **_Hive 将元数据存储在数据库中，如 mysql、derby。Hive 中的元数据包括表的名字，表的列和分区及其属性，表的属性（是否为外部表等），表的数据所在目录等。_**
+
+Hive只是一个客户端，在安装时，我们可以在Hadoop集群中，选择一台安装Hive。Hive没有集群的概念，但是可以搭建Server/Client端。
+### Hive框架的作用
+（1）可以让不懂java的数据分析人员使用hadoop进行数据分析；
+（2）MapReduce开发非常繁琐复杂，使用hive可以提高效率。
+（3）统一的元数据管理，可与impala/spark共享元数据。
+
 ### hive在hdfs上的文件结构
 ```
 　　    数据仓库的位置                数据库目录           表目录          表的数据文件 
@@ -186,6 +193,10 @@ hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
 在python中可以使用line.split('\x01')来进行切分，也可以使用line.split('\001')，注意其中是单引号
 在java中可以使用split("\\u0001")来进行切分 
 
+### decimal
+DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precision, scale) 语法在创建表时来定义Decimal数据类型的precision和scale。 
+如果未指定precision，则默认为10。如果未指定scale，它将默认为0（无小数位）。
+
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
 -e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。
@@ -248,5 +259,6 @@ at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
 ```
 分析：orc的表是别人建的，无法确定当初建表的hive的版本。google.protobuf是一个作为协议的包，类似于序列化。因此猜测是不同版本的hive的orc不一样导致压缩数据和解压数据无法连起来。
 参考：http://www.cnblogs.com/smartloli/p/4288493.html
+https://www.jianshu.com/p/bd7820161a49?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation
 更多hive看：https://www.iteblog.com/
 hive 安装：https://www.jianshu.com/p/6108e0aed204

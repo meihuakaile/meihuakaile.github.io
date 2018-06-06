@@ -36,6 +36,7 @@ Hive使用Hadoop来分析处理数据，而Hadoop系统是批处理系统，因�
 类似于Google的BigTable，其分布式计算采用MapReduce，通过MapReduce完成大块的数据加载和全表扫描操作等。
 文件存储系统采用HDFS，通过Zookeeper来完成状态管理协同服务。不过BigTable只支持一级索引，Hbase不仅支持一级索引，还支持二级索引。
 在HBase中，表被分割成区域，并由区域服务器提供服务。区域被列族垂直分为“Stores”。Stores被保存在HDFS文件。
+### HBase组成
 ![](2.jpg)
 HBase有三个主要组成部分：客户端，主服务器(HMaster)和区域服务器(HRegion Server)。区域服务器可以按要求添加或删除。
 主服务器(HMaster):类似与namenode/jobTrackers，用来管理区域服务器。包括，区域被分割后新区域的放置、区域服务器出问题后区域的移动（FailOver，故障转移）等。
