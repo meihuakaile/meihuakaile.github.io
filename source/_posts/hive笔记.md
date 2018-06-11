@@ -45,20 +45,22 @@ hive引入partition和bucket的概念，中文翻译分别为分区和桶，这�
 
 ### 创建单分区/多分区
 分区建表分为2种，一种是单分区，也就是说在表文件夹目录下只有一级文件夹目录。另外一种是多分区，表文件夹下出现多文件夹嵌套模式。
-
-a、单分区建表语句：create table day_table (id int, content string) partitioned by (dt string);单分区表，按天分区，在表结构中存在id，content，dt三列。
-b、双分区建表语句：create table day_hour_table (id int, content string) partitioned by (dt string, hour string);双分区表，按天和小时分区，在表结构中新增加了dt和hour两列。
-### 查看/增加分区
+a、单分区建表语句：`create table day_table (id int, content string) partitioned by (dt string);`单分区表，按天分区，在表结构中存在id，content，dt三列。
+b、双分区建表语句：`create table day_hour_table (id int, content string) partitioned by (dt string, hour string);`双分区表，按天和小时分区，在表结构中新增加了dt和hour两列。
+多个分区意味着多级目录。
+### 查看/增加/删除分区
 `show partitions table_name` 查看表所有的分区
 `alter table xxx add partition (dt='2018-05-22')`  对分区名是dt的表增加分区
-当外部表是分区表时，只有建立对应的分区，才能查到数据
+`alter table table_name drop partition (dt='2018-05-22')` 删除分区
+**_当外部表是分区表时，只有建立对应的分区，才能查到数据.
+删除内部表的分区会删除相应的数据。_**
 ### Buckets 桶
 对指定列计算 hash，根据 hash 值切分数据，目的是为了并行，每一个 Bucket 对应一个文件。将 user 列分散至 32 个 bucket，首先对 user 列的值计算 hash，对应 hash 值为 0 的 HDFS 目录为：/ warehouse /app/dt =20100801/ctry=US/part-00000；hash 值为 20 的 HDFS 目录为：/ warehouse /app/dt =20100801/ctry=US/part-00020
 
 ### (内部)表
 表其实就是hdfs目录
 Hive中的表和关系型数据库中的表在概念上很类似，每个表在HDFS中都有相应的目录用来存储表的数据，这个目录可以通过${HIVE_HOME}/conf/hive-site.xml配置文件中的hive.metastore.warehouse.dir属性来配置，这个属性默认的值是/user/hive/warehouse（这个目录在HDFS上），我们可以根据实际的情况来修改这个配置。
-如果我有一个表wyp，那么在HDFS中会创建/user/hive/warehouse/wyp目录（这里假定hive.metastore.warehouse.dir配置为/user/hive/warehouse）；wyp表所有的数据都存放在这个目录中。这个例外是外部表。
+如果我有一个表wyp在cl库中，那么在HDFS中会创建/user/hive/warehouse/cl.db/wyp目录（这里假定hive.metastore.warehouse.dir配置为/user/hive/warehouse）；wyp表所有的数据都存放在这个目录中。这个例外是外部表。
 
 参考：https://www.jianshu.com/p/dd97e0b2d2cf
 ### 外部表 
@@ -85,6 +87,17 @@ Hive中的表和关系型数据库中的表在概念上很类似，每个表在H
 * STORED AS是指定文件的存储格式。Hive中基本提供两种文件格式：SEQUENCEFILE和TEXTFILE，序列文件是一种压缩的格式，通常可以提供更高的性能。
 * LOCATION指的是在HDFS上存储的位置。
 
+### 元数据
+Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）中。
+元数据使用JPOX（Java Persistent Objects）对象关系映射解决方案进行持久化，所以任何被JPOX支持的存储都可以被Hive使用。
+大多数商业关系型数据库和许多开源的数据存储都被支持，所以就可以被Hive使用存储元数据。Hive支持三种不同的元存储服务器，分别为：内嵌式元存储、本地元存储、远程元存储，每种存储方式使用不同的配置参数，
+
+内嵌式元存储：主要用于单元测试，在该模式下每次只有一个进程可以连接到元存储，Derby是内嵌式元存储的默认数据库。
+本地模式：每个Hive客户端都会打开到数据存储的连接并在该连接上请求SQL查询。
+远程模式：所有的Hive客户端都将打开一个到元数据服务器的连接，该服务器依次查询元数据。
+
+参考：https://blog.csdn.net/skywalker_only/article/details/26219619
+http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html
 ### queuename
 hadoop相关。通过`set mapreduce.job.queuename`可以查看当前定义队列名。
 队列是跟用户对应的，哪个用户要执行，需要指定哪个队列。
@@ -196,7 +209,7 @@ hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
 ### decimal
 DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precision, scale) 语法在创建表时来定义Decimal数据类型的precision和scale。 
 如果未指定precision，则默认为10。如果未指定scale，它将默认为0（无小数位）。
-
+**_曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。_**
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
 -e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。
@@ -225,8 +238,16 @@ select 部分不能用括号，否则会被认为是表1的字段；
 
 同样可以把`into`换成`overwrite`以达到覆盖的效果。
 (1)是导入一个分区的数据 `select ...`部分不用带dt(分区)的值。注意，如果表2也是分区表，此时用`select *`查出来的数据有分区字段
-(2)是导入多个分区的表，执行前需要`set hive.exec.dynamic.partition.mode=nonstrict;`，此时`select ...`必须有dt分区的字段。
+(2)是导入多个分区的表，执行前需要`set hive.exec.dynamic.partition.mode=nonstrict;`，因为严格模式下，不允许所有的分区都被动态指定，目的是为了防止生成太多的目录.此时`select ...`必须有dt分区的字段。
+(2)是动态分区，不指定分区，一次可以导入多个分区。
 
+### 同时插入多个表
+```mysql
+from (select ... from test limit 1) t
+insert into table test1 select ...
+insert into table test3 select ...
+```
+从test中查数同时插入到test1、test3。每个select都必须存在，可以用*
 ### 改变location
 通过修改表DDL：`alter table t_m_cc set location 'hdfs://heracles/user/video-mvc/hive/warehouse/t_m_cc'`
 

@@ -96,6 +96,27 @@ group by 一般和聚合函数一起使用才有意义,比如 count sum avg等,�
 offset指定要返回的第一行的偏移量,rows第二个指定返回行的最大数目。初始行的偏移量是0(不是1)。
 `select * from table_name limit 10,5`  查询第11到第15条数据
 
+### 索引类型
+唯一索引：目的不是为了提高访问速度，而只是为了避免数据出现重复。唯一索引可以有多个，但索引列的值必须唯一，索引列的值允许有空值。
+如果能确定某个数据列将只包含彼此各不相同的值，在为这个数据列创建索引的时候就应该使用关键字UNIQUE，把它定义为一个唯一索引。
+（1）创建唯一索可以使用关键字UNIQUE随表一同创建：
+```mysql
+CREATE TABLE `wb_blog` ( 
+     `id` smallint(8) unsigned NOT NULL, 
+     `catid` smallint(5) unsigned NOT NULL DEFAULT '0', 
+     PRIMARY KEY (`id`), 
+     UNIQUE KEY `catename` (`catid`)  ) ; 
+```
+为'catid'字段创建名为catename的唯一索引
+（2）直接创建`CREATE UNIQUE INDEX catename ON wb_blog(catid); `
+
+### replace into
+` replace into t(id, update_time) values(1, now())`或者
+`replace into t(id, update_time) select 1, now()`
+
+replace into 跟 insert 功能类似，不同点在于：replace into 首先尝试插入数据到表中， 1. 如果发现表中已经有此行数据（根据主键或者唯一索引判断）则先删除此行数据，然后插入新的数据。 2. 否则，直接插入新数据。
+要注意的是：插入数据的表必须有主键或者是唯一索引！否则的话，replace into 会直接插入数据，这将导致表中出现重复的数据。
+
 ### 日期
 #### DATE_FORMAT(date,format)
 date 参数是合法的日期。format 规定日期/时间的输出格式。
