@@ -97,8 +97,9 @@ offset指定要返回的第一行的偏移量,rows第二个指定返回行的最
 `select * from table_name limit 10,5`  查询第11到第15条数据
 
 ### 索引类型
-唯一索引：目的不是为了提高访问速度，而只是为了避免数据出现重复。唯一索引可以有多个，但索引列的值必须唯一，索引列的值允许有空值。
+唯一索引：很多情况下，目的不是为了提高访问速度，而只是为了避免数据出现重复。唯一索引可以有多个，但索引列的值必须唯一，索引列的值允许有空值。
 如果能确定某个数据列将只包含彼此各不相同的值，在为这个数据列创建索引的时候就应该使用关键字UNIQUE，把它定义为一个唯一索引。
+如果能确定某个数据列将只包含彼此各不相同的值，在为这个数据列创建索引的时候就应该用关键字UNIQUE把它定义为一个唯一索引。这么做的好处：一是简化了MySQL对这个索引的管理工作，这个索引也因此而变得更有效率；二是MySQL会在有新记录插入数据表时，自动检查新记录的这个字段的值是否已经在某个记录的这个字段里出现过了；如果是，MySQL将拒绝插入那条新记录。也就是说，唯一索引可以保证数据记录的唯一性。事实上，在许多场合，人们创建唯一索引的目的往往不是为了提高访问速度，而只是为了避免数据出现重复。
 （1）创建唯一索可以使用关键字UNIQUE随表一同创建：
 ```mysql
 CREATE TABLE `wb_blog` ( 
@@ -110,12 +111,40 @@ CREATE TABLE `wb_blog` (
 为'catid'字段创建名为catename的唯一索引
 （2）直接创建`CREATE UNIQUE INDEX catename ON wb_blog(catid); `
 
+参考：https://www.cnblogs.com/interdrp/p/8031087.html
 ### replace into
 ` replace into t(id, update_time) values(1, now())`或者
 `replace into t(id, update_time) select 1, now()`
-
 replace into 跟 insert 功能类似，不同点在于：replace into 首先尝试插入数据到表中， 1. 如果发现表中已经有此行数据（根据主键或者唯一索引判断）则先删除此行数据，然后插入新的数据。 2. 否则，直接插入新数据。
 要注意的是：插入数据的表必须有主键或者是唯一索引！否则的话，replace into 会直接插入数据，这将导致表中出现重复的数据。
+ MySQL replace into 有三种形式：
+1. `replace into tbl_name(col_name, ...) values(...)`
+2. `replace into tbl_name(col_name, ...) select ...`
+3. `replace into tbl_name set col_name=value, ...`
+
+第一种形式类似于insert into的用法，
+第二种replace select的用法也类似于insert select，这种用法并不一定要求列名匹配，事实上，MYSQL甚至不关心select返回的列名，它需要的是列的位置。例如，replace into tb1(  name, title, mood) select  rname, rtitle, rmood from tb2; 这个例子使用replace into从 tb2中将所有数据导入tb1中。
+第三种replace set用法类似于update set用法，使用一个例如“SET col_name = col_name + 1”的赋值，则对位于右侧的列名称的引用会被作为DEFAULT(col_name)处理。因此，该赋值相当于SET col_name = DEFAULT(col_name) + 1。
+前两种形式用的多些。其中 “into” 关键字可以省略，不过最好加上 “into”，这样意思更加直观。另外，对于那些没有给予值的列，MySQL 将自动为这些列赋上默认值。
+
+参考：https://blog.csdn.net/zmzwll1314/article/details/51550028
+
+### CAST/CONVERT
+转换数据类型
+```mysql
+CAST(value as type);
+CONVERT(value, type);
+```
+就是`CAST(xxx AS 类型)`, `CONVERT(xxx,类型)`。
+可以转换的类型是有限制的。这个类型可以是以下值其中的一个：
+二进制，同带binary前缀的效果 : BINARY    
+字符型，可带参数 : `CHAR`  
+日期 : `DATE`     
+时间: `TIME`     
+日期时间型 : `DATETIME`     
+浮点数 : `DECIMAL`      
+整数 : `SIGNED`     
+无符号整数 : `UNSIGNED` 
 
 ### 日期
 #### DATE_FORMAT(date,format)

@@ -420,5 +420,13 @@ hadoop dfsadmin -report 查看HDFS的基本统计信息
 hadoop dfsadmin -safemode leave 退出安全模式  
 hadoop dfsadmin -safemode enter 进入安全模式  
 
-  
+## test
+使用方法：hadoop fs -test -[ezd] URI
+选项：
+-e 检查文件是否存在。如果存在则返回0。
+-z 检查文件是否是0字节。如果是则返回0。 
+-d 如果路径是个目录，则返回1，否则返回0。
+示例：`hadoop fs -test -e filename`
 
+# 参考
+hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test

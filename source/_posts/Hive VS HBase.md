@@ -5,9 +5,10 @@ tags: ['HBase']
 categories: [hadoop]
 copyright: true
 ---
+HBase在Hadoop的生态圈是扮演这一个重要的角色那就是  实时、分布式、高维数据 的数据存储；
 Hbase和Hive在大数据架构中处在不同位置，Hbase主要解决实时数据查询问题，Hive主要解决数据处理和计算问题，一般是配合使用。
 HBase是建立在Hadoop文件系统之上的分布式面向列的数据库，是一个数据模型,提供快速随机访问海量结构化数据.
-hbase当前noSql（非关系型的数据库管理系统）数据库的一种,最常见的应用场景就是采集的网页数据的存储，是key-value型数据库.
+HBase当前noSql（非关系型的数据库管理系统）数据库的一种,最常见的应用场景就是采集的网页数据的存储，是key-value型数据库.
 
 ## VS
 在大数据架构中，Hive和HBase是协作关系，数据流一般如下图：

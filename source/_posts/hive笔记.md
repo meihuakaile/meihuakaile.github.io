@@ -36,6 +36,22 @@ Hive的数据都是存储在HDFS上的，默认有一个根目录，在hive-site
 default默认的数据库：指的就是这个/user/hive/warehouse路径
 参考：https://www.cnblogs.com/xningge/p/8439970.html
 
+### queuename
+hadoop相关。通过`set mapreduce.job.queuename`可以查看当前定义队列名。
+队列是跟用户对应的，哪个用户要执行，需要指定哪个队列。
+
+### 元数据
+Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）中。
+元数据使用JPOX（Java Persistent Objects）对象关系映射解决方案进行持久化，所以任何被JPOX支持的存储都可以被Hive使用。
+大多数商业关系型数据库和许多开源的数据存储都被支持，所以就可以被Hive使用存储元数据。Hive支持三种不同的元存储服务器，分别为：内嵌式元存储、本地元存储、远程元存储，每种存储方式使用不同的配置参数，
+
+内嵌式元存储：主要用于单元测试，在该模式下每次只有一个进程可以连接到元存储，Derby是内嵌式元存储的默认数据库。
+本地模式：每个Hive客户端都会打开到数据存储的连接并在该连接上请求SQL查询。
+远程模式：所有的Hive客户端都将打开一个到元数据服务器的连接，该服务器依次查询元数据。
+
+参考：https://blog.csdn.net/skywalker_only/article/details/26219619
+http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html
+
 ### 分区
 hive引入partition和bucket的概念，中文翻译分别为分区和桶，这两个概念都是把数据划分成块，分区是粗粒度的划分桶是细粒度的划分，这样做为了可以让查询发生在小范围的数据上以提高效率。
 在Hive Select查询中一般会扫描整个表内容，会消耗很多时间做没必要的工作。有时候只需要扫描表中关心的一部分数据，因此建表时引入了partition概念。
@@ -57,6 +73,21 @@ b、双分区建表语句：`create table day_hour_table (id int, content string
 ### Buckets 桶
 对指定列计算 hash，根据 hash 值切分数据，目的是为了并行，每一个 Bucket 对应一个文件。将 user 列分散至 32 个 bucket，首先对 user 列的值计算 hash，对应 hash 值为 0 的 HDFS 目录为：/ warehouse /app/dt =20100801/ctry=US/part-00000；hash 值为 20 的 HDFS 目录为：/ warehouse /app/dt =20100801/ctry=US/part-00020
 
+### 建表
+![](1.jpeg)
+* PARTITIONED 表示的是分区，不同的分区会以文件夹的形式存在，在查询的时候指定分区查询将会大大加快查询的时间。
+* CLUSTERED表示的是按照某列聚类，例如在插入数据中有两项“张三，数学”和“张三，英语”，若是CLUSTERED BY name，则只会有一项，“张三，(数学，英语)”，这个机制也是为了加快查询的操作。
+* STORED是指定排序的形式，是降序还是升序。
+* BUCKETS是指定了分桶的信息，这在后面会单独列出来，在这里还不会涉及到。
+* ROW FORMAT是指定了行格式字段，如行、列的分隔符，`ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'`
+* STORED AS是指定文件的存储格式。Hive中基本提供两种文件格式：SEQUENCEFILE和TEXTFILE，序列文件是一种压缩的格式，通常可以提供更高的性能。
+* LOCATION指的是在HDFS上存储的位置。
+
+`create [external] table table_name1 like table_name2 [location hdfs_path]` 创建一个和表2结构一样的表
+
+### 修改表名
+`alter table old_name rename to new_name`
+
 ### (内部)表
 表其实就是hdfs目录
 Hive中的表和关系型数据库中的表在概念上很类似，每个表在HDFS中都有相应的目录用来存储表的数据，这个目录可以通过${HIVE_HOME}/conf/hive-site.xml配置文件中的hive.metastore.warehouse.dir属性来配置，这个属性默认的值是/user/hive/warehouse（这个目录在HDFS上），我们可以根据实际的情况来修改这个配置。
@@ -77,41 +108,48 @@ Hive中的表和关系型数据库中的表在概念上很类似，每个表在H
 每天将收集到的网站日志定期流入HDFS文本文件，一天一个目录；
 在Hive中建立外部表作为源表，通过添加分区的方式，将每天HDFS上的原始日志映射到外部表的天分区中；
 在外部表（原始日志表）的基础上做大量的统计分析，用到的中间表、结果表使用内部表存储，数据通过SELECT+INSERT进入内部表。
-### 建表
-![](1.jpeg)
-* PARTITIONED 表示的是分区，不同的分区会以文件夹的形式存在，在查询的时候指定分区查询将会大大加快查询的时间。
-* CLUSTERED表示的是按照某列聚类，例如在插入数据中有两项“张三，数学”和“张三，英语”，若是CLUSTERED BY name，则只会有一项，“张三，(数学，英语)”，这个机制也是为了加快查询的操作。
-* STORED是指定排序的形式，是降序还是升序。
-* BUCKETS是指定了分桶的信息，这在后面会单独列出来，在这里还不会涉及到。
-* ROW FORMAT是指定了行格式字段，如行、列的分隔符，`ROW FORMAT DELIMITED FIELDS TERMINATED BY '\t' LINES TERMINATED BY '\n'`
-* STORED AS是指定文件的存储格式。Hive中基本提供两种文件格式：SEQUENCEFILE和TEXTFILE，序列文件是一种压缩的格式，通常可以提供更高的性能。
-* LOCATION指的是在HDFS上存储的位置。
 
-### 元数据
-Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）中。
-元数据使用JPOX（Java Persistent Objects）对象关系映射解决方案进行持久化，所以任何被JPOX支持的存储都可以被Hive使用。
-大多数商业关系型数据库和许多开源的数据存储都被支持，所以就可以被Hive使用存储元数据。Hive支持三种不同的元存储服务器，分别为：内嵌式元存储、本地元存储、远程元存储，每种存储方式使用不同的配置参数，
+### if
+If 函数语法: if(boolean testCondition, T valueTrue, T valueFalseOrNull)
+返回值: T
+说明:  当条件testCondition为TRUE时，返回valueTrue；否则返回valueFalseOrNull
+举例：
+```mysql
+hive> select if(1=2,100,200) from dual;
+200
+```
+### 显示表头
+`set hive.cli.print.header=true;`
+select时会显示对应字段。
 
-内嵌式元存储：主要用于单元测试，在该模式下每次只有一个进程可以连接到元存储，Derby是内嵌式元存储的默认数据库。
-本地模式：每个Hive客户端都会打开到数据存储的连接并在该连接上请求SQL查询。
-远程模式：所有的Hive客户端都将打开一个到元数据服务器的连接，该服务器依次查询元数据。
+### 执行外部命令
+hadoop命令：
+把命令行里的hadoop去掉。
+如直接执行`dfs -ls ...;`
 
-参考：https://blog.csdn.net/skywalker_only/article/details/26219619
-http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html
-### queuename
-hadoop相关。通过`set mapreduce.job.queuename`可以查看当前定义队列名。
-队列是跟用户对应的，哪个用户要执行，需要指定哪个队列。
+其他命令，以!开始，以;结束。
+如`!echo 'li';`
+
+### NVL
+`NVL( str, replace_with)`  
+str为NULL, 则NVL函数返replace_with值，否则返str值
+
+### CONCAT(str1, str2,...)
+连接字符串，如果参数中有null，返回结果也会是null，因此可以结合上面的方面使用。
 
 ### CONCAT_WS(separator, str1, str2,...)
 它是一个特殊形式的 CONCAT()。第一个参数是剩余参数间的分隔符。分隔符可以是与剩余参数一样的字符串。如果分隔符是 NULL，返回值也将为 NULL。这个函数会跳过分隔符参数后的任何 NULL 和空字符串。分隔符将被加到被连接的字符串之间
 这个函数会跳过分隔符参数后的任何 NULL 和空字符串，但是**跳过空字符串后还是会有多余的分隔符存在**（非常鸡肋啊）。
 
-### collect_set（）
+### collect_set()
 是 Hive 内置的一个聚合函数, 它返回一个消除了重复元素的对象集合, 其返回值类型是 array 。
 把group by值一样的分组由列变成行，即变成数组，可以用下标访问。
 collect_set()方法把group by一样的组里的数据组成一个数组。数组从0开始，如果直接select数组，是[item1, ..., itemn]的格式。
 如`select collect_set(uname) unames ....group by uid`，把同一个uid的uname组成数组， 通过别名unames[ind]访问数据。
 `concat_ws(',',collect_set(cast(col_0 as string))) ` 两个一起使用把列变成由逗号分割的行。
+
+###【is null】 = 【 = null】？、【is not null】 = 【 <> null】？
+hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 <> null 或 = null（虽然不报错）
 
 ### size()
 size()方法返回数组的长度。
@@ -173,8 +211,9 @@ empid       deptid      salary                                  rank
 8           50          6500.00                                 2
 ```
 例子参考：https://blog.csdn.net/biaorger/article/details/38523527
+row_number()另一作用可以用来去除重复：先按分组字段分区，再通过 rownum = 1过滤即可。另外，去重还可以借助于group by。
 
-###  over partition by与group by 的区别
+### partition by与group by 的区别
 后者是经典的使用，是对检索结果的保留行进行单纯分组，如果有sum函数，就是先分组再对每个分组求和；
 前者类似虽然也具有分组功能，但同时也具有其他的功能，如果有sum函数，是先分组，再累加，会把分组里累加的过程输出。
 ```
@@ -194,6 +233,14 @@ B C E
 02 02 13
 ```
 从上面的例子中可以看到第二条语句的累加过程
+
+**_hive中group by和mysql不同。mysql可以接受select处理后的别名作为group by，hive的group by不能接受。**_
+
+### ORDER BY、SORT BY
+ORDER BY为全局排序，会将所有数据送到同一个Reducer中后再对所有数据进行排序，对于大数据会很慢，谨慎使用
+SORT BY为局部排序，只会在每一个Reducer中对数据进行排序，在每个Reducer输出是有序的，但并非全局排序（每个reducer出来的数据是有序的，但是不能保证所有的数据是有序的——即文件(分区)之间无序，除非只有一个reducer）
+DISTRIBUTE BY 是控制map的输出被送到哪个reducer端进行汇总计算。注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。
+注：这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写
 
 ### hive的默认数据分隔符^A
 hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
@@ -236,7 +283,7 @@ select 部分不能用括号，否则会被认为是表1的字段；
 (1)`insert into table_name1 partition(dt='2018-03-11') select ... from table_name2`
 (2)`set hive.exec.dynamic.partition.mode=nonstrict;insert into table_name1 partition(dt) select ... from table table_name2`
 
-同样可以把`into`换成`overwrite`以达到覆盖的效果。
+同样可以把`into`换成`overwrite table`以达到覆盖的效果。
 (1)是导入一个分区的数据 `select ...`部分不用带dt(分区)的值。注意，如果表2也是分区表，此时用`select *`查出来的数据有分区字段
 (2)是导入多个分区的表，执行前需要`set hive.exec.dynamic.partition.mode=nonstrict;`，因为严格模式下，不允许所有的分区都被动态指定，目的是为了防止生成太多的目录.此时`select ...`必须有dt分区的字段。
 (2)是动态分区，不指定分区，一次可以导入多个分区。
@@ -253,6 +300,45 @@ insert into table test3 select ...
 
 直接修改hive 的meta info: `update DBS set DB_LOCATION_URI = replace(DB_LOCATION_URI,"oldpath","newpath")`
                         `update SDS  set location =replace(location,'oldpath,'newpath')`
+### 自定义UDF
+网上介绍了四中方法。只验证过第一种。
+方法（1）最常用也最不被喜欢的方法。
+```mysql
+add jar testUDF-0.0.1-SNAPSHOT.jar;
+create temporary function zodiac as "com.hive.udf.UDFZodiacSign";
+```
+之后就可以在sql里直接使用`zodiac()`。但是这种方法只存在在当前会话中。
+每次会话都要重新add、create。（下面的.hiverc文件可以解决每次都要add、create问题）
+
+其他方法：https://www.cnblogs.com/chushiyaoyue/p/6632090.html?utm_source=itdadao&utm_medium=referral
+### .hiverc文件
+网上说在`${HIVE_HOME}/bin`目录下（我目前遇到别人部署的hive是在用户目录下）
+（`ls -a`命令查看隐藏文件）
+它是在hive启动的时候被调用，可以在里面定义常用的参数。
+写到这个是因为，还可以把上面加载udf的最常用最不被喜欢的第一种方法的add、create语句写到.hiverc文件里，这样每次启动hive时都默认加载了udf方法。
+### set变量
+
+|命名空间|使用权限|描述|
+|:------|:---|:-------|
+|hivevar|可读可写|hive 0.18.0 版本及之后。用户自定义变量|
+|hiveconf|可读可写|hive相关的配置属性|
+|system|可读可写|java相关的配置属性|
+|env|只可读|shell环境定义的环境变量|
+
+hivevar例子：
+```
+set hivevar:dd='aa';
+select ${hivevar:dd}
+```
+hivevar的前缀可以省略，但是可能会找不到变量，不建议省略。
+system、env的前缀不能省。
+
+上面是在hive的终端里，另一种是在shell里使用：
+hive -hivevar dd='aa' -f ./create_table.sql
+
+直接`set`命令可以看到所有变量值。
+`set`单个参数，可以看见这个参数的值。
+
 ### 读orc格式数据
 hive-0.11版本中的使用方法为：`hive --orcfiledump <location-of-orc-file>`，其他版本的使用方法可以去官方文档中查找。
 
@@ -279,7 +365,12 @@ at java.lang.reflect.Method.invoke(Method.java:606)
 at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
 ```
 分析：orc的表是别人建的，无法确定当初建表的hive的版本。google.protobuf是一个作为协议的包，类似于序列化。因此猜测是不同版本的hive的orc不一样导致压缩数据和解压数据无法连起来。
+
+### 参考
 参考：http://www.cnblogs.com/smartloli/p/4288493.html
 https://www.jianshu.com/p/bd7820161a49?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation
 更多hive看：https://www.iteblog.com/
 hive 安装：https://www.jianshu.com/p/6108e0aed204
+hive字符串：https://www.iteblog.com/archives/1639.html
+hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test
+hive 常用总结（写的很好）：https://www.cnblogs.com/jiangzhengjun/p/6349226.html
