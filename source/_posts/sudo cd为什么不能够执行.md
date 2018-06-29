@@ -2,7 +2,7 @@
 title: 'sudo cd为什么不能够执行'
 date: "2018/04/19"
 tags: [ubuntu]
-categories: ['ubuntu']
+categories: ['linux']
 copyright: true
 ---
 问题复现： 开始想cd到某个文件夹，但是爆出“没有权限”；

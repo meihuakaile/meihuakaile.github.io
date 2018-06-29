@@ -2,7 +2,7 @@
 title: ubuntu下的所有解压文件命令
 date: "2018/04/08"
 tags: ['ubuntu压缩']
-categories: ['ubuntu']
+categories: ['linux']
 ---
 #### tar  
 

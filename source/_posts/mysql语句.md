@@ -8,7 +8,9 @@ copyright: true
 select * from table1 a inner join table2 b on a.id=b.id;
 
 注意mysql语句的执行顺序，正确的使用别名。
-
+### 布尔类型
+首先mysql是不支持布尔类型的，当把一个数据设置成布尔类型的时候,数据库会自动转换成tinyint(1)的数据类型,其实这个就是变相的布尔。
+默认值也就是1,0两种,分别对应了布尔类型的true和false
 ### create table xxx as select...
 创建xxx表，并把select查询的内容直接作为信息插入到xxx表中。注意的是select的字段要记得起别名，否则新建表会自动起一些奇怪的名字。
 ### case when then ... else ... end
@@ -16,7 +18,7 @@ select * from table1 a inner join table2 b on a.id=b.id;
 ```mysql
 CASE WHEN gender='1' THEN '男'
 WHEN gender='2' THEN '女'
-ELSE '人妖' 
+ELSE '人妖'
 END
 ```
 ### sql join
@@ -44,7 +46,7 @@ left join + union(可去除重复数据)+ right join
 ```mysql
 select * from A left join B on A.id = B.id (where 条件）
 union
-select * 
+select *
 from A right join B on A.id = B.id （where条件);
 ```
 
@@ -63,16 +65,16 @@ exit语法：select * from 表A where exists(select * from 表B where 表B.id=�
 
 linux命令mysql 的参数-e可以后面可以直接跟mysql语句。
 使用-e在终端执行使在导入/出命令前加上“set character_set_database=utf8;” 可以有效避免中文乱码。
-导入数据： 
+导入数据：
 ```mysql
 LOAD DATA LOCAL INFILE '/home/chenliclchen/mysql/tableExport.txt' INTO TABLE `atp_event`(
-event_name, business, event_type, start_time, end_time, event_area, description); 
+event_name, business, event_type, start_time, end_time, event_area, description);
 ```
 **_如果指定local关键词，则表明从客户主机读文件。如果local没指定，文件必须位于服务器上。_**使用`load data local infile`而不是`load data infile`
 导入数据出错参考：[ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement](/2018/04/19/ERROR 1 HY000 Can't create or write to file 'user.txt' Errcode 13 - Permission denied)
 导入中文乱码时参考：[导入数据乱码](/2018/04/19/ERROR 1290 HY000  The MySQL server is running with the --secure-file-priv option so it cannot execute this statement)
 
-导出数据： 
+导出数据：
 ```mysql
 select * into outfile '/home/chenliclchen/mysql/t.txt' fields terminated by ',' from atp_event;  
 ```
@@ -102,11 +104,11 @@ offset指定要返回的第一行的偏移量,rows第二个指定返回行的最
 如果能确定某个数据列将只包含彼此各不相同的值，在为这个数据列创建索引的时候就应该用关键字UNIQUE把它定义为一个唯一索引。这么做的好处：一是简化了MySQL对这个索引的管理工作，这个索引也因此而变得更有效率；二是MySQL会在有新记录插入数据表时，自动检查新记录的这个字段的值是否已经在某个记录的这个字段里出现过了；如果是，MySQL将拒绝插入那条新记录。也就是说，唯一索引可以保证数据记录的唯一性。事实上，在许多场合，人们创建唯一索引的目的往往不是为了提高访问速度，而只是为了避免数据出现重复。
 （1）创建唯一索可以使用关键字UNIQUE随表一同创建：
 ```mysql
-CREATE TABLE `wb_blog` ( 
-     `id` smallint(8) unsigned NOT NULL, 
-     `catid` smallint(5) unsigned NOT NULL DEFAULT '0', 
-     PRIMARY KEY (`id`), 
-     UNIQUE KEY `catename` (`catid`)  ) ; 
+CREATE TABLE `wb_blog` (
+     `id` smallint(8) unsigned NOT NULL,
+     `catid` smallint(5) unsigned NOT NULL DEFAULT '0',
+     PRIMARY KEY (`id`),
+     UNIQUE KEY `catename` (`catid`)  ) ;
 ```
 为'catid'字段创建名为catename的唯一索引
 （2）直接创建`CREATE UNIQUE INDEX catename ON wb_blog(catid); `
@@ -144,7 +146,7 @@ CONVERT(value, type);
 日期时间型 : `DATETIME`     
 浮点数 : `DECIMAL`      
 整数 : `SIGNED`     
-无符号整数 : `UNSIGNED` 
+无符号整数 : `UNSIGNED`
 
 ### 日期
 #### DATE_FORMAT(date,format)
@@ -159,7 +161,7 @@ date1 和 date2 参数是合法的日期或日期/时间表达式。 返回两�
 
 ### format(number, length)
 number是浮点数。length约束浮点数小数位数。
-### round(x[, d]) 
+### round(x[, d])
 x指要处理的数，d是指保留几位小数。用于数据的四舍五入。d默认为0。d可以是负数，这时是指定小数点左边的d位整数位为0,同时小数位均为0。
 ### LEFT(str,len)/RIGHT(str,len)
 LEFT(str,len)

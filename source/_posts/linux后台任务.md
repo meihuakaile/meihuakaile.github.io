@@ -2,7 +2,7 @@
 title: 'linux后台任务'
 date: "2018/04/20"
 tags: [ubuntu]
-categories: [ubuntu]
+categories: [linux]
 copyright: true
 ---
 1、通过 jobs  命令可以看到所有后台的所有的任务。

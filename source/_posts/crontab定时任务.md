@@ -2,7 +2,7 @@
 title: 'crontab定时任务'
 date: "2018/04/20"
 tags: [ubuntu]
-categories: [ubuntu]
+categories: [linux]
 copyright: true
 ---
 # crontab参数

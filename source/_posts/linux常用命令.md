@@ -2,7 +2,7 @@
 title: 'linux常用命令'
 date: "2018/04/20"
 tags: [ubuntu]
-categories: [ubuntu]
+categories: [linux]
 copyright: true
 ---
 ### 防火墙
@@ -15,7 +15,7 @@ rz上传  sz下载
 在SecureCRT中使用 rz -be 可以打开上传界面，把本地文件上传到服务器
 sz 文件1 文件2    可下载多个文件 文件在本地的保存地址看：options — session options — X/Y/Zmodem。
 rz 上传文件
-总结自：http://blog.csdn.net/lioncode/article/details/7921525 
+总结自：http://blog.csdn.net/lioncode/article/details/7921525
 
 ### vim搜索
 /字符串  第一个出现的字符串
@@ -28,7 +28,7 @@ n跳到下一个匹配  N跳到上一个匹配
 主要是有些经常用又很长比较难记的命令。
 输入alias可以看到已有的别名。
 添加别名的两种办法：
-（1）打开 .bashrc文件 vim .bashrc 
+（1）打开 .bashrc文件 vim .bashrc
 \# some more ls aliases
 alias ll='ls -alF'
 添加别名。如alias d2='ssh data2.cn'就是只输入d2就相当与输入了ssh登陆“data2.cn”的命令。
@@ -39,7 +39,7 @@ alias ll='ls -alF'
 
 ### 读取数据库中信息。
 mysql -h 127.0.0.1 -u root -p XXXX -P 3306 -e "select * from table"  > /tmp/test/txt
--h 后面是主机； -u后面是用户名； -p后面是数据库名字 ； -P后面是端口号 ； -e就是mysql的select语句 ； 最后是重定向到一个文件。 
+-h 后面是主机； -u后面是用户名； -p后面是数据库名字 ； -P后面是端口号 ； -e就是mysql的select语句 ； 最后是重定向到一个文件。
 
 参看：https://www.cnblogs.com/emanlee/p/4233602.html
 
@@ -99,7 +99,7 @@ uniq命令可以去除排序过的文件中的重复行，因此uniq经常和sor
 62.1.38.89 www.google.com  
 62.1.38.89 chrome.google.com  
 193.192.250.172 www.google.com  
-212.188.10.241 www.google.com 
+212.188.10.241 www.google.com
 命令：
 cat test.txt|awk '{print $1}'|sort|uniq -c  
 参考：http://james-lover.iteye.com/blog/2105795
@@ -128,4 +128,46 @@ http://mingxinglai.com/cn/2015/09/connect-mysql-via-ssh-tunnel/
 更多参考：http://www.jb51.net/article/52377.htm
 反引号就是1旁边的键。
 
+### 报错：变量与空格[: too many arguments
+```shell
+ret="Peter Anne"
+if [ $ret == "Peter Anne" ]; then
+  echo "pass"
+else
+  echo "failed"
+fi
+```
+这段脚本会报错`变量与空格[: too many arguments` 。原因：
+`if [ $ret == "Peter Anne" ];`它的参数分别为` [，$ret， ==，"Peter Anne"，]`，一共5个参数。（`[`也是被当作参数，这就是为什么`[`一定要有空格的缘故。
+如果正常5个参数，是没有问题的，但是问题出在了$ret变量里。
+在Linux系统中的真实解析是，`if [ Peter Anne == "Peter Anne" ]`，参数则分为：`[，Peter，Anne， ==，"Peter Anne"，]`，一共6个参数，这时就会报上面的错。
+解决办法是`if [ "${ret}" == "Peter Anne" ]`。
+
+参考自：https://blog.csdn.net/qq_22520587/article/details/62455740
+
+### eval command-line
+其中`command－line`是在终端上键入的一条普通命令行。然而当在它前面放上eval时，其结果是shell在执行命令行之前扫描它两次。如：
+```
+pipe="|"
+eval ls $pipe wc -l
+```
+shell第1次扫描命令行时，它替换出pipe的值｜，接着eval使它再次扫描命令行，这时shell把｜作为管道符号了。
+如果变量中包含任何需要shell直接在命令行中看到的字符（不是替换的结果），就可以使用eval。命令行结束符`（` `；` `｜` `&` `）` ，I／o重定向符（< >）和引号就属于对shell具有特殊意义的符号，必须直接出现在命令行中。
+eval其他用法参考：http://blog.51cto.com/363918/1341977
+
+### 函数返回字符串
+shell脚本的return只能返回数值类型，可是我们很多时候想返回字符串。在函数中直接用echo 字符串，在调用时就可以得到返回字符串。
+```shell
+#!/bin/sh
+function getStr ()
+{
+    String="very good"
+    echo $String
+}
+str=$(getStr)
+echo $str
+```
+结果：`very good`
+
 常用参看：https://www.cnblogs.com/yu2000/p/4089011.html
+shell数值比较：https://www.cnblogs.com/happyhotty/articles/2065412.html

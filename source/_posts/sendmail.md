@@ -2,7 +2,7 @@
 title: 'sendmail'
 date: "2018/04/20"
 tags: [ubuntu]
-categories: [ubuntu]
+categories: [linux]
 copyright: true
 ---
 # 安装

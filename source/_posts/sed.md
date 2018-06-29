@@ -2,7 +2,7 @@
 title: 'sed'
 date: "2018/04/20"
 tags: [ubuntu]
-categories: [ubuntu]
+categories: [linux]
 copyright: true
 ---
 sed文本处理，可以配合正则使用。处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有 改变，除非你使用重定向存储输出（除了-i命令）。
