@@ -8,11 +8,20 @@ copyright: true
 select * from table1 a inner join table2 b on a.id=b.id;
 
 注意mysql语句的执行顺序，正确的使用别名。
+
+### shell参数
+`-u` 用户名
+`-p` 密码
+`-h` 主机
+`-P` 端口号
+`-s` 静默模式，省略很多输出。比如select时输出的列名等。
+
+参看：https://www.computerhope.com/unix/mysql.htm
 ### 布尔类型
 首先mysql是不支持布尔类型的，当把一个数据设置成布尔类型的时候,数据库会自动转换成tinyint(1)的数据类型,其实这个就是变相的布尔。
 默认值也就是1,0两种,分别对应了布尔类型的true和false
 ### create table xxx as select...
-创建xxx表，并把select查询的内容直接作为信息插入到xxx表中。注意的是select的字段要记得起别名，否则新建表会自动起一些奇怪的名字。
+创建xxx表，并把select查询的内容直接作为信息插入到xxx表中。注意的是select的字段要记得起别名，否则新建表会自动起一些奇怪的名字。另外注意，select不要用括号括起来，否则会报错。
 ### case when then ... else ... end
 条件语法，常用于select时,如：
 ```mysql

@@ -11,35 +11,37 @@ mvn archetype:generate 自动生成mvn项目
 **_使用archetype插件生成一个webapp项目：_**
 mvn archetype:generate -DgroupId=com.qunar.fresh -DartifactId=mytestapp -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
 
-mvn clean **_清除项目_**
-mvn compile **_编译代码_**
-mvn test-compile **_只编译测试代码_**
-mvn test **_运行单元测试代码_**（编译源代码、测试代码；运行测试代码）
-mvn package 打包成jar/war(根据pom文件packaging定)文件，在target文件下（在开发机部署，把target文件夹部署）
-mvn install **_部署到本地仓库_**
-mvn deploy 在远程仓库中安装jar（现在不用）
+`mvn clean` **_清除项目_**
+`mvn compile` **_编译代码_**
+`mvn test-compile` **_只编译测试代码_**
+`mvn test` **_运行单元测试代码_**（编译源代码、测试代码；运行测试代码）
+`mvn package` 打包成jar/war(根据pom文件packaging定)文件，在target文件下
+`mvn install` **_部署到本地仓库_**
+`mvn deploy` 在远程仓库中安装jar（一般不用）
 
-mvn clean install -Dmaven.test.skip=true **_单元测试逻辑不编译，不执行，直接跳过_**
-mvn clean install -DskipTests **_单元测试编译，只跳过测试过程_**
+`mvn clean install -Dmaven.test.skip=true` **_单元测试逻辑不编译，不执行，直接跳过_**
+`mvn clean install -DskipTests` **_单元测试编译，只跳过测试过程_**
 
-mvn help:effective-pom查看依赖的父pom
-mvn dependency:tree **_查看pom依赖树，解决pom依赖问题_**
+`mvn help:effective-pom` 查看依赖的父pom
+`mvn dependency:tree` **_查看pom依赖树，解决pom依赖问题_**
 
-mvn dependency:analyze  分析pom依赖
-mvn clean package -Pdev -Dmaven.test.skip=true **_过滤掉test指定环境打包_**
+`mvn dependency:analyze`  **_分析pom依赖_**
+`mvn clean package -Pdev -Dmaven.test.skip=true` **_过滤掉test指定环境打包_**
 
-mvn clean tomcat7:run -Pdev**_使用tomcat指定环境启动项目_**
+`mvn clean tomcat7:run -Pdev` **_使用tomcat指定环境启动项目_**
 
 **scrop 规定jar包的作用域**
-1.compile（默认） 表示编译打包之后这个jar包会放在编译后的文件里
-2.provided 编译时有用，但是打包后不存在。常见的是servlet，servlet的实现在容器里（tomcat/jetty）
-3.runtime 运行时使用，写代码时不能使用。常见为日志、mysql driver
-4.test 正常不能用，只用在用test时才能用，如junit。
-5.import 内部组件，公共pom，pom中定义了很多jar版本号
+1.`compile`（默认） 在编译、测试、运行时均需要使用此依赖，表示编译打包之后这个jar包会放在编译后的文件里；
+2.`provided` 编译时有用，但是打包后不存在。对于编译和测试有效，但在运行时无效。常见的是servlet，servlet的实现在容器里（tomcat/jetty），这个在运行时会由你的 tomcat 、jboss 、jetty等容器来提供，但在编译和测试阶段你仍是需要这个 jar 包的；
+3.`runtime` 运行时使用，写代码时不能使用。常见为日志、mysql driver
+4.`test` 正常不能用，只用在用test时才能用，如junit。
+5.`import` 内部组件，公共pom，pom中定义了很多jar版本号
 
 **解决依赖冲突**
-dependencyManegement 解决包依赖冲突（首选办法），指定优选包版本
-exclusion 解决包依赖冲突（加在不用的那个dependency里），在一些公司规定不让使用的包时，如除了commons-logging
+mvn自带解决依赖冲突：1、依赖最近者优先。2、路径相同，先声明的优先。
+但是最好能自己指定：
+1、`dependencyManegement` 解决包依赖冲突（首选办法），指定优选包版本
+2、`exclusion` 解决包依赖冲突（加在不用的那个dependency里）。有一些公司规定不让使用某些包，如日志输出上不能用commons-logging
 
 生命周期
 clean Pre-clean（准备） Clean（移除） Post-clean 会以此执行上面的命令
@@ -60,11 +62,10 @@ scope 依赖范围
 optional 依赖是否可选
 exclusions 依赖冲突解决
 
-
 <modules>
 <packaging>pom</ 使用一个命令进行多个模块的聚合
 
-groupid 部门名称 com.qunar.fresh.项目组名称
+groupid 部门名称 com.fresh.项目组名称
 arti... 项目名
 mvn package -Plocal profile用local
 mvn clean package -Pdev
