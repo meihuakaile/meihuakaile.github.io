@@ -428,5 +428,11 @@ hadoop dfsadmin -safemode enter 进入安全模式
 -d 如果路径是个目录，则返回1，否则返回0。
 示例：`hadoop fs -test -e filename`
 
+## hadoop fs -ls -d
+使用帮助命令`hadoop fs -help ls` 看到-d对应的是`Directories are listed as plain files.`
+
+遇到的情况是`hadoop fs -ls -d /user/hive/warehouse/test.db/t/*/*` 假设表test.t是分区表，而且有两个分区，这条命令就可以输出该表所有的分区值。  
+
 # 参考
 hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test
+https://www.cnblogs.com/zhaosk/p/4391294.html

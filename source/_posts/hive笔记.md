@@ -51,7 +51,7 @@ Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）
 本地模式：每个Hive客户端都会打开到数据存储的连接并在该连接上请求SQL查询。
 远程模式：所有的Hive客户端都将打开一个到元数据服务器的连接，该服务器依次查询元数据。
 
-参考：https://blog.csdn.net/skywalker_only/article/details/26219619
+参考：https://blog.csdn.net/skywalker_only/article/details/26219619（三种元数据存储方式）
 http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html
 
 ### 分区
@@ -275,6 +275,13 @@ SORT BY为局部排序，只会在每一个Reducer中对数据进行排序，在
 DISTRIBUTE BY 是控制map的输出被送到哪个reducer端进行汇总计算。注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。
 注：这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写
 
+### find_in_set
+集合查找函数: find_in_set
+语法: find_in_set(string str, string strList) 
+返回值: int
+说明: 返回str在strlist第一次出现的位置，strlist是用逗号分割的字符串。如果没有找该str字符，则返回0
+例子：`select find_in_set('de','ef,ab,de');` 返回3
+
 ### hive的默认数据分隔符^A
 hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
 
@@ -300,6 +307,11 @@ ROW FORMAT DELIMITED必须写在其他字段前，除了stored as。
 DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precision, scale) 语法在创建表时来定义Decimal数据类型的precision和scale。
 如果未指定precision，则默认为10。如果未指定scale，它将默认为0（无小数位）。
 **_曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。_**
+
+### export LC_ALL=en_US.UTF-8
+`export LC_ALL=en_US.UTF-8` 解决hive客户端调用脚本中文问题。
+
+https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
 
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
@@ -402,6 +414,13 @@ Hive相关的配置属性总结
 `set hive.cli.print.header=true;` 显示表头。select时会显示对应字段。
 `set hive.mapred.mode=strict;` 如果对分区表查询，且没有在where中对分区字段进行限制，报错`FAILED: SemanticException [Error 10041]: No partition predicate found for Alias "test_part" Table "test_part"`；对应还有`nonstrict`模式。
 
+压缩：
+1、`mapreduce.map.output.compress`：map输出结果是否压缩
+   `mapreduce.map.output.compress.codec`
+2、`mapreduce.output.fileoutputformat.compress`：job输出结果是否压缩
+   `mapreduce.output.fileoutputformat.compress.type`
+   `mapreduce.output.fileoutputformat.compress.codec`  
+eg,`set mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.compress.GzipCodec;`  设置job输出结果压缩成gz。
 
 
 ### tblproperties
@@ -459,3 +478,5 @@ hive 安装：https://www.jianshu.com/p/6108e0aed204
 hive字符串：https://www.iteblog.com/archives/1639.html
 hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test
 hive 常用总结（写的很好）：https://www.cnblogs.com/jiangzhengjun/p/6349226.html
+mp调优：https://www.cnblogs.com/sunxucool/p/4459006.html
+函数（时间、字符串、数值）：https://blog.csdn.net/duan19056/article/details/17758819

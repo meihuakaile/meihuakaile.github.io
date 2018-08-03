@@ -15,8 +15,31 @@ select * from table1 a inner join table2 b on a.id=b.id;
 `-h` 主机
 `-P` 端口号
 `-s` 静默模式，省略很多输出。比如select时输出的列名等。
+`-A` 与`--auto-rehash`相反，emmmm,看不太懂，大概意思应该是`auto-rehash` 会变慢，但是可以自动补全，默认也是这种模式。
+`--default-character-set=utf8` mysql客户端默认使用latin1编码，系统使用其他编码时会出现乱码等问题。使用这个选项可以强制指定编码解决问题。
+
+`--auto-rehash`：
+```
+Enable automatic rehashing. This option is on by default, which enables database, 
+table, and column name completion. Use --disable-auto-rehash to disable rehashing. 
+That causes mysql to start faster, but you must issue the rehash command if you want 
+to use name completion.
+
+To complete a name, enter the first part and press Tab. If the name is unambiguous, 
+mysql completes it. Otherwise, you can press Tab again to see the possible names 
+that begin with what you have typed so far. Completion does not occur if there is 
+no default database.
+```
 
 参看：https://www.computerhope.com/unix/mysql.htm
+### 修改表结构
+`alter table table_name1 rename to table_name2` 把表名由表1改为表2
+`alter table table_name1 modify column field1 field1_type`  修改字段长度/字段类型
+`alter table table_name1 change old_field new_field field_type` 修改字段名字，必须跟上字段类型
+
+### 增删改查
+`update table_name set field1='value1', field2='value2' [where ...]`修改多个字段值 
+
 ### 布尔类型
 首先mysql是不支持布尔类型的，当把一个数据设置成布尔类型的时候,数据库会自动转换成tinyint(1)的数据类型,其实这个就是变相的布尔。
 默认值也就是1,0两种,分别对应了布尔类型的true和false
@@ -75,18 +98,20 @@ exit语法：select * from 表A where exists(select * from 表B where 表B.id=�
 linux命令mysql 的参数-e可以后面可以直接跟mysql语句。
 使用-e在终端执行使在导入/出命令前加上“set character_set_database=utf8;” 可以有效避免中文乱码。
 导入数据：
+`load data local infile '' [replace] into table table_name` 如果有replace，会根据主键/唯一索引查询后覆盖插入。
 ```mysql
-LOAD DATA LOCAL INFILE '/home/chenliclchen/mysql/tableExport.txt' INTO TABLE `atp_event`(
+LOAD DATA LOCAL INFILE '/home/mysql/tableExport.txt' INTO TABLE `atp_event`(
 event_name, business, event_type, start_time, end_time, event_area, description);
 ```
 **_如果指定local关键词，则表明从客户主机读文件。如果local没指定，文件必须位于服务器上。_**使用`load data local infile`而不是`load data infile`
 导入数据出错参考：[ERROR 1290 (HY000): The MySQL server is running with the --secure-file-priv option so it cannot execute this statement](/2018/04/19/ERROR 1 HY000 Can't create or write to file 'user.txt' Errcode 13 - Permission denied)
 导入中文乱码时参考：[导入数据乱码](/2018/04/19/ERROR 1290 HY000  The MySQL server is running with the --secure-file-priv option so it cannot execute this statement)
-
+【注：hive中是`load data local inpath '' [overwrite] into table table_name`】
 导出数据：
 ```mysql
 select * into outfile '/home/chenliclchen/mysql/t.txt' fields terminated by ',' from atp_event;  
 ```
+
 ### coalesce(..., ....)
 返回第一个不为null的值
 
@@ -102,10 +127,15 @@ group by 一般和聚合函数一起使用才有意义,比如 count sum avg等,�
 `DECIMAL(P,D)`表示列可以存储D位小数的P位数。
 **_没有指定括号里的精度时，导入的小数会被截断_**。
 **_在hive里曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。_**
+
 ### limit分页
 `LIMIT [offset,] rows`
 offset指定要返回的第一行的偏移量,rows第二个指定返回行的最大数目。初始行的偏移量是0(不是1)。
 `select * from table_name limit 10,5`  查询第11到第15条数据
+
+### like
+(1)`%` ：0个或多个；`*`一个或多个；`_` `?` 一个字符。
+(2)只在首或尾% 和 * 两者都可以使用；如果在头尾同时使用的话,就必须要使用%。
 
 ### 索引类型
 唯一索引：很多情况下，目的不是为了提高访问速度，而只是为了避免数据出现重复。唯一索引可以有多个，但索引列的值必须唯一，索引列的值允许有空值。
