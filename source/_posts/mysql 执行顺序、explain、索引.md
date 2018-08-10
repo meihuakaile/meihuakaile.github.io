@@ -102,3 +102,43 @@ Text 比varchar存更多的东西。不能存null，或者默认为null。
 逻辑分页：使用游标（next）分页，先把数据都查出来再分页。
 mybatis的RowBound是逻辑分页。
 逻辑分页是把数据库的压力放在了应用中，因为是在应用中分的页。
+
+### 权限管理
+mysql里用户信息存在`mysql.user`里，通过看这个表可以看到所有用户的权限信息。
+通过`SELECT DISTINCT CONCAT('User: ''',user,'''@''',host,''';') AS query FROM mysql.user;`可以查到所有的账户。
+这里表里`user+host`必须是唯一的。
+`show grants` 查看当前用户的权限。
+
+#### create 创建用户
+`create user 'username'@'host' [identified by [password] 'password1' ]` 创建新的用户。没有`[identified by [password] 'password1' ]`代表该用户不需要密码；加上`[password]`表示后面的密码`password1`用password加密。
+加密的原因：`create user`语句的操作会被记录到服务器日志文件或者操作历史文件中。有那个文件的人可以可以看到用户的密码，因此需要加密。
+如何加密：使用password加密。先使用`select password('password1')`算出加密后的哈希值密码，再用加密后的密码代替上面的`password1`.
+#### grant 授权
+相比与`create`需要先创建，再授权；`grant`可以直接创建用户并授权。
+```mysql
+GRANT priv_type [(column_list)] [, priv_type [(column_list)]] ...
+    ON [object_type] {tbl_name | * | *.* | db_name.*}
+    TO user [IDENTIFIED BY [PASSWORD] 'password']
+        [, user [IDENTIFIED BY [PASSWORD] 'password']] ...
+    [REQUIRE
+        NONE |
+        [{SSL| X509}]
+        [CIPHER 'cipher' [AND]]
+        [ISSUER 'issuer' [AND]]
+        [SUBJECT 'subject']]
+    [WITH with_option [with_option] ...]
+```
+简单的，`grant priv on 库.表 to 'username'@'host' [identified by [password] 'password1' ]` 给用户`'username'@'host'`授权。
+当需要给多个机器权限时，就需要多个grant语句，此时如果是同一网段的，可以host采用`192.23.%`；甚至可以直接用`%`代表所有机器。
+
+`GRANT USAGE ON` 加空的权限，只能连库什么都没法做。
+
+#### 直接修改表加权限
+不管是`create`还是`grant`，其实都是在操纵`user`表。
+`INSERT INTO mysql.user(host,user,password,[privilegelist]) VALUES ('host','username',password('password'),privilegevaluelist)`
+emmmm，我的mysql没有`password`字段。。。。
+
+#### 删除用户
+`drop user ‘username’@‘host’ `/`delete from mysql.user where user='username' and host='host'`
+
+参考：https://www.cnblogs.com/lyhabc/p/3822267.html 

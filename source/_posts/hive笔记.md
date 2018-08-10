@@ -69,8 +69,10 @@ b、双分区建表语句：`create table day_hour_table (id int, content string
 分区是数据表中的一个列名，但是这个列并不占有表的实际存储空间。它作为一个虚拟列而存在。
 ### 查看/增加/删除分区
 `show partitions table_name [partition(...)] ` 查看表所有的分区；加上可选`[partition(...)]`可以查看指定分区是否存在。
-`alter table xxx add partition (dt='2018-05-22')`  对分区名是dt的表增加分区
+`alter table xxx add [if not exist] partition (dt='2018-05-22')`  对分区名是dt的表增加分区
 `alter table table_name drop partition (dt='2018-05-22')` 删除分区
+`alter table table_name partition(dt='...') set localtion '...' ` 修改分区地址（不会修改/删除旧的分区数据）
+`alter table table_name drop [if exist] partition (dt='...') ` 删除分区。如果是内部表，还会删除数据。
 **_当外部表是分区表时，只有建立对应的分区，才能查到数据. 删除内部表的分区会删除相应的数据。_**
 
 ### Buckets 桶
@@ -109,9 +111,6 @@ https://blog.csdn.net/m0_37534613/article/details/55258928
 
 `create [external] table table_name1 like table_name2 [location hdfs_path]` 创建一个和表2结构一样的表
 
-### 修改表名
-`alter table old_name rename to new_name`
-
 ### (内部)表
 表其实就是hdfs目录
 Hive中的表和关系型数据库中的表在概念上很类似，每个表在HDFS中都有相应的目录用来存储表的数据，这个目录可以通过${HIVE_HOME}/conf/hive-site.xml配置文件中的hive.metastore.warehouse.dir属性来配置，这个属性默认的值是/user/hive/warehouse（这个目录在HDFS上），我们可以根据实际的情况来修改这个配置。
@@ -134,11 +133,45 @@ Hive中的表和关系型数据库中的表在概念上很类似，每个表在H
 在Hive中建立外部表作为源表，通过添加分区的方式，将每天HDFS上的原始日志映射到外部表的天分区中；
 在外部表（原始日志表）的基础上做大量的统计分析，用到的中间表、结果表使用内部表存储，数据通过SELECT+INSERT进入内部表。
 
+
+### 修改表
+所有通过`alter`，修改的只是表的元数据，表里存的数据并不会改变。
+
+#### 改变location
+通过修改表DDL：`alter table t_m_cc set location 'hdfs://heracles/user/video-mvc/hive/warehouse/t_m_cc'`
+直接修改hive 的meta info: `update DBS set DB_LOCATION_URI = replace(DB_LOCATION_URI,"oldpath","newpath")`
+                        `update SDS  set location =replace(location,'oldpath,'newpath')`
+
+#### 修改表名
+`alter table old_name rename to new_name` 改表名
+
+#### 修改列
+```mysql
+alter table table_name change column old_field_name new_field_name field_type
+comment '...'
+after field_name;
+```
+修改列名、注释、位置。如果要挪到第一个位置，只需要用`first`代替`after field_name`。
+`alter table table_name add columns(..., ...)`添加新的字段。
+`alter table table replace columns (..., ..., ...);`删除/替换列
+
+#### 修改表属性
+`alter table table_name set tblproperties(...)` 可以增加新的表属性，或者修改已经存在的属性，但是无法删除属性
+
 ### 自定义表的存储格式
 `inputformat`对象将输入流分割成记录；`outputformat`对象将记录格式化为输出流（如查询的输出结果）；一个SerDe在读数据时将记录解析列，在写数据时将列编码成记录。
+SerDe决定了记录是如何分解成字段的（反序列化过程），以及字段是如何写入到存储中的（序列化过程）。
 
 ### 集合数据类型
 array、map、struct三种。好处是处理p/t级数据时，减少寻址，快。坏处是增大数据冗余等。
+
+### 时间类型
+`Timestamps`类型可以是
+- （1）以秒为单位的整数；
+- （2）带精度的浮点数，最大精确到小数点后9位，纳秒级；
+- （3）java.sql.Timestamp格式的字符串 YYYY-MM-DD hh:mm:ss.fffffffff
+
+`Date` 只支持YYYY-MM-DD格式的日期，其余写法都是错误的，如需带上时分秒，需使用timestamp。
 
 ### if
 If 函数语法: if(boolean testCondition, T valueTrue, T valueFalseOrNull)
@@ -313,6 +346,9 @@ DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precis
 
 https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
 
+### get_json_object
+`get_json_object(json_string,’$.str’)` 得到json字符串json_string的$.str节点的值，$指根节点。
+
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
 -e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。
@@ -358,11 +394,7 @@ insert into table test1 select ...
 insert into table test3 select ...
 ```
 从test中查数同时插入到test1、test3。每个select都必须存在，可以用*
-### 改变location
-通过修改表DDL：`alter table t_m_cc set location 'hdfs://heracles/user/video-mvc/hive/warehouse/t_m_cc'`
 
-直接修改hive 的meta info: `update DBS set DB_LOCATION_URI = replace(DB_LOCATION_URI,"oldpath","newpath")`
-                        `update SDS  set location =replace(location,'oldpath,'newpath')`
 ### 自定义UDF
 网上介绍了四中方法。只验证过第一种。
 方法（1）最常用也最不被喜欢的方法。

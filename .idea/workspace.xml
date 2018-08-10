@@ -2,12 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d611714d-3f1d-4318-9f65-bd45f35f96b3" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/shell编写总结.md" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/进程与线程.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/themes/next" afterPath="$PROJECT_DIR$/themes/next" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/awk.md" afterPath="$PROJECT_DIR$/source/_posts/awk.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" afterPath="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive笔记.md" afterPath="$PROJECT_DIR$/source/_posts/hive笔记.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/linux常用命令.md" afterPath="$PROJECT_DIR$/source/_posts/linux常用命令.md" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" afterPath="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/mysql语句.md" afterPath="$PROJECT_DIR$/source/_posts/mysql语句.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -23,12 +24,26 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/hive笔记.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="160">
-                <caret line="325" column="32" lean-forward="false" selection-start-line="325" selection-start-column="32" selection-end-line="325" selection-end-column="32" />
+              <first_editor relative-caret-position="94">
+                <caret line="143" column="0" lean-forward="true" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
                 <folding>
-                  <marker date="1532505441670" expanded="true" signature="6298:6330" ph="select if(1=... dual" />
-                  <marker date="1532505441670" expanded="true" signature="13681:13715" ph="select ... i... " />
+                  <marker date="1533907392249" expanded="true" signature="6523:6631" ph="alter table table_name... " />
+                  <marker date="1533907392249" expanded="true" signature="7475:7507" ph="select if(1=... dual" />
+                  <marker date="1533907392249" expanded="true" signature="14956:14990" ph="select ... i... " />
                 </folding>
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="进程与线程.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/source/_posts/进程与线程.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="240">
+                <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+                <folding />
               </first_editor>
               <second_editor />
             </state>
@@ -39,8 +54,8 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/awk.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="3880">
-                <caret line="194" column="16" lean-forward="false" selection-start-line="194" selection-start-column="16" selection-end-line="194" selection-end-column="16" />
+              <first_editor relative-caret-position="0">
+                <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="3" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -48,12 +63,25 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="linux常用命令.md" pinned="false" current-in-tab="true">
+      <file leaf-file-name="linux常用命令.md" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/source/_posts/linux常用命令.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="113">
-                <caret line="140" column="4" lean-forward="false" selection-start-line="140" selection-start-column="4" selection-end-line="140" selection-end-column="4" />
+              <first_editor relative-caret-position="80">
+                <caret line="4" column="19" lean-forward="true" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+                <folding />
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="shell编写总结.md" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/source/_posts/shell编写总结.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="-688">
+                <caret line="16" column="10" lean-forward="false" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -65,13 +93,28 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="-1647">
-                <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+              <first_editor relative-caret-position="230">
+                <caret line="193" column="12" lean-forward="false" selection-start-line="193" selection-start-column="12" selection-end-line="193" selection-end-column="12" />
                 <folding>
-                  <marker date="1533300063913" expanded="true" signature="2568:2681" ph="select * fro... A" />
-                  <marker date="1533300063913" expanded="true" signature="3310:3467" ph="LOAD DATA LO... atp_event" />
-                  <marker date="1533300063913" expanded="true" signature="4039:4133" ph="select * int... atp_event" />
-                  <marker date="1533300063913" expanded="true" signature="5210:5396" ph="CREATE TABLE... wb_blog" />
+                  <marker date="1533907134136" expanded="true" signature="2597:2710" ph="select * fro... A" />
+                  <marker date="1533907134136" expanded="true" signature="3339:3496" ph="LOAD DATA LO... atp_event" />
+                  <marker date="1533907134136" expanded="true" signature="4068:4162" ph="select * int... atp_event" />
+                  <marker date="1533907134136" expanded="true" signature="5330:5516" ph="CREATE TABLE... wb_blog" />
+                </folding>
+              </first_editor>
+              <second_editor />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="mysql 执行顺序、explain、索引.md" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md">
+          <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+            <state split_layout="SPLIT">
+              <first_editor relative-caret-position="2000">
+                <caret line="100" column="15" lean-forward="false" selection-start-line="100" selection-start-column="15" selection-end-line="100" selection-end-column="15" />
+                <folding>
+                  <marker date="1533647589013" expanded="true" signature="4225:4637" ph="GRANT priv_t... " />
                 </folding>
               </first_editor>
               <second_editor />
@@ -117,8 +160,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>search</find>
-      <find>local</find>
       <find>git fetch</find>
       <find>row</find>
       <find>5.pn</find>
@@ -147,6 +188,8 @@
       <find>4459006</find>
       <find>load</find>
       <find>like</find>
+      <find>alter</find>
+      <find>set</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/source/_posts</dir>
@@ -158,9 +201,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/source/_posts/KNN.md" />
-        <option value="$PROJECT_DIR$/source/_drafts/AdaBoost.md" />
-        <option value="$PROJECT_DIR$/source/_posts/mvn常用.md" />
         <option value="$PROJECT_DIR$/source/_drafts/npm.md" />
         <option value="$PROJECT_DIR$/source/_posts/mapper部分语法 CDATA foreach resultMap.md" />
         <option value="$PROJECT_DIR$/source/_posts/Base64编码原理.md" />
@@ -188,7 +228,6 @@
         <option value="$PROJECT_DIR$/source/_posts/java&amp;guava常用用法.md" />
         <option value="$PROJECT_DIR$/source/_drafts/Hive VS HBase.md" />
         <option value="$PROJECT_DIR$/source/_posts/Mybatis拦截器介绍及分页插件.md" />
-        <option value="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" />
         <option value="$PROJECT_DIR$/source/_posts/spring 自定义注解实现登陆拦截.md" />
         <option value="$PROJECT_DIR$/source/_posts/Spring配置Mybatis.md" />
         <option value="$PROJECT_DIR$/source/_posts/SPRING AOP的所遇到的问题.md" />
@@ -204,11 +243,15 @@
         <option value="$PROJECT_DIR$/source/_posts/ubuntu 64位安装wps（亲测可用）.md" />
         <option value="$PROJECT_DIR$/source/_posts/ubuntu下的所有解压文件命令.md" />
         <option value="$PROJECT_DIR$/source/_posts/sudo cd为什么不能够执行.md" />
-        <option value="$PROJECT_DIR$/source/_posts/linux常用命令.md" />
-        <option value="$PROJECT_DIR$/source/_posts/hive笔记.md" />
         <option value="$PROJECT_DIR$/source/_posts/awk.md" />
         <option value="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" />
+        <option value="$PROJECT_DIR$/source/_posts/进程与线程.md" />
+        <option value="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" />
+        <option value="$PROJECT_DIR$/source/_posts/linux常用命令.md" />
         <option value="$PROJECT_DIR$/source/_posts/mysql语句.md" />
+        <option value="$PROJECT_DIR$/source/_posts/hive笔记.md" />
+        <option value="$PROJECT_DIR$/source/linux命令使用总结.md" />
+        <option value="$PROJECT_DIR$/source/_posts/shell编写总结.md" />
       </list>
     </option>
   </component>
@@ -221,11 +264,13 @@
   <component name="NodeModulesDirectoryManager">
     <handled-path value="$PROJECT_DIR$/.deploy_git/node_modules" />
     <handled-path value="$PROJECT_DIR$/node_modules" />
+    <handled-path value="$PROJECT_DIR$/public/node_modules" />
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="y" value="-7" />
-    <option name="width" value="1366" />
-    <option name="height" value="712" />
+    <option name="x" value="65" />
+    <option name="y" value="210" />
+    <option name="width" value="1362" />
+    <option name="height" value="640" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -242,7 +287,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -277,6 +321,7 @@
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -286,14 +331,14 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/source/_posts" />
+      <recent name="$PROJECT_DIR$/source" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/source/_posts" />
       <recent name="$PROJECT_DIR$/source" />
       <recent name="$PROJECT_DIR$/source/_drafts" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/source/_posts" />
-      <recent name="$PROJECT_DIR$/source" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -331,19 +376,20 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-7" width="1368" height="717" extended-state="6" />
+    <frame x="0" y="-7" width="1366" height="712" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.14036418" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.19271624" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298791" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.39378238" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.1208981" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -365,26 +411,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/source/_posts/mvn常用.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="80">
-            <caret line="4" column="19" lean-forward="false" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="19" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/ERROR 1 HY000 Can't create or write to file 'user.txt' Errcode 13 - Permission denied.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="900">
-            <caret line="45" column="34" lean-forward="false" selection-start-line="45" selection-start-column="34" selection-end-line="45" selection-end-column="34" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/source/_posts/matlab安装遇到问题 install Matlab bin util oscheck.sh:  lib64 libc.so.6: not found.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -614,16 +640,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="1440">
-            <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/source/_posts/Spring配置Mybatis.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -659,12 +675,6 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="680">
             <caret line="34" column="3" lean-forward="false" selection-start-line="34" selection-start-column="2" selection-end-line="34" selection-end-column="3" />
-            <folding>
-              <marker date="1526977994159" expanded="true" signature="1843:2116" ph="..." />
-              <marker date="1526977994159" expanded="true" signature="2034:2106" ph="..." />
-              <marker date="1526977994159" expanded="true" signature="2639:2879" ph="..." />
-              <marker date="1526977994159" expanded="true" signature="3137:3212" ph="..." />
-            </folding>
           </first_editor>
           <second_editor />
         </state>
@@ -675,7 +685,6 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="0">
             <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-            <folding />
           </first_editor>
           <second_editor />
         </state>
@@ -794,50 +803,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/awk.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="3880">
-            <caret line="194" column="16" lean-forward="false" selection-start-line="194" selection-start-column="16" selection-end-line="194" selection-end-column="16" />
-            <folding />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="8560">
             <caret line="428" column="8" lean-forward="false" selection-start-line="428" selection-start-column="8" selection-end-line="428" selection-end-column="8" />
-            <folding>
-              <marker date="1533129414234" expanded="true" signature="4058:4549" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4074:4229" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4245:4433" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4449:4528" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4596:5158" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4612:4691" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4707:4782" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4798:4962" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="4978:5137" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="5208:5366" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="5224:5345" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="7448:7812" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="7464:7567" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="7583:7696" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="7712:7791" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="7922:8397" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="7938:8017" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8033:8108" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8124:8242" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8258:8376" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8522:9095" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8538:8635" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8651:8740" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8756:8852" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8868:8967" ph="..." />
-              <marker date="1533129414234" expanded="true" signature="8983:9074" ph="..." />
-            </folding>
           </first_editor>
           <second_editor />
         </state>
@@ -848,20 +818,40 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="220">
             <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/awk.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="0">
+            <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="3" />
             <folding />
           </first_editor>
           <second_editor />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/hive笔记.md">
+    <entry file="file://$PROJECT_DIR$/source/_posts/进程与线程.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="160">
-            <caret line="325" column="32" lean-forward="false" selection-start-line="325" selection-start-column="32" selection-end-line="325" selection-end-column="32" />
+          <first_editor relative-caret-position="240">
+            <caret line="12" column="4" lean-forward="false" selection-start-line="12" selection-start-column="4" selection-end-line="12" selection-end-column="4" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="2000">
+            <caret line="100" column="15" lean-forward="false" selection-start-line="100" selection-start-column="15" selection-end-line="100" selection-end-column="15" />
             <folding>
-              <marker date="1532505441670" expanded="true" signature="6298:6330" ph="select if(1=... dual" />
-              <marker date="1532505441670" expanded="true" signature="13681:13715" ph="select ... i... " />
+              <marker date="1533647589013" expanded="true" signature="4225:4637" ph="GRANT priv_t... " />
             </folding>
           </first_editor>
           <second_editor />
@@ -871,13 +861,28 @@
     <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="-1647">
-            <caret line="38" column="0" lean-forward="false" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
+          <first_editor relative-caret-position="230">
+            <caret line="193" column="12" lean-forward="false" selection-start-line="193" selection-start-column="12" selection-end-line="193" selection-end-column="12" />
             <folding>
-              <marker date="1533300063913" expanded="true" signature="2568:2681" ph="select * fro... A" />
-              <marker date="1533300063913" expanded="true" signature="3310:3467" ph="LOAD DATA LO... atp_event" />
-              <marker date="1533300063913" expanded="true" signature="4039:4133" ph="select * int... atp_event" />
-              <marker date="1533300063913" expanded="true" signature="5210:5396" ph="CREATE TABLE... wb_blog" />
+              <marker date="1533907134136" expanded="true" signature="2597:2710" ph="select * fro... A" />
+              <marker date="1533907134136" expanded="true" signature="3339:3496" ph="LOAD DATA LO... atp_event" />
+              <marker date="1533907134136" expanded="true" signature="4068:4162" ph="select * int... atp_event" />
+              <marker date="1533907134136" expanded="true" signature="5330:5516" ph="CREATE TABLE... wb_blog" />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/hive笔记.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="94">
+            <caret line="143" column="0" lean-forward="true" selection-start-line="143" selection-start-column="0" selection-end-line="143" selection-end-column="0" />
+            <folding>
+              <marker date="1533907392249" expanded="true" signature="6523:6631" ph="alter table table_name... " />
+              <marker date="1533907392249" expanded="true" signature="7475:7507" ph="select if(1=... dual" />
+              <marker date="1533907392249" expanded="true" signature="14956:14990" ph="select ... i... " />
             </folding>
           </first_editor>
           <second_editor />
@@ -887,8 +892,19 @@
     <entry file="file://$PROJECT_DIR$/source/_posts/linux常用命令.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="113">
-            <caret line="140" column="4" lean-forward="false" selection-start-line="140" selection-start-column="4" selection-end-line="140" selection-end-column="4" />
+          <first_editor relative-caret-position="80">
+            <caret line="4" column="19" lean-forward="true" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/shell编写总结.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="-688">
+            <caret line="16" column="10" lean-forward="false" selection-start-line="16" selection-start-column="10" selection-end-line="16" selection-end-column="10" />
             <folding />
           </first_editor>
           <second_editor />

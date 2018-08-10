@@ -15,6 +15,7 @@ select * from table1 a inner join table2 b on a.id=b.id;
 `-h` 主机
 `-P` 端口号
 `-s` 静默模式，省略很多输出。比如select时输出的列名等。
+`数据库名` 在语句最后跟上数据库名会直接进入该数据库。
 `-A` 与`--auto-rehash`相反，emmmm,看不太懂，大概意思应该是`auto-rehash` 会变慢，但是可以自动补全，默认也是这种模式。
 `--default-character-set=utf8` mysql客户端默认使用latin1编码，系统使用其他编码时会出现乱码等问题。使用这个选项可以强制指定编码解决问题。
 
@@ -111,6 +112,8 @@ event_name, business, event_type, start_time, end_time, event_area, description)
 ```mysql
 select * into outfile '/home/chenliclchen/mysql/t.txt' fields terminated by ',' from atp_event;  
 ```
+### 导入表结构、表数据
+`mysqldump -u用戶名 -p密码 [-d] 数据库名 [表名] > 脚本名`  有-d 时只导出结构不导数据；指定表名时只导出该表的数据和结构
 
 ### coalesce(..., ....)
 返回第一个不为null的值
@@ -203,10 +206,9 @@ number是浮点数。length约束浮点数小数位数。
 ### round(x[, d])
 x指要处理的数，d是指保留几位小数。用于数据的四舍五入。d默认为0。d可以是负数，这时是指定小数点左边的d位整数位为0,同时小数位均为0。
 ### LEFT(str,len)/RIGHT(str,len)
-LEFT(str,len)
+`LEFT(str,len)`
 返回字符串str的最左面len个字符。
-
-RIGHT(str,len)
+`RIGHT(str,len)`
 返回字符串str的最右面len个字符。
 ### length(str)
 返回字符串的长度。

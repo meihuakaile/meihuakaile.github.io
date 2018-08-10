@@ -173,5 +173,7 @@ echo $str
 ```
 结果：`very good`
 
+### 
 常用参看：https://www.cnblogs.com/yu2000/p/4089011.html
 shell数值比较：https://www.cnblogs.com/happyhotty/articles/2065412.html
+read:https://blog.csdn.net/u012359618/article/details/52329346
