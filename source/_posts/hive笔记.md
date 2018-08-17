@@ -7,6 +7,7 @@ categories:
   - hadoop
 copyright: true
 date: 2018-04-19
+top: 1
 ---
 
 架构在Hadoop之上，提供简单的sql查询功能，可以**_将sql语句转换为MapReduce任务进行运行(增删改查)_**。
@@ -39,9 +40,12 @@ default是默认的数据库：指的就是这个/user/hive/warehouse路径，�
 参考：https://www.cnblogs.com/xningge/p/8439970.html
 
 ### queuename
-hadoop相关。通过`set mapreduce.job.queuename`可以查看当前定义队列名。
+hadoop相关,作业提交到的队列，默认是`default`。通过`set mapreduce.job.queuename`可以查看当前定义队列名。
 队列是跟用户对应的，哪个用户要执行，需要指定哪个队列。
+`mapred.job.queue.name` 一样，这个是老版本v1的，上面是新版本v2的。
+拥有不同优先级的各种队列只是让Hadoop可以轻松决定处理器可用时下一步该做什么，或者它可以使用多少。
 
+更多参考：http://dongxicheng.org/mapreduce-nextgen/hadoop-yarn-configurations-mapreduce/
 ### 元数据
 Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）中。
 元数据使用JPOX（Java Persistent Objects）对象关系映射解决方案进行持久化，所以任何被JPOX支持的存储都可以被Hive使用。
@@ -217,9 +221,6 @@ collect_set()方法把group by一样的组里的数据组成一个数组。数�
 ### 【is null】 = 【 = null】？、【is not null】 = 【 <> null】？
 hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 <> null 或 = null（虽然不报错）
 
-### size()
-size()方法返回数组的长度。
-
 ### insert
 1.insert into是增加数据
 2.insert overwrite是删除原有数据然后在新增数据，如果有分区那么只会删除指定分区数据，其他分区数据不受影响
@@ -349,6 +350,24 @@ https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
 ### get_json_object
 `get_json_object(json_string,’$.str’)` 得到json字符串json_string的$.str节点的值，$指根节点。
 
+### REGEXP/RLIKE/LIKE
+语法: A REGEXP B
+操作类型: strings
+描述: 功能与RLIKE相同
+
+LIKE:不是正则，而是通配符。这个通配符可以看一下SQL的标准，例如%代表任意多个字符。
+RLIKE:是正则，正则的写法与java一样。功能与REGEXP相同.
+
+### regexp_extract
+regexp_extract(string subject, string pattern, int index)
+通过下标返回正则表达式指定的部分。正则`\`需要转义`\\`,例如'\w'需要使用'\\w'
+index指的是：返回所有匹配的第N个.
+### size
+数组长度。
+注意的是，如果和split一起用`size(split(str, 'operate'))`，如果str为‘’或者null时，返回的结果是1；因为split返回的是有一个空串的数组。
+### left semi join
+`left semi join` 子句中右边的表只能在 ON 子句中设置过滤条件，在 WHERE 子句、SELECT 子句或其他地方过滤都不行。
+参考：https://my.oschina.net/leejun2005/blog/188459
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
 -e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。
@@ -445,6 +464,11 @@ Hive相关的配置属性总结
 `set hive.cli.print.current.db=true;` 在cli hive提示符后显示当前数据库。
 `set hive.cli.print.header=true;` 显示表头。select时会显示对应字段。
 `set hive.mapred.mode=strict;` 如果对分区表查询，且没有在where中对分区字段进行限制，报错`FAILED: SemanticException [Error 10041]: No partition predicate found for Alias "test_part" Table "test_part"`；对应还有`nonstrict`模式。
+`set hive.exec.dynamic.partition.mode=nonstrict;` 设置可以动态分区；因为严格模式下，不允许所有的分区都被动态指定。（详细使用看上面“导出数据到表”章节）
+`set hive.exec.max.dynamic.partitions=100;` 默认是1000；在所有执行的MR节点上，一共可以创建最大动态分区数
+`set hive.exec.max.dynamic.partitions.pernode=100;`  默认是100；在每个执行MR的节点上，最大可以创建多少个动态分区。该参数需要根据实际的数据来设定。比如：源数据中包含了一年的数据，即day字段有365个值，那么该参数就需要设置成大于365，如果使用默认值100，则会报错。
+
+动态分区参考：http://lxw1234.com/archives/2015/06/286.htm
 
 压缩：
 1、`mapreduce.map.output.compress`：map输出结果是否压缩
@@ -472,6 +496,80 @@ hive是“读时模式”，对于存储文件的完整性、数据的格式是�
 只有在读数据时才会尽量的把hdfs的文件和表字段进行匹配。
 我遇到的一个典型例子：hdfs文件里数据是3.5，hive表对应字段类型是`decimal`，这样导致读出来的数是4.（decimal没有指定小数精度时，默认是没有小数位）
 
+### SerDe Library、InputFormat、outputFormat 
+由一个错误引出：`Failed with exception java.io.IOException:java.lang.ClassCastException: org.apache.hadoop.hive.ql.io.orc.OrcStruct cannot be cast to org.apache.hadoop.io.BinaryComparable`
+问题复现：
+建一个外部表，一般inputformat、outputformat写成这样的，都是通过`show create table table_name`得到的。
+```mysql
+CREATE EXTERNAL TABLE test_orc(
+id string, 
+content string
+)
+PARTITIONED BY ( 
+dt string )
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\u0001' 
+STORED AS INPUTFORMAT 
+'org.apache.hadoop.hive.ql.io.orc.OrcInputFormat' 
+OUTPUTFORMAT 
+'org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat';
+```
+之后使用 `select`查询报上面的错。
+
+原因分析：
+orc格式的表通过show create table得到的建表语句直接建外部表，查数据时会报强转失败的错。
+因为这个建表语句显示了STORED AS INPUTFORMAT/OUTPUTFORMAT，但是没有定义serde，serde使用了默认值 。直接用STORED AS orc 即可。
+通过`describe formatted test_orc`看到`SerDe Library`的类型和`inputformat/outputformat`没有对应，Your SerDe library is LazySimpleSerde and your Input Format and Output Format are ORC. Totally not gonna work!：
+```bash
+| # Storage Information |
+| SerDe Library: | org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe |
+| InputFormat:   | org.apache.hadoop.hive.ql.io.orc.OrcInputFormat    | 
+| OutputFormat:  | org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat   |
+```
+解决办法：
+```mysql
+CREATE EXTERNAL TABLE test_orc(
+id string, 
+content string
+)
+PARTITIONED BY ( 
+dt string )
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\u0001' 
+STORED AS orc;
+```
+之后`describe formatted test_orc`：
+```bash
+# Storage Information	 	 
+SerDe Library:      	org.apache.hadoop.hive.ql.io.orc.OrcSerde	 
+InputFormat:        	org.apache.hadoop.hive.ql.io.orc.OrcInputFormat	 
+OutputFormat:       	org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat
+```
+三者关系详解：
+
+Hive中，默认使用的是TextInputFormat，一行表示一条记录。在每条记录(一行中)，默认使用^A分割各个字段。
+在有些时候，我们往往面对多行，结构化的文档，并需要将其导入Hive处理。
+有很多可选的办法来存储数据。如把数据放在一个地方，hive通过`external`包裹它；
+如直接放在`hive warehouse`用表`table`来管理。可以指定`inputformat`和`outputformat`指定表的存储。
+我们在客户端使用sql操作表，但是底层数据可能是 text file or sequence file or hbase table or some other data structure.
+
+Hive官方说法：
+SerDe is a short name for “Serializer and Deserializer.”
+Hive uses SerDe (and !FileFormat) to read and write table rows.
+HDFS files –> InputFileFormat –> <key, value> –> Deserializer –> Row object
+Row object –> Serializer –> <key, value> –> OutputFileFormat –> HDFS files
+
+**_总结一下_**，当面临一个HDFS上的文件时，Hive将如下处理（以读为例）：
+(1) 调用InputFormat，将文件切成不同的文档。每篇文档即一行(Row)。
+(2) 调用SerDe的Deserializer，将一行(Row)，切分为各个字段。
+(3)SerDe：序列化、反序列化。hive读写表数据(不是文件)。可以理解成一行row和多个字段field转变的过程。
+(4)InputFormat、outputFormat：hdfs文件到表数据的转化。将文件切成不同的文档row；把row组合成底层的文件。
+
+其他：`serdeproperties`可以传递参数给serde。
+
+这三个参数都可以重写，详细看下面第一个链接。
+参考：https://www.coder4.com/archives/4031
+https://stackoverflow.com/questions/42416236/what-is-the-difference-between-inputformat-outputformat-stored-as-in-hive
 ### 易错
 hive cli 有tab补全的功能，因此，如果hql里有tab时，会出现`Display all 479 possibilities? (y or n)`的询问。
 
