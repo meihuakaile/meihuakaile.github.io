@@ -7,7 +7,11 @@ copyright: true
 ---
 场景1：当你改乱了工作区某个文件的内容，想直接丢弃工作区的修改时，用命令git checkout -- file。
 场景2：当你不但改乱了工作区某个文件的内容，还添加到了暂存区时，想丢弃修改，可以分两步，第一步用命令git reset HEAD file，就回到了场景1，第二步按场景1操作。
-场景3：本地在cl分支开发，现在要合并master的内容使cl分支有最新的master代码。git checkout master切换分支git pull拉取并合并master分支最新代码 git checkout cl切换分支 git merge master更新最新master代码到cl分支
+场景3：本地在cl分支开发，现在要合并master的内容使cl分支有最新的master代码。
+      `git checkout master`切换分支
+      `git pull`拉取并合并master分支最新代码 
+      `git checkout cl`切换分支 
+      `git merge master`更新最新master代码到cl分支
 
 1、修改后放在了修改区；add之后是暂存区；commit是本地仓库。
 暂存区是存放下次将要提交的图表信息，索引。本地仓库存放原数据，对象数据库。

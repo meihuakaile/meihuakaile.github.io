@@ -436,3 +436,4 @@ hadoop dfsadmin -safemode enter 进入安全模式
 # 参考
 hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test
 https://www.cnblogs.com/zhaosk/p/4391294.html
+https://blog.csdn.net/litianxiang_kaola/article/details/71154302（wordcount例子）

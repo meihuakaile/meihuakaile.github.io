@@ -2,9 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d611714d-3f1d-4318-9f65-bd45f35f96b3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/Linux脚本开头bash和sh是什么意思以及区别.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/themes/next" afterPath="$PROJECT_DIR$/themes/next" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" afterPath="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive笔记.md" afterPath="$PROJECT_DIR$/source/_posts/hive笔记.md" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -20,12 +20,22 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/hive笔记.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="340">
-                <caret line="585" column="28" lean-forward="false" selection-start-line="585" selection-start-column="28" selection-end-line="585" selection-end-column="28" />
+              <first_editor relative-caret-position="20">
+                <caret line="663" column="11" lean-forward="false" selection-start-line="663" selection-start-column="11" selection-end-line="663" selection-end-column="11" />
                 <folding>
-                  <marker date="1534426040188" expanded="true" signature="6736:6844" ph="alter table table_name... " />
-                  <marker date="1534426040188" expanded="true" signature="7688:7720" ph="select if(1=... dual" />
-                  <marker date="1534426040188" expanded="true" signature="15682:15716" ph="select ... i... " />
+                  <marker date="1535547986943" expanded="true" signature="6736:6844" ph="alter table table_name... " />
+                  <marker date="1535547986943" expanded="true" signature="8014:8046" ph="select if(1=... dual" />
+                  <marker date="1535547986943" expanded="true" signature="13964:14044" ph="SELECT a.key... a" />
+                  <marker date="1535547986943" expanded="true" signature="14019:14043" ph="SELECT b.key... B" />
+                  <marker date="1535547986943" expanded="true" signature="14069:14132" ph="SELECT a.key... a" />
+                  <marker date="1535547986943" expanded="true" signature="16356:16390" ph="select ... i... " />
+                  <marker date="1535547986943" expanded="true" signature="16548:16628" ph="select id in... " />
+                  <marker date="1535547986943" expanded="true" signature="16548:16638" ph="select id in... " />
+                  <marker date="1535547986943" expanded="true" signature="20018:20100" ph="select from_... dual" />
+                  <marker date="1535547986943" expanded="true" signature="20126:20210" ph="select from_... dual" />
+                  <marker date="1535547986943" expanded="true" signature="20271:20372" ph="select conca... dual" />
+                  <marker date="1535547986943" expanded="true" signature="20398:20497" ph="select conca... dual" />
+                  <marker date="1535547986943" expanded="true" signature="28093:28184" ph="..." />
                 </folding>
               </first_editor>
               <second_editor />
@@ -89,8 +99,8 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="3520">
-                <caret line="176" column="6" lean-forward="false" selection-start-line="176" selection-start-column="6" selection-end-line="176" selection-end-column="6" />
+              <first_editor relative-caret-position="3980">
+                <caret line="199" column="20" lean-forward="false" selection-start-line="199" selection-start-column="20" selection-end-line="199" selection-end-column="20" />
                 <folding>
                   <marker date="1533907134136" expanded="true" signature="2597:2710" ph="select * fro... A" />
                   <marker date="1533907134136" expanded="true" signature="3339:3496" ph="LOAD DATA LO... atp_event" />
@@ -156,12 +166,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>导入</find>
-      <find>分区</find>
-      <find>元数据</find>
-      <find>python基础</find>
-      <find>python爬虫</find>
-      <find>爬虫</find>
       <find>jp</find>
       <find>dec</find>
       <find>decimal</find>
@@ -186,6 +190,12 @@
       <find>方法返回数组的长度</find>
       <find>queue</find>
       <find>queuename</find>
+      <find>date</find>
+      <find>位置</find>
+      <find>修改列</find>
+      <find>collect_set</find>
+      <find>semi</find>
+      <find>建一个外部表，</find>
     </findStrings>
     <dirStrings>
       <dir>$PROJECT_DIR$/source/_posts</dir>
@@ -238,7 +248,6 @@
         <option value="$PROJECT_DIR$/source/_posts/ubuntu下的所有解压文件命令.md" />
         <option value="$PROJECT_DIR$/source/_posts/sudo cd为什么不能够执行.md" />
         <option value="$PROJECT_DIR$/source/_posts/awk.md" />
-        <option value="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" />
         <option value="$PROJECT_DIR$/source/_posts/进程与线程.md" />
         <option value="$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md" />
         <option value="$PROJECT_DIR$/source/_posts/linux常用命令.md" />
@@ -248,6 +257,7 @@
         <option value="$PROJECT_DIR$/source/_posts/Linux脚本开头#!/bin/bash和#!/bin/sh是什么意思以及区别.md" />
         <option value="$PROJECT_DIR$/source/_posts/Linux脚本开头#!bash和sh是什么意思以及区别.md" />
         <option value="$PROJECT_DIR$/source/_posts/hive笔记.md" />
+        <option value="$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md" />
       </list>
     </option>
   </component>
@@ -260,8 +270,9 @@
   <component name="NodeModulesDirectoryManager">
     <handled-path value="$PROJECT_DIR$/.deploy_git/node_modules" />
     <handled-path value="$PROJECT_DIR$/node_modules" />
+    <handled-path value="$PROJECT_DIR$/public/node_modules" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="-7" />
     <option name="width" value="1366" />
     <option name="height" value="712" />
@@ -281,7 +292,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -293,6 +304,12 @@
               <item name="blog" type="b2602c69:ProjectViewProjectNode" />
               <item name="blog" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="blog" type="b2602c69:ProjectViewProjectNode" />
+              <item name="blog" type="462c0819:PsiDirectoryNode" />
+              <item name="source" type="462c0819:PsiDirectoryNode" />
+              <item name="_drafts" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="blog" type="b2602c69:ProjectViewProjectNode" />
@@ -315,12 +332,12 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$USER_HOME$/pycharmProject/register" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
   </component>
@@ -370,9 +387,9 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-7" width="1366" height="712" extended-state="6" />
+    <frame x="0" y="-7" width="1368" height="717" extended-state="7" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.103186645" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11229135" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298791" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -380,7 +397,7 @@
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31088084" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3609672" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -753,16 +770,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="8560">
-            <caret line="428" column="8" lean-forward="false" selection-start-line="428" selection-start-column="8" selection-end-line="428" selection-end-column="8" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/source/_posts/logistic回归LR及代码实现.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
@@ -778,46 +785,6 @@
         <state split_layout="SPLIT">
           <first_editor relative-caret-position="0">
             <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="6" selection-end-column="3" />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="2000">
-            <caret line="100" column="15" lean-forward="false" selection-start-line="100" selection-start-column="15" selection-end-line="100" selection-end-column="15" />
-            <folding>
-              <marker date="1533647589013" expanded="true" signature="4225:4637" ph="GRANT priv_t... " />
-            </folding>
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/shell编写总结.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="1120">
-            <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
-            <folding />
-          </first_editor>
-          <second_editor />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
-      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
-        <state split_layout="SPLIT">
-          <first_editor relative-caret-position="3520">
-            <caret line="176" column="6" lean-forward="false" selection-start-line="176" selection-start-column="6" selection-end-line="176" selection-end-column="6" />
-            <folding>
-              <marker date="1533907134136" expanded="true" signature="2597:2710" ph="select * fro... A" />
-              <marker date="1533907134136" expanded="true" signature="3339:3496" ph="LOAD DATA LO... atp_event" />
-              <marker date="1533907134136" expanded="true" signature="4068:4162" ph="select * int... atp_event" />
-              <marker date="1533907134136" expanded="true" signature="5330:5516" ph="CREATE TABLE... wb_blog" />
-            </folding>
           </first_editor>
           <second_editor />
         </state>
@@ -856,16 +823,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/source/_posts/hive笔记.md">
+    <entry file="file://$PROJECT_DIR$/source/_posts/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="340">
-            <caret line="585" column="28" lean-forward="false" selection-start-line="585" selection-start-column="28" selection-end-line="585" selection-end-column="28" />
-            <folding>
-              <marker date="1534426040188" expanded="true" signature="6736:6844" ph="alter table table_name... " />
-              <marker date="1534426040188" expanded="true" signature="7688:7720" ph="select if(1=... dual" />
-              <marker date="1534426040188" expanded="true" signature="15682:15716" ph="select ... i... " />
-            </folding>
+          <first_editor relative-caret-position="486">
+            <caret line="438" column="76" lean-forward="false" selection-start-line="438" selection-start-column="76" selection-end-line="438" selection-end-column="76" />
           </first_editor>
           <second_editor />
         </state>
@@ -899,6 +861,71 @@
           <first_editor relative-caret-position="80">
             <caret line="4" column="19" lean-forward="false" selection-start-line="4" selection-start-column="19" selection-end-line="4" selection-end-column="19" />
             <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/shell编写总结.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="1120">
+            <caret line="56" column="0" lean-forward="false" selection-start-line="56" selection-start-column="0" selection-end-line="56" selection-end-column="0" />
+            <folding />
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/mysql语句.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="3980">
+            <caret line="199" column="20" lean-forward="false" selection-start-line="199" selection-start-column="20" selection-end-line="199" selection-end-column="20" />
+            <folding>
+              <marker date="1533907134136" expanded="true" signature="2597:2710" ph="select * fro... A" />
+              <marker date="1533907134136" expanded="true" signature="3339:3496" ph="LOAD DATA LO... atp_event" />
+              <marker date="1533907134136" expanded="true" signature="4068:4162" ph="select * int... atp_event" />
+              <marker date="1533907134136" expanded="true" signature="5330:5516" ph="CREATE TABLE... wb_blog" />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/mysql 执行顺序、explain、索引.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="2000">
+            <caret line="100" column="15" lean-forward="false" selection-start-line="100" selection-start-column="15" selection-end-line="100" selection-end-column="15" />
+            <folding>
+              <marker date="1533647589013" expanded="true" signature="4225:4637" ph="GRANT priv_t... " />
+            </folding>
+          </first_editor>
+          <second_editor />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/source/_posts/hive笔记.md">
+      <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
+        <state split_layout="SPLIT">
+          <first_editor relative-caret-position="20">
+            <caret line="663" column="11" lean-forward="false" selection-start-line="663" selection-start-column="11" selection-end-line="663" selection-end-column="11" />
+            <folding>
+              <marker date="1535547986943" expanded="true" signature="6736:6844" ph="alter table table_name... " />
+              <marker date="1535547986943" expanded="true" signature="8014:8046" ph="select if(1=... dual" />
+              <marker date="1535547986943" expanded="true" signature="13964:14044" ph="SELECT a.key... a" />
+              <marker date="1535547986943" expanded="true" signature="14019:14043" ph="SELECT b.key... B" />
+              <marker date="1535547986943" expanded="true" signature="14069:14132" ph="SELECT a.key... a" />
+              <marker date="1535547986943" expanded="true" signature="16356:16390" ph="select ... i... " />
+              <marker date="1535547986943" expanded="true" signature="16548:16628" ph="select id in... " />
+              <marker date="1535547986943" expanded="true" signature="16548:16638" ph="select id in... " />
+              <marker date="1535547986943" expanded="true" signature="20018:20100" ph="select from_... dual" />
+              <marker date="1535547986943" expanded="true" signature="20126:20210" ph="select from_... dual" />
+              <marker date="1535547986943" expanded="true" signature="20271:20372" ph="select conca... dual" />
+              <marker date="1535547986943" expanded="true" signature="20398:20497" ph="select conca... dual" />
+              <marker date="1535547986943" expanded="true" signature="28093:28184" ph="..." />
+            </folding>
           </first_editor>
           <second_editor />
         </state>

@@ -155,8 +155,14 @@ alter table table_name change column old_field_name new_field_name field_type
 comment '...'
 after field_name;
 ```
-修改列名、注释、位置。如果要挪到第一个位置，只需要用`first`代替`after field_name`。
-`alter table table_name add columns(..., ...)`添加新的字段。
+修改列名、注释的位置；如果要挪到第一个位置，只需要用`first`代替`after field_name`。
+**_注意前面提到的`alter`语句只修改表元数据，数据没有任何变化，所以列的位置变化时，数据不会跟着变化_**。
+但其实不推荐增加列，因为会有很多的问题。 
+**_增加新的列后，可能发现新增加的列插入的数据都是null。_**不管是用`insert into`还是`insert overwrite`。
+解决办法（1）：删除对应的分区`alter table table_name drop partition(dt=...)`，然后可以准确插入数据。
+解决办法（2）：修改元数据，但一般没有权限，[参考](https://blog.csdn.net/lxpbs8851/article/details/17118841)，没有验证过。
+
+`alter table table_name add columns(..., ...)`添加新的（多个）字段。
 `alter table table replace columns (..., ..., ...);`删除/替换列
 
 #### 修改表属性
@@ -207,11 +213,14 @@ str为NULL, 则NVL函数返replace_with值，否则返str值
 这个函数会跳过分隔符参数后的任何 NULL 和空字符串，但是**跳过空字符串后还是会有多余的分隔符存在**（非常鸡肋啊）。
 
 ### collect_set()
-是 Hive 内置的一个聚合函数, 它返回一个消除了重复元素的对象集合, 其返回值类型是 array 。
+是 Hive 内置的一个聚合函数, 它返回一个**_消除了重复元素_**的对象集合, 其返回值类型是 array 。
 把group by值一样的分组由列变成行，即变成数组，可以用下标访问。
 collect_set()方法把group by一样的组里的数据组成一个数组。数组从0开始，如果直接select数组，是[item1, ..., itemn]的格式。
 如`select collect_set(uname) unames ....group by uid`，把同一个uid的uname组成数组， 通过别名unames[ind]访问数据。
 `concat_ws(',',collect_set(cast(col_0 as string))) ` 两个一起使用把列变成由逗号分割的行。
+
+### collect_list
+`collect_list(id)` 列出该字段所有的值，列出来**_不去重_**
 
 ### explode
 上面的collect_set是把列变成行，explode是把行变成列。
@@ -366,7 +375,22 @@ index指的是：返回所有匹配的第N个.
 数组长度。
 注意的是，如果和split一起用`size(split(str, 'operate'))`，如果str为‘’或者null时，返回的结果是1；因为split返回的是有一个空串的数组。
 ### left semi join
+hive中没有实现in/exist，使用`left semi join`代替
 `left semi join` 子句中右边的表只能在 ON 子句中设置过滤条件，在 WHERE 子句、SELECT 子句或其他地方过滤都不行。
+例子
+mysql中
+```mysql
+SELECT a.key, a.value 
+  FROM a 
+  WHERE a.key in 
+   (SELECT b.key 
+    FROM B); 
+```
+hive重写为：
+```mysql
+SELECT a.key, a.val 
+FROM a LEFT SEMI JOIN b on (a.key = b.key)
+```
 参考：https://my.oschina.net/leejun2005/blog/188459
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
@@ -395,12 +419,13 @@ select 部分不能用括号，否则会被认为是表1的字段；
 (2)`set hive.exec.dynamic.partition.mode=nonstrict;insert into table_name1 partition(dt) select ... from table table_name2`
 
 同样可以把`into`换成`overwrite table`以达到覆盖的效果。注意：只会覆盖table_name2中存在的对应分区，table_name1中已经存在的分区，table_name2中没有是不会进行覆盖。 即，覆盖只是覆盖分区里的数据数据、追加分区，原分区不变。
-(1)是导入一个分区的数据 `select ...`部分不用带dt(分区)的值。注意，如果表2也是分区表，此时用`select *`查出来的数据有分区字段
+(1)是导入一个分区的数据 `select ...`部分不用带dt(分区)的值。注意，如果表2也是分区表，此时不能用`select *`，因为它查出来的数据有分区字段，比`insert`的多一个字段。
 (2)是导入多个分区的表，执行前需要`set hive.exec.dynamic.partition.mode=nonstrict;`，因为严格模式下，不允许所有的分区都被动态指定，目的是为了防止生成太多的目录.此时`select ...`必须有dt分区的字段。
 (2)是动态分区，不指定分区，一次可以导入多个分区。
 
 ### 文件导入数据到表
 `load data [local] inpath 'file1.txt' [overwrite] into table table_name [partition(partcol=val)]`
+通常情况下，会不只是一个文件，而是一个目录，load操作会把目录下的文件全部拷贝到表的location下。
 `local` 决定文件是来自本地还是hdfs。
 `overwrite` 决定是否要覆盖。
 `load`命令不支持动态分区，必须指定分区。(可以把数据先转到非分区表，再利用上面小节“导出数据到表”的方法把非分区表的数据导入到分区表)。不指定分区，会报错`FAILED: SemanticException org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Invalid partition key & values; keys [dt, ], values [])`
@@ -408,12 +433,17 @@ load不能加载桶表数据，只能从另一张表加载数据。(和动态分
 
 ### 同时插入多个表
 ```mysql
-from (select ... from test limit 1) t
+from test t
 insert into table test1 select ...
 insert into table test3 select ...
 ```
 从test中查数同时插入到test1、test3。每个select都必须存在，可以用*
-
+eg:
+```mysql
+from test_part
+insert into table test_part2 partition(dt='2018-08-19', source='app') select id 
+insert into table test_part4 partition(dt='2018-08-10', source='app') select id;
+```
 ### 自定义UDF
 网上介绍了四中方法。只验证过第一种。
 方法（1）最常用也最不被喜欢的方法。
@@ -463,7 +493,7 @@ system、env的前缀不能省。
 Hive相关的配置属性总结
 `set hive.cli.print.current.db=true;` 在cli hive提示符后显示当前数据库。
 `set hive.cli.print.header=true;` 显示表头。select时会显示对应字段。
-`set hive.mapred.mode=strict;` 如果对分区表查询，且没有在where中对分区字段进行限制，报错`FAILED: SemanticException [Error 10041]: No partition predicate found for Alias "test_part" Table "test_part"`；对应还有`nonstrict`模式。
+`set hive.mapred.mode=strict;` 如果对分区表查询，且没有在where中对分区字段进行限制，报错`FAILED: SemanticException [Error 10041]: No partition predicate found for Alias "test_part" Table "test_part"`；对应还有`nonstrict`模式（默认模式）。
 `set hive.exec.dynamic.partition.mode=nonstrict;` 设置可以动态分区；因为严格模式下，不允许所有的分区都被动态指定。（详细使用看上面“导出数据到表”章节）
 `set hive.exec.max.dynamic.partitions=100;` 默认是1000；在所有执行的MR节点上，一共可以创建最大动态分区数
 `set hive.exec.max.dynamic.partitions.pernode=100;`  默认是100；在每个执行MR的节点上，最大可以创建多少个动态分区。该参数需要根据实际的数据来设定。比如：源数据中包含了一年的数据，即day字段有365个值，那么该参数就需要设置成大于365，如果使用默认值100，则会报错。
@@ -485,7 +515,14 @@ eg,`set mapreduce.output.fileoutputformat.compress.codec=org.apache.hadoop.io.co
 Hive会自动增加两个表属性：last_modified_by，保存最后修改这个表的用户的用户名；last_modified_time，保存最后一次修改的时间秒，但是如果用户没有手动定义任何的文档说明，这两个属性还是不会自动添加的。
 `show tblproperties table_name` 查看表的`tblproperties`信息
 
-### 命令
+### <> != 区别
+语法: A <> B
+操作类型: 所有基本类型
+描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL；如果表达式A与表达式B不相等，则为TRUE；否则为FALSE
+
+hive中，当两边数据类型不对等时，比较的时候会出现问题。
+
+### 查看命令
 `describe [extended/formatted] table_name` 查看表信息，类似`desc`  可选的`[extended]`可以看到更详细的信息，`formatted`看更多信息，可读性强
 `describe database [extended/formatted] database1` 查看库信息，可以看到库地址
 `drop database database1 cascade/restrict`  库不为空时，一般不允许直接删除，`cascade`保证可以删除，默认是restrict
@@ -496,10 +533,35 @@ hive是“读时模式”，对于存储文件的完整性、数据的格式是�
 只有在读数据时才会尽量的把hdfs的文件和表字段进行匹配。
 我遇到的一个典型例子：hdfs文件里数据是3.5，hive表对应字段类型是`decimal`，这样导致读出来的数是4.（decimal没有指定小数精度时，默认是没有小数位）
 
+### 计算时间的月份差
+`select floor(months_between('2018-07-01','2018-02-04')) from default.dual`
+返回值为: 4
+时间格式必须是`yyyy-mm-dd`，如果是`yyyymmdd`需要转换
+`floor`是取整函数
+
+### yyyy-mm-dd、yyyymmdd转换
+方法1: from_unixtime+ unix_timestamp
+```mysql
+--20171205转成2017-12-05 
+select from_unixtime(unix_timestamp('20171205','yyyymmdd'),'yyyy-mm-dd') from dual;
+
+--2017-12-05转成20171205
+select from_unixtime(unix_timestamp('2017-12-05','yyyy-mm-dd'),'yyyymmdd') from dual;
+```
+
+方法2: substr + concat
+```mysql
+--20171205转成2017-12-05 
+select concat(substr('20171205',1,4),'-',substr('20171205',5,2),'-',substr('20171205',7,2)) from dual;
+
+--2017-12-05转成20171205
+select concat(substr('2017-12-05',1,4),substr('2017-12-05',6,2),substr('2017-12-05',9,2)) from dual;
+```
+
 ### SerDe Library、InputFormat、outputFormat 
 由一个错误引出：`Failed with exception java.io.IOException:java.lang.ClassCastException: org.apache.hadoop.hive.ql.io.orc.OrcStruct cannot be cast to org.apache.hadoop.io.BinaryComparable`
 问题复现：
-建一个外部表，一般inputformat、outputformat写成这样的，都是通过`show create table table_name`得到的。
+建一个外部表，建表语句如下，一般inputformat、outputformat写成下面这样的，都是通过`show create table table_name`得到建表语句：
 ```mysql
 CREATE EXTERNAL TABLE test_orc(
 id string, 
@@ -514,12 +576,13 @@ STORED AS INPUTFORMAT
 OUTPUTFORMAT 
 'org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat';
 ```
-之后使用 `select`查询报上面的错。
+之后使用 `select`查询该表时报上面的错。
 
 原因分析：
 orc格式的表通过show create table得到的建表语句直接建外部表，查数据时会报强转失败的错。
-因为这个建表语句显示了STORED AS INPUTFORMAT/OUTPUTFORMAT，但是没有定义serde，serde使用了默认值 。直接用STORED AS orc 即可。
-通过`describe formatted test_orc`看到`SerDe Library`的类型和`inputformat/outputformat`没有对应，Your SerDe library is LazySimpleSerde and your Input Format and Output Format are ORC. Totally not gonna work!：
+因为这个建表语句显式指定了STORED AS INPUTFORMAT/OUTPUTFORMAT，但是没有定义serde，serde使用了默认值 。
+通过`describe formatted test_orc`看到`SerDe Library`的类型和`inputformat/outputformat`没有对应。
+Your SerDe library is LazySimpleSerde and your Input Format and Output Format are ORC. Totally not gonna work!：
 ```bash
 | # Storage Information |
 | SerDe Library: | org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe |
@@ -570,8 +633,54 @@ Row object –> Serializer –> <key, value> –> OutputFileFormat –> HDFS fil
 这三个参数都可以重写，详细看下面第一个链接。
 参考：https://www.coder4.com/archives/4031
 https://stackoverflow.com/questions/42416236/what-is-the-difference-between-inputformat-outputformat-stored-as-in-hive
+
+### join原理、调优
+(join 时，每次 map/reduce 任务的逻辑是这样的：reducer 会缓存 join 序列中除了最后一个表的所有表的记录，再通过最后一个表将结果序列化到文件系统。) 
+hive允许多个表进行join，如果多个表的on字段都是依据的同一列，将只需要一个MR任务。流程是，前两个表放在reduce内存中，第三个表经过shuffle后通过流式的方式一行一行进入前面的reduce。
+很好理解，一般来说（map side join除外）Map过程负责分发数据，具体JOIN操作在Reduce完成，因此，如果多表基于不同的列做JOIN，则无法在一轮MapReduce任务中将所有相关数据Shuffle到同一个Reduce。
+因此把数据量大的表放在最后join，也可以通过关键字STREAMTABLE指定流式进入的表，这样可以节省reduce不必要的内存。
+
+例如：以下将被“翻译”成1个MapReduce任务(join都基于table2.key1)
+`SELECT talble1.val,table2.val,table3.val from table1 JOIN table2 ON (table1.key=table2.key1) JOIN table3 ON(table3.key = table2.key1)`
+以下将被“翻译”成2个MapReduce任务
+`SElECT table1.val,table2.val,table3.val from table1 JOIN table2 ON(table1.key=table2.key1) JOIN table3 ON(table3.key = table2.key2)；`
+
+通过“STREAMTABLE”显示指定Reduce流式读入的表：
+`SELECT STREAMTABLE(table1) table1.val,table2.val,table3.val from table1 JOIN table2 on (table1.key = table2.key1) JOIN table3 ON(table3.key = table2.key1)`
+
+对于多表JOIN，Hive会将前面的表缓存在Reduce内存中，然后后面的表会流式的进入Reduce和Reduce内存中其他的表做JOIN。例如：
+`SELECT table1.val,table2.val,table3.val from a JOIN b on (table1.key = table2.key1) JOIN c ON(table3.key = table2.key1)`
+在Reduce中，table1、table2表等待JOIN的数据会放在内存中，这会引发一些问题，如果Reduce个数不足或者table1,table2表数据过大，可能导致Out of Memory
+因此，需要将数据量最大的表放到最后，或者通过“STREAMTABLE”显示指定Reduce流式读入的表。例如：
+`SELECT STREAMTABLE(table1) table1.val,table2.val,table3.val from table1 JOIN table2 on (table1.key = table2.key1) JOIN table3 ON(table3.key = table2.key1)`
+此时，table2、table3表数据在Reduce将放在内存中。
+
+**_map端join：_**
+这里与下面“join出错”章节有关。
+MapJoin是Hive的一种优化操作，其适用于小表JOIN大表的场景，由于表的JOIN操作是在Map端且在内存进行的，所以其并不需要启动Reduce任务也就不需要经过shuffle阶段，从而能在一定程度上节省资源提高JOIN效率
+在Hive0.11后，Hive默认启动该优化。
+通过以下两个属性来设置该优化的触发时机
+`hive.auto.convert.join` 默认值为true，自动开户MAPJOIN优化
+`hive.mapjoin.smalltable.filesize` 默认值为2500000(25M),通过配置该属性来确定使用该优化的表的大小，如果表的大小小于此值就会被加载进内存中（默认可自动优化，有时没有，可以用下面的语法指定要存起来的小表）。
+假如JOIN两张表，其中有一张表特别小(可以放在内存中),可以使用Map-side JOIN。
+Map-Side JOIN是在Mapper中做JOIN,原理是将其中一张JOIN表放到每个Mapper任务的内存中，从而不用Reduce任务，在Mapper中就完成JOIN。
+Map-SIde JOIN不适合FULL/RIGHT OUTER JOIN。
+示例如下：
+`SELECT /*+MAPJOIN(b)*/ table1.key,table1.value from a join b on table1.key = table2.key;`
+
+参考：https://www.cnblogs.com/MOBIN/p/5702580.html
+
+**_join中处空值''的语义区别_：**
+''下hive关联操作的字段会被作为关联条件,这样会产生很多垃圾数据,在ETL中数据做了预处理后,
+建议查询条件增加非空串判断: `from stu a join tea b on a.name = b.name and a.name !='' and b.name != '' ;`
+NULL下hive关联操作的字段不会作为关联条件.
+实践中，这一语义区别也是经常导致数据倾斜的原因之一.(mysql操作结果一样)
+
+作者：Bloo_m
+转载自：https://www.jianshu.com/p/ae9b952abf6e （原理值得仔细看，讲的很赞，但是有几处错误）
 ### 易错
 hive cli 有tab补全的功能，因此，如果hql里有tab时，会出现`Display all 479 possibilities? (y or n)`的询问。
+`left/right join on where`时注意条件放在on之后还是where之后，结果会不同。 
 
 ### 读orc格式数据
 hive-0.11版本中的使用方法为：`hive --orcfiledump <location-of-orc-file>`，其他版本的使用方法可以去官方文档中查找。
@@ -600,6 +709,53 @@ at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
 ```
 分析：orc的表是别人建的，无法确定当初建表的hive的版本。google.protobuf是一个作为协议的包，类似于序列化。因此猜测是不同版本的hive的orc不一样导致压缩数据和解压数据无法连起来。
 
+### 使用SQL2011保留字出错
+报错：`Failed to recognize predicate 'xxx'. Failed rule: 'identifier' in column specification`
+原因：我的HQL中出现`row`作为字段名。在Hive1.2.0版本开始增加了如下配置选项，默认值为true：
+`hive.support.sql11.reserved.keywords`该选项的目的是：是否启用对SQL2011保留关键字的支持。 启用后，将支持部分SQL2011保留关键字。
+解决方法（1）：放弃`row`，换一个关键字。
+解决方法（2）：弃用对保留关键字的支持。`set hive.support.sql11.reserved.keywords = false ;`
+解决方法（3）：弃用对保留关键字的支持。在conf下的hive-site.xml配置文件中修改配置选项：
+```xml
+<property>
+    <name>hive.support.sql11.reserved.keywords</name>
+    <value>false</value>
+</property>
+```
+总结自：https://blog.csdn.net/SJF0115/article/details/73244762
+
+### join on中比较大小报错
+报错：`Both left and right aliases encountered in JOIN '1'`
+原因：两个表join的时候，不支持两个表的字段 非相等 操作。Hive 不支持所有非等值的连接，因为非等值连接非常难转化到 map/reduce 任务。
+解决：可以把不相等条件拿到 where语句中。
+
+### 使用distinct报错
+报错`HIVE: cannot recognize input near 'distinct' '('`
+原因：hive的语法中select的字段分两种，all和distinct，默认是all，加distinct的字段必须放在所有查询字段的最前面（mysql也是）。
+总结自：https://stackoverflow.com/questions/38794766/hive-cannot-recognize-input-near-distinct
+
+### memory limits
+报错：`is running beyond physical memory limits. Current usage: 2.0 GB of 2 GB physical memory used; 9.9 GB of 40 GB virtual memory used.`
+分析：`2.0 GB of 2 GB physical memory used` 物理内存溢出 OOM为out of memory
+解决：设置mapper和reducer 物理内存和虚拟内存
+`set mapreduce.map.memory.mb=10240;`  container的内存 运行mapper的容器的物理内存，1024M = 1G
+`set mapreduce.map.java.opts='-Xmx7680M';`  jvm堆内存
+`set mapreduce.reduce.memory.mb=10240;`
+`set mapreduce.reduce.java.opts='-Xmx7680M';`
+在yarn container这种模式下，map/reduce task是运行在Container之中的，所以上面提到的mapreduce.map(reduce).memory.mb大小**_都大于_**mapreduce.map(reduce).java.opts值的大小。mapreduce.{map|reduce}.java.opts能够通过Xmx设置JVM最大的heap的使用，**_一般设置为0.75倍的memory.mb，因为需要为java code等预留些空间_**。
+
+来源于网络：虚拟内存的计算由 物理内存 和 yarn-site.xml中的yarn.nodemanager.vmem-pmem-ratio制定。
+`yarn.nodemanager.vmem-pmem-ratio`是 一个比例，默认是2.1   虚拟内存 = 物理内存 × 这个比例 
+yarn.nodemanager.vmem-pmem-ratio 的比率，默认是2.1.这个比率的控制影响着虚拟内存的使用，当yarn计算出来的虚拟内存，比在mapred-site.xml里的mapreduce.map.memory.mb或mapreduce.reduce.memory.mb的2.1倍还要多时，会被kill掉。
+
+参考：https://blog.csdn.net/yisun123456/article/details/81327372
+### join出错
+报错`FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask`
+一个join操作导致的，原因不明。
+网上查到解决办法：`SET hive.auto.convert.join=false;` 此操作的原理看上面“join原理、调优”章节里的“map端的join”。
+
+
+参考：https://www.cnblogs.com/MOBIN/p/5702580.html
 ### 参考
 参考：http://www.cnblogs.com/smartloli/p/4288493.html
 https://www.jianshu.com/p/bd7820161a49?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation
@@ -610,3 +766,4 @@ hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#te
 hive 常用总结（写的很好）：https://www.cnblogs.com/jiangzhengjun/p/6349226.html
 mp调优：https://www.cnblogs.com/sunxucool/p/4459006.html
 函数（时间、字符串、数值）：https://blog.csdn.net/duan19056/article/details/17758819
+https://segmentfault.com/a/1190000011889191
