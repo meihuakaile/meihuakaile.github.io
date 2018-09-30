@@ -59,7 +59,7 @@ export JAVA_HOME=/usr/java/jdk1.6.0_07
   
 5\.  为了方便执行Hadoop命令，修改/etc/profiles,在最后面加上：
 ```  
-export JAVA_HOME=/usr/lib/jvm/java-7-oracle  
+export JAVA_HOME=/usr/java/jdk1.6.0_07  
 export HADOOP_HOME=/home/hadoop/hadoop-1.2.1  
 export PATH=$PATH:$JAVA_HOME/bin:$HADOOP_HOME/bin  
 export CLASSPATH=.:$JAVA_HOME/lib/dt.jar:$JAVA_HOME/lib/tools.jar:$JAVA_HOME/lib/htmlconverter.jar:$JAVA_HOME/lib/jconsole.jar:$JAVA_HOME/lib/sa-jdi.jar
@@ -432,6 +432,14 @@ hadoop dfsadmin -safemode enter 进入安全模式
 使用帮助命令`hadoop fs -help ls` 看到-d对应的是`Directories are listed as plain files.`
 
 遇到的情况是`hadoop fs -ls -d /user/hive/warehouse/test.db/t/*/*` 假设表test.t是分区表，而且有两个分区，这条命令就可以输出该表所有的分区值。  
+
+## hadoop fs -count < hdfs path >
+输出 目录个数，文件个数，文件总计大小，输入路径
+例如：
+```bash
+hadoop fs -count /data/dltb3yi/
+ 1        24000       253953854502 /data/dltb3yi/      # 获得24000个文件
+```
 
 # 参考
 hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test

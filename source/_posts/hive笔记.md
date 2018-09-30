@@ -310,13 +310,16 @@ B C E
 ```
 从上面的例子中可以看到第二条语句的累加过程
 
-**_hive中group by和mysql不同。mysql可以接受select处理后的别名作为group by，hive的group by不能接受。**_
+**_hive中group by和mysql不同。mysql可以接受select处理后的别名作为group by，hive的group by不能接受。_**
 
-### ORDER BY、SORT BY
-ORDER BY为全局排序，会将所有数据送到同一个Reducer中后再对所有数据进行排序，对于大数据会很慢，谨慎使用
-SORT BY为局部排序，只会在每一个Reducer中对数据进行排序，在每个Reducer输出是有序的，但并非全局排序（每个reducer出来的数据是有序的，但是不能保证所有的数据是有序的——即文件(分区)之间无序，除非只有一个reducer）
-DISTRIBUTE BY 是控制map的输出被送到哪个reducer端进行汇总计算。注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。
-注：这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写
+### ORDER /SORT /DISTRIBUTE BY
+- `ORDER BY` 全局排序，会将所有数据送到同一个Reducer中后再对所有数据进行排序，对于大数据会很慢，谨慎使用
+- `SORT BY` 局部排序，只会在每一个Reducer中对数据进行排序，在每个Reducer输出是有序的，但并非全局排序（每个reducer出来的数据是有序的，但是不能保证所有的数据是有序的——即文件(分区)之间无序，除非只有一个reducer）
+- `DISTRIBUTE BY` 控制map的输出被送到哪个reducer端进行汇总计算，相同字段的map输出会发到一个reduce节点去处理。通过这个特性可以强行使hql有reduce，伴随有减少mapper输出文件个数、减轻数据倾斜等功效，可看下面链接里的例子。
+
+关与`DISTRIBUTE BY`使用非常好的文章：https://www.iteblog.com/archives/1533.html
+
+~~注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写.~~
 
 ### find_in_set
 集合查找函数: find_in_set
@@ -497,6 +500,7 @@ Hive相关的配置属性总结
 `set hive.exec.dynamic.partition.mode=nonstrict;` 设置可以动态分区；因为严格模式下，不允许所有的分区都被动态指定。（详细使用看上面“导出数据到表”章节）
 `set hive.exec.max.dynamic.partitions=100;` 默认是1000；在所有执行的MR节点上，一共可以创建最大动态分区数
 `set hive.exec.max.dynamic.partitions.pernode=100;`  默认是100；在每个执行MR的节点上，最大可以创建多少个动态分区。该参数需要根据实际的数据来设定。比如：源数据中包含了一年的数据，即day字段有365个值，那么该参数就需要设置成大于365，如果使用默认值100，则会报错。
+`set hive.exec.reducers.bytes.per.reducer` 每个reduce任务处理的数据量，默认为1000^3=1G
 
 动态分区参考：http://lxw1234.com/archives/2015/06/286.htm
 
@@ -518,7 +522,8 @@ Hive会自动增加两个表属性：last_modified_by，保存最后修改这个
 ### <> != 区别
 语法: A <> B
 操作类型: 所有基本类型
-描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL；如果表达式A与表达式B不相等，则为TRUE；否则为FALSE
+描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL，因此比较时要特别注意字段为null的情况；
+如果表达式A与表达式B不相等，则为TRUE；否则为FALSE
 
 hive中，当两边数据类型不对等时，比较的时候会出现问题。
 
