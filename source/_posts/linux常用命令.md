@@ -159,6 +159,12 @@ eval其他用法参考：http://blog.51cto.com/363918/1341977
 `grep -v`过滤掉某些的数据
 
 grep 参数：http://man.linuxde.net/grep
+
+### 递归查文件个数
+`ls -lR ./order/ ./user/|grep "^-"|wc -l`
+递归查普通文件个数
+`-H` 以M格式看文件大小
+
 ### 函数返回字符串
 shell脚本的return只能返回数值类型，可是我们很多时候想返回字符串。在函数中直接用echo 字符串，在调用时就可以得到返回字符串。
 ```shell

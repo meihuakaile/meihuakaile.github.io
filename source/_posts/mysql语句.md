@@ -215,3 +215,6 @@ x指要处理的数，d是指保留几位小数。用于数据的四舍五入。
 ### substr(string, start, length)
 从start开始截取string字符串，截取长度length。
 从第一个开始截取start是1.
+
+### grant
+`show grants for username` 查看mysql用户权限
