@@ -501,7 +501,7 @@ Hive会自动增加两个表属性：last_modified_by，保存最后修改这个
 ### <> != 区别
 语法: A <> B
 操作类型: 所有基本类型
-描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL，因此比较时要特别注意字段为null的情况；
+描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL，因此比较时要特别注意字段为null的情况（如果有一边等于null，结果就是false）；
 如果表达式A与表达式B不相等，则为TRUE；否则为FALSE
 
 hive中，当两边数据类型不对等时，比较的时候会出现问题。
@@ -654,10 +654,10 @@ Map-SIde JOIN不适合FULL/RIGHT OUTER JOIN。
 
 参考：https://www.cnblogs.com/MOBIN/p/5702580.html
 
-**_join中处空值''的语义区别_：**
+**_join中处空值''/null的语义区别_：**
 ''下hive关联操作的字段会被作为关联条件,这样会产生很多垃圾数据,在ETL中数据做了预处理后,
 建议查询条件增加非空串判断: `from stu a join tea b on a.name = b.name and a.name !='' and b.name != '' ;`
-NULL下hive关联操作的字段不会作为关联条件.
+NULL下hive关联操作的字段不会作为关联条件,即使是`null=null`的结果也是false.
 实践中，这一语义区别也是经常导致数据倾斜的原因之一.(mysql操作结果一样)
 
 作者：Bloo_m

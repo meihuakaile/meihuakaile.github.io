@@ -218,3 +218,12 @@ x指要处理的数，d是指保留几位小数。用于数据的四舍五入。
 
 ### grant
 `show grants for username` 查看mysql用户权限
+
+### group_concat
+`group_concat([DISTINCT] 要连接的字段 [Order BY 排序字段 ASC/DESC] [Separator '分隔符'] )`
+分割字符默认是逗号。
+
+### 
+`Mysql ERROR 1690 (22003): BIGINT UNSIGNED value is out of range in..`
+因为字段类型为unsigned,所以当相减结果为负值时会报错.
+解决：使用cast()修改字段类型为signed

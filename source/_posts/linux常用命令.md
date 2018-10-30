@@ -106,7 +106,10 @@ cat test.txt|awk '{print $1}'|sort|uniq -c
 
 ### dir=$( cd $(dirname $0) ; pwd -P )
 得到当前运行脚本实际物理地址，而非链接地址。
-$0就是当前运行脚本；dirname得到指定脚本所在的目录，在执行时相对的路径。pwd 的-P得到的实际物理地址，不是连接的地址；-L是链接地址，而非物理地址。
+$0就是当前运行脚本；
+`dirname`得到指定脚本所在的目录，在执行时相对的路径。
+`pwd 的-P` 得到的实际物理地址，不是连接的地址；-L是链接地址，而非物理地址。
+`basename` 是去除目录后剩下的名字.
 
 ### 1>/dev/null 2>&1
 （1）1>/dev/null 首先表示标准输出重定向到空设备文件，也就是不输出任何信息到终端，说白了就是不显示任何信息。
@@ -160,11 +163,23 @@ eval其他用法参考：http://blog.51cto.com/363918/1341977
 
 grep 参数：http://man.linuxde.net/grep
 
+### $! 
+`$!` Shell最后运行的后台Process的PID
+wait PID || exit 1
 ### 递归查文件个数
 `ls -lR ./order/ ./user/|grep "^-"|wc -l`
 递归查普通文件个数
-`-H` 以M格式看文件大小
+`-h` 以M格式看文件大小
 
+### 逐行读文件
+```bash
+cat testdata | while read line
+do
+    echo $line
+done
+```
+
+其他方法：https://www.cnblogs.com/DengGao/p/5935688.html
 ### 函数返回字符串
 shell脚本的return只能返回数值类型，可是我们很多时候想返回字符串。在函数中直接用echo 字符串，在调用时就可以得到返回字符串。
 ```shell
