@@ -25,7 +25,7 @@ Plugin的wrap方法，它根据当前的Interceptor上面的注解定义哪些�
 2、在mybatis的配置文件中写上
 ```xml
 <plugins>
-        <!--<plugin interceptor="com.qunar.data.intercepts.MyIntercept"></plugin>-->
+        <!--<plugin interceptor="com.data.intercepts.MyIntercept"></plugin>-->
         <plugin interceptor="com.github.pagehelper.PageHelper">
             <property name="dialect" value="mysql"/>
         </plugin>

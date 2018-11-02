@@ -15,6 +15,7 @@ select * from table1 a inner join table2 b on a.id=b.id;
 `-h` 主机
 `-P` 端口号
 `-s` 静默模式，省略很多输出。比如select时输出的列名等。
+`-A` 省略输出列名。
 `数据库名` 在语句最后跟上数据库名会直接进入该数据库。
 `-A` 与`--auto-rehash`相反，emmmm,看不太懂，大概意思应该是`auto-rehash` 会变慢，但是可以自动补全，默认也是这种模式。
 `--default-character-set=utf8` mysql客户端默认使用latin1编码，系统使用其他编码时会出现乱码等问题。使用这个选项可以强制指定编码解决问题。

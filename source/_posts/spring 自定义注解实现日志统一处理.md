@@ -15,7 +15,7 @@ copyright: true
 
 #####  1.controller、service自定义注解
 ```java
-    package com.qunar.fresh.annotation;
+    package com.fresh.annotation;
      
     import java.lang.annotation.ElementType;
     import java.lang.annotation.Retention;
@@ -35,7 +35,7 @@ copyright: true
     }
     
     
-    package com.qunar.fresh.annotation;
+    package com.fresh.annotation;
      
     import java.lang.annotation.ElementType;
     import java.lang.annotation.Retention;
@@ -58,10 +58,10 @@ copyright: true
 
 #####  2.写aop进行切面
 ```java
-    package com.qunar.fresh.aop;
+    package com.fresh.aop;
      
-    import com.qunar.fresh.annotation.ControllerLog;
-    import com.qunar.fresh.annotation.ServiceLog;
+    import com.fresh.annotation.ControllerLog;
+    import com.fresh.annotation.ServiceLog;
     import lombok.extern.slf4j.Slf4j;
     import org.apache.commons.lang3.StringUtils;
     import org.apache.commons.lang3.text.StrBuilder;
@@ -83,12 +83,12 @@ copyright: true
     @Aspect
     public class LogAop {
      
-     @Pointcut("@annotation(com.qunar.fresh.annotation.ServiceLog)")
+     @Pointcut("@annotation(com.fresh.annotation.ServiceLog)")
      public void serviceAspect(){
         log.info("service 日志");
      }
      
-     @Pointcut("@annotation(com.qunar.fresh.annotation.ControllerLog)") //
+     @Pointcut("@annotation(com.fresh.annotation.ControllerLog)") //
      public void controllerAspect(){
         log.info("controller 日志");
      }
@@ -147,11 +147,11 @@ copyright: true
 
 #####  4.使用
 ```java
-    package com.qunar.fresh.controller;
+    package com.fresh.controller;
      
-    import com.qunar.fresh.annotation.ControllerLog;
-    import com.qunar.fresh.annotation.LoginRequired;
-    import com.qunar.fresh.service.TestService;
+    import com.fresh.annotation.ControllerLog;
+    import com.fresh.annotation.LoginRequired;
+    import com.fresh.service.TestService;
     import org.springframework.stereotype.Controller;
     import org.springframework.web.bind.annotation.PathVariable;
     import org.springframework.web.bind.annotation.RequestMapping;
@@ -181,7 +181,7 @@ copyright: true
     }
     
     
-    package com.qunar.fresh.service;
+    package com.fresh.service;
      
     /**
      * TestService
@@ -193,10 +193,10 @@ copyright: true
      void printHello( String name);
     }
      
-    package com.qunar.fresh.service.impl;
+    package com.fresh.service.impl;
      
-    import com.qunar.fresh.annotation.ServiceLog;
-    import com.qunar.fresh.service.TestService;
+    import com.fresh.annotation.ServiceLog;
+    import com.fresh.service.TestService;
     import lombok.extern.slf4j.Slf4j;
     import org.springframework.stereotype.Service;
      
@@ -220,6 +220,6 @@ copyright: true
 这样，当浏览器输入：  [ http://localhost:8080/test/one/who
 ](http://localhost:8080/test/one/who) 时，会有如下输出日志：  
 ```
-    INFO com.qunar.fresh.aop.LogAop - 测试用aop统一处理日志操作: com.qunar.fresh.controller.TestController类的test()方法被请求，参数为： [who]
-    INFO com.qunar.fresh.aop.LogAop - 测试aop统一处理service日志输出操作: com.qunar.fresh.service.impl.TestServiceImpl类的printHello()方法被请求，参数为： [who]
+    INFO com.fresh.aop.LogAop - 测试用aop统一处理日志操作: com.fresh.controller.TestController类的test()方法被请求，参数为： [who]
+    INFO com.fresh.aop.LogAop - 测试aop统一处理service日志输出操作: com.fresh.service.impl.TestServiceImpl类的printHello()方法被请求，参数为： [who]
 ```

@@ -2,7 +2,7 @@
 title: spring遇到问题
 date: "2018/09/05"
 tags: ['spring']
-categories: ['spring问题']
+categories: ['spring']
 copyright: true
 ---
 # javax.management.RuntimeMBeanException: java.lang.UnsupportedOperationException: Usage threshold is not supported
@@ -13,11 +13,11 @@ javax.management.RuntimeMBeanException: java.lang.UnsupportedOperationException:
         at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.rethrowMaybeMBeanException(DefaultMBeanServerInterceptor.java:852) ~[na:1.8.0_144]
         at com.sun.jmx.interceptor.DefaultMBeanServerInterceptor.getAttribute(DefaultMBeanServerInterceptor.java:651) ~[na:1.8.0_144]
         at com.sun.jmx.mbeanserver.JmxMBeanServer.getAttribute(JmxMBeanServer.java:678) ~[na:1.8.0_144]
-        at qunar.servlet.server.TomcatServer.extractContext(TomcatServer.java:40) [common-core-8.3.2.jar:na]
-        at qunar.servlet.server.ServerWrapper.<init>(ServerWrapper.java:26) [common-core-8.3.2.jar:na]
-        at qunar.servlet.server.TomcatServer.<init>(TomcatServer.java:14) [common-core-8.3.2.jar:na]
-        at qunar.ServletWatcher.portOf(ServletWatcher.java:240) [common-core-8.3.2.jar:na]
-        at qunar.ServletWatcher.fixPort(ServletWatcher.java:232) [common-core-8.3.2.jar:na]
+        at servlet.server.TomcatServer.extractContext(TomcatServer.java:40) [common-core-8.3.2.jar:na]
+        at servlet.server.ServerWrapper.<init>(ServerWrapper.java:26) [common-core-8.3.2.jar:na]
+        at servlet.server.TomcatServer.<init>(TomcatServer.java:14) [common-core-8.3.2.jar:na]
+        at ServletWatcher.portOf(ServletWatcher.java:240) [common-core-8.3.2.jar:na]
+        at ServletWatcher.fixPort(ServletWatcher.java:232) [common-core-8.3.2.jar:na]
         at qunar.ServletWatcher.init(ServletWatcher.java:91) [common-core-8.3.2.jar:na]
         at qunar.ServletWatcher.contextInitialized(ServletWatcher.java:58) [common-core-8.3.2.jar:na]
         at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:5016) [tomcat-embed-core-7.0.59.jar:7.0.59]

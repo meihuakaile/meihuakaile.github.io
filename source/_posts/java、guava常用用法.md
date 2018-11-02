@@ -145,7 +145,7 @@ public class LoginInterceptor extends HandlerInterceptorAdapter{
 @Component
 public class DaoAop {
 
-    @Pointcut("execution(* com.qunar.fresh.dao.*.*(..))")
+    @Pointcut("execution(* com.fresh.dao.*.*(..))")
     public void daoPoint(){}
 
     @Around("daoPoint()")
@@ -163,4 +163,4 @@ public class DaoAop {
     }
 }
 ```
-com.qunar.fresh.dao.\*.\*(..)  是包.类.方法(参数),上面的例子是统计dao层方法的执行时间。
+com.fresh.dao.\*.\*(..)  是包.类.方法(参数),上面的例子是统计dao层方法的执行时间。

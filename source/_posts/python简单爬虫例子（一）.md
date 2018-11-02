@@ -36,7 +36,7 @@ urllib2是python提供的抓取网页的组件。
     import urllib
     import urllib2
     
-    #http://dujia.qunar.com/pq/list_%E5%AE%9C%E6%98%8C?searchfrom=around&arounddep=%E6%AD%A6%E6%B1%89&tf=Ihot_01
+    #http://dujia.com/pq/list_%E5%AE%9C%E6%98%8C?searchfrom=around&arounddep=%E6%AD%A6%E6%B1%89&tf=Ihot_01
     data = {}
     data['searchfrom'] = 'around'
     data['arounddep'] = '%E6%AD%A6%E6%B1%89'
@@ -44,7 +44,7 @@ urllib2是python提供的抓取网页的组件。
     
     value = urllib.urlencode(data)
     print value
-    url = 'http://dujia.qunar.com/pq/list_%E5%AE%9C%E6%98%8C' + '?' + value
+    url = 'http://dujia.com/pq/list_%E5%AE%9C%E6%98%8C' + '?' + value
     
     response = urllib2.urlopen(url)
     print response.read()
@@ -57,7 +57,7 @@ urllib2是python提供的抓取网页的组件。
     import urllib
     import urllib2
     
-    #http://dujia.qunar.com/pq/list_%E5%AE%9C%E6%98%8C?searchfrom=around&arounddep=%E6%AD%A6%E6%B1%89&tf=Ihot_01
+    #http://dujia.com/pq/list_%E5%AE%9C%E6%98%8C?searchfrom=around&arounddep=%E6%AD%A6%E6%B1%89&tf=Ihot_01
     data = {}
     data['searchfrom'] = 'around'
     data['arounddep'] = '%E6%AD%A6%E6%B1%89'
@@ -66,7 +66,7 @@ urllib2是python提供的抓取网页的组件。
     value = urllib.urlencode(data)
     print value
     
-    url = 'http://dujia.qunar.com/pq/list_%E5%AE%9C%E6%98%8C'
+    url = 'http://dujia.com/pq/list_%E5%AE%9C%E6%98%8C'
     response = urllib2.urlopen(url,value)
     print response.read()
 

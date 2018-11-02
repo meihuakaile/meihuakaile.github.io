@@ -641,12 +641,13 @@ hive允许多个表进行join，如果多个表的on字段都是依据的同一�
 
 **_map端join：_**
 这里与下面“join出错”章节有关。
-MapJoin是Hive的一种优化操作，其适用于小表JOIN大表的场景，由于表的JOIN操作是在Map端且在内存进行的，所以其并不需要启动Reduce任务也就不需要经过shuffle阶段，从而能在一定程度上节省资源提高JOIN效率
+假如JOIN两张表，其中有一张表特别小(可以放在内存中),可以使用Map-side JOIN。Join计算时，将小表（驱动表）放在join的左边。
+MapJoin是Hive的一种优化操作，其适用于小表JOIN大表的场景。表的JOIN操作会在Map端且在内存进行，所以其并不需要启动Reduce任务也就不需要经过shuffle阶段，从而能在一定程度上节省资源提高JOIN效率。
 在Hive0.11后，Hive默认启动该优化。
 通过以下两个属性来设置该优化的触发时机
 `hive.auto.convert.join` 默认值为true，自动开户MAPJOIN优化
 `hive.mapjoin.smalltable.filesize` 默认值为2500000(25M),通过配置该属性来确定使用该优化的表的大小，如果表的大小小于此值就会被加载进内存中（默认可自动优化，有时没有，可以用下面的语法指定要存起来的小表）。
-假如JOIN两张表，其中有一张表特别小(可以放在内存中),可以使用Map-side JOIN。
+`hive.ignore.mapjoin.hint；`（默认值：true；是否忽略mapjoin hint 即mapjoin标记）
 Map-Side JOIN是在Mapper中做JOIN,原理是将其中一张JOIN表放到每个Mapper任务的内存中，从而不用Reduce任务，在Mapper中就完成JOIN。
 Map-SIde JOIN不适合FULL/RIGHT OUTER JOIN。
 示例如下：

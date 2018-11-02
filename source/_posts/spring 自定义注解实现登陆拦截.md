@@ -18,7 +18,7 @@ copyright: true
 例子：  
 #####  1.自定义注解
 ```java
-    package com.qunar.fresh.annotation;
+    package com.fresh.annotation;
     
     import java.lang.annotation.ElementType;
     import java.lang.annotation.Retention;
@@ -48,9 +48,9 @@ Retention(保留)注解说明,这种类型的注解会被保留到那个阶段. 
 其他相关注解：https://www.jb51.net/article/55371.htm
 #####  2.写一个拦截器
 ```java
-    package com.qunar.fresh.interceptor;
+    package com.fresh.interceptor;
     
-    import com.qunar.fresh.annotation.LoginRequired;
+    import com.fresh.annotation.LoginRequired;
     import lombok.extern.slf4j.Slf4j;
     import org.springframework.stereotype.Component;
     import org.springframework.web.method.HandlerMethod;
@@ -136,9 +136,9 @@ Retention(保留)注解说明,这种类型的注解会被保留到那个阶段. 
 ```
 #####  4.使用例子
 ```java
-    package com.qunar.fresh.controller;
+    package com.fresh.controller;
     
-    import com.qunar.fresh.annotation.LoginRequired;
+    import com.fresh.annotation.LoginRequired;
     import org.springframework.stereotype.Controller;
     import org.springframework.web.bind.annotation.RequestMapping;
     

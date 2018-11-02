@@ -9,7 +9,7 @@ mvn --version == mvn -v
 mvn archetype:generate 自动生成mvn项目
 
 **_使用archetype插件生成一个webapp项目：_**
-mvn archetype:generate -DgroupId=com.qunar.fresh -DartifactId=mytestapp -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
+mvn archetype:generate -DgroupId=com.fresh -DartifactId=mytestapp -DarchetypeArtifactId=maven-archetype-webapp -DinteractiveMode=false
 
 `mvn clean` **_清除项目_**
 `mvn compile` **_编译代码_**
