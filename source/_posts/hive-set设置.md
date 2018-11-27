@@ -7,6 +7,7 @@ copyright: true
 ---
 直接`set`命令可以看到所有变量值。
 `set`单个参数，可以看见这个参数的值。
+
 ### 常用hiveconf
 Hive相关的配置属性总结
 `set hive.cli.print.current.db=true;` 在cli hive提示符后显示当前数据库。
@@ -23,60 +24,20 @@ Hive相关的配置属性总结
 
 动态分区参考：http://lxw1234.com/archives/2015/06/286.htm
 
-### group by数据倾斜优化
-`SET hive.groupby.skewindata=true;` 当选项设定为 true，生成的查询计划会有两个 MR Job。第一个 MR Job 中，Map 的输出结果集合会随机分布到 Reduce 中，每个 Reduce 做部分聚合操作，并输出结果，这样处理的结果是相同的 Group By Key 有可能被分发到不同的 Reduce 中，从而达到负载均衡的目的；第二个 MR Job 再根据预处理的数据结果按照 Group By Key 分布到 Reduce 中（这个过程可以保证相同的 Group By Key 被分布到同一个 Reduce 中），最后完成最终的聚合操作.
-~~从上面group by语句可以看出，这个变量是用于控制负载均衡的。当数据出现倾斜时，如果该变量设置为true，那么Hive会自动进行负载均衡~~
-~~比如A日志表与B码表join，但是A中的关联字段id仅是B中id的一小部分，这时候很容易出现reduce阶段倾斜，大量的reduce空跑，因为这些空跑的reduce分到的B的id在A中不存在。~~
-`set hive.map.aggr=true;` 在mapper端部分聚合，相当于Combiner 。Map-Side聚合（一般在聚合函数sum,count时使用）。
-
-特别的有`select count(distinct name) from user group by uid;` 即count distinct + （group by）的情况。
-改变为`select count(name) from (select uid, name from user group by uid, name)t group by uid`.
-主要是把count distinct改变成group by。
-```sql
-select split(uid, '_')[0], sum(names) from
-(
-  select concat_ws('-', uid, substr(rand()*10, 1, 1)) uid, count(name) names
-  from 
-  (
-    select uid, name
-    from user
-    group by uid, name
-  )a
-  group by concat_ws('-', uid, substr(rand()*10, 1, 1))
-)b
-group by split(uid, '_')[0]
-```
-### join 数据倾斜优化
-1、`null=null`结果是null，即false，因此在join之前把key为null的值去掉。
-   如果null有用不能去掉。办法（1）用union all
-   ```sh
-   Select * From log a 
-　　　Join users b 
-     On a.user_id is not null And a.user_id = b.user_id
-　 Union all 
-   Select * from log a　where a.user_id is null;
-   ```
-   办法（2）赋予null值新的随机值
-   ```sh
-    Select * from log a 
-　　left outer Join bmw_users b 
-   on case when a.user_id is null then concat(‘dp_hive’,rand()) 
-　　   else a.user_id end = b.user_id; 
-   ```
-   
-2、`group by`操作放在join之前，减少join的笛卡尔积大小。
-3、`set hive.skewjoin.key=100000;` hive 在运行的时候没有办法判断哪个 key 会产生多大的倾斜，所以使用这个参数控制倾斜的阈值，如果超过这个值，新的值会发送给那些还没有达到的 reduce
-
 ### 并发优化
 `set hive.exec.parallel=true;`  开启任务并行执行
 `set hive.exec.parallel.thread.number=8;`  同一个sql允许并行任务的最大线程数
 
 job之间没有前后依赖的都可以并行执行。
 ### 内存
-`set mapreduce.map.memory.mb=10240;`  container的内存 运行mapper的容器的物理内存，1024M = 1G
-`set mapreduce.map.java.opts='-Xmx7680M';`  jvm堆内存
-`set mapreduce.reduce.memory.mb=10240;`
-`set mapreduce.reduce.java.opts='-Xmx7680M';`
+```sql
+set mapreduce.map.memory.mb=20480;
+set mapreduce.map.java.opts='-Xmx20480M';  
+set mapreduce.reduce.memory.mb=20480;
+set mapreduce.reduce.java.opts='-Xmx20480M';
+```
+`set mapreduce.map.memory.mb`  container的内存 运行mapper的容器的物理内存，1024M = 1G
+`set mapreduce.map.java.opts`  jvm堆内存
 在yarn container这种模式下，map/reduce task是运行在Container之中的，所以上面提到的mapreduce.map(reduce).memory.mb大小**_都大于_**mapreduce.map(reduce).java.opts值的大小。mapreduce.{map|reduce}.java.opts能够通过Xmx设置JVM最大的heap的使用，**_一般设置为0.75倍的memory.mb，因为需要为java code等预留些空间_**。
 
 来源于网络：虚拟内存的计算由 物理内存 和 yarn-site.xml中的yarn.nodemanager.vmem-pmem-ratio制定。
@@ -96,38 +57,10 @@ yarn.nodemanager.vmem-pmem-ratio 的比率，默认是2.1.这个比率的控制�
 `set mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec;`  设置压缩类型
 `set mapred.output.compression.type=BLOCK;` 大文件压缩仍然会耗时，而且影响mapper并行（mapper并行和文件的个数有关），这个设置，使大的文件可以分割成小文件进行压缩
 
+**_gzip不支持切片，切片参数都不管用。如果要压缩成gzip格式，做好控制在170M，mr的效果是最好的。_**
+
 这种处理文件压缩的能力并非是hive特有的，实际上，使用了hadoop的TextInputFormat进行处理，它可以识别后缀名是.deflate或.gz的压缩文件，并可以轻松处理。
 hive无需关心底层文件是否是压缩的，以及如何压缩的。
-
-### 输出文件合并
-**_文件合并 和 上面的压缩 并存时会失效。而且文件合并对`orc`格式的表（orc本身就已经压缩）不起作用。_**
-`set hive.merge.mapfiles = true `#在Map-only的任务结束时合并小文件
-`set hive.merge.mapredfiles = true` #在Map-Reduce的任务结束时合并小文件
-`set hive.merge.size.per.task = 256*1000*1000` #合并后每个文件的大小，默认256000000
-`set hive.merge.smallfiles.avgsize=16000000 `#平均文件大小，是决定是否执行合并操作的阈值，默认16000000
-触发合并的条件是：
-根据查询类型不同，相应的mapfiles/mapredfiles参数必须需要打开，即前两个参数根据场景必须有一个为true；
-结果文件的平均大小需要小于avgsize参数的值。
-
-合并过程：结果文件进行合并时会执行一个额外的map-only脚本，mapper的数量是文件总大小除以size.per.task参数所得的值。
-
-### 控制mapper大小
-文件合并失效，且job只有map时，map的个数就是文件个数；通过控制map大小控制map个数，以控制输出文件个数。
-`set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;` 执行Map前进行小文件合并
-`set mapred.max.split.size=2048000000;` 2G 每个Map最大输入大小。
-`set mapred.min.split.size=2048000000;`  
-`set mapred.min.split.size.per.node=2048000000;` 一个节点上split的至少的大小 ，决定了多个data node上的文件是否需要合并
-`set mapred.min.split.size.per.rack=2048000000;` 一个交换机下split的至少的大小，决定了多个交换机上的文件是否需要合并
-MR-Job 默认的输入格式 FileInputFormat 为每一个小文件生成一个切片。
-CombineFileInputFormat 通过将多个“小文件”合并为一个”切片”（在形成切片的过程中也考虑同一节点、同一机架的数据本地性），让每一个 Mapper 任务可以处理更多的数据，从而提高 MR 任务的执行速度。
-
-https://www.cnblogs.com/skyl/p/4754999.html
-
-### 小文件压缩
-解决小文件的问题可以从两个方向入手：
-1. 输入合并。即在Map前合并小文件
-2. 输出合并。即在输出结果的时候合并小文件
-对于输出结果为压缩文件形式存储的情况，如果使用输出合并，则必须配合SequenceFile来存储，否则无法进行合并。
 
 ### 关于Strict Mode 
 

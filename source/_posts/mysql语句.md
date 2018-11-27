@@ -38,9 +38,13 @@ no default database.
 `alter table table_name1 rename to table_name2` 把表名由表1改为表2
 `alter table table_name1 modify column field1 field1_type`  修改字段长度/字段类型
 `alter table table_name1 change old_field new_field field_type` 修改字段名字，必须跟上字段类型
+`alter table table_name1 add column new_field field_type` 新增字段
 
 ### 增删改查
 `update table_name set field1='value1', field2='value2' [where ...]`修改多个字段值 
+
+### 多个表关联update
+`UPDATE items,month SET items.price=month.price WHERE items.id=month.id;`
 
 ### 布尔类型
 首先mysql是不支持布尔类型的，当把一个数据设置成布尔类型的时候,数据库会自动转换成tinyint(1)的数据类型,其实这个就是变相的布尔。
@@ -65,7 +69,7 @@ select * from table1 inner join table2 on 条件
 #### ...right join ....on....
 右表的数据会全部输出来，没有的补null。
 https://www.cnblogs.com/dinglinyong/p/6656315.html
-#### UNION
+#### UNION / UNION ALL 
 用于合并两个或多个 SELECT 语句的结果集。
 UNION 内部的 SELECT 语句必须拥有相同数量的列。列也必须拥有相似的数据类型。每条 SELECT 语句中的列的顺序必须相同。
 UNION 操作符选取不同的值。如果允许重复的值，请使用 UNION ALL。
@@ -89,11 +93,6 @@ from A right join B on A.id = B.id （where条件);
 因此，如果子语句是小表就用in，是大表就用exit；
 in语法：select * from 表A where id in (select id from 表B)
 exit语法：select * from 表A where exists(select * from 表B where 表B.id=表A.id)
-
-### limit优化
-
-数据库数据很多的时候会发现分页查询会越来越慢，使用一个id控制就会变快很多（但其实思考到，加入表里数据并不规整有删除的情况，可能会无法使用）。
-如，select id,name from product limit 866613, 20。——》 select id,name from product where id> 866612 limit 20；
 
 ### 导入导出数据
 
@@ -136,6 +135,11 @@ group by 一般和聚合函数一起使用才有意义,比如 count sum avg等,�
 `LIMIT [offset,] rows`
 offset指定要返回的第一行的偏移量,rows第二个指定返回行的最大数目。初始行的偏移量是0(不是1)。
 `select * from table_name limit 10,5`  查询第11到第15条数据
+
+### limit优化
+
+数据库数据很多的时候会发现分页查询会越来越慢，使用一个id控制就会变快很多（但其实思考到，加入表里数据并不规整有删除的情况，可能会无法使用）。
+如，select id,name from product limit 866613, 20。——》 select id,name from product where id> 866612 limit 20；
 
 ### like
 (1)`%` ：0个或多个；`*`一个或多个；`_` `?` 一个字符。
@@ -221,10 +225,10 @@ x指要处理的数，d是指保留几位小数。用于数据的四舍五入。
 `show grants for username` 查看mysql用户权限
 
 ### group_concat
-`group_concat([DISTINCT] 要连接的字段 [Order BY 排序字段 ASC/DESC] [Separator '分隔符'] )`
-分割字符默认是逗号。
+`group_concat([DISTINCT] 要连接的字段 [Order BY 排序字段 ASC/DESC] [Separator '分隔符'] )` 分割字符默认是逗号
+有把一列数据变成一行的功效。 把`要连接的字段` 这个字段的 所有值由一列变成一行；可按照 `排序字段` 排序；`分隔符`是变成一行时的连接符。
 
-### 
+### ERROR 1690
 `Mysql ERROR 1690 (22003): BIGINT UNSIGNED value is out of range in..`
 因为字段类型为unsigned,所以当相减结果为负值时会报错.
 解决：使用cast()修改字段类型为signed

@@ -15,6 +15,10 @@ copyright: true
 （4）`BEGIN` `END`必须是大写。
 （5）由上面的（2），外面是单引号，那里面字符必须使用双引号。
 
+# print 单/双引号
+双引号：使用`\`转义`awk '{print "version=\"1.0\""}'` 输出结果`version="1.0"`
+单引号：使用`\`转义，并用单引号引起来`awk '{print "version='\''1.0'\''"}'` 输出结果`version='1.0'`
+
 # 使用方法
 （1）awk 'pattern{action}' input-file(s)  
 pattern匹配行，并对匹配做出action操作。{action}可省。

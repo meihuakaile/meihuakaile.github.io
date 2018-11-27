@@ -11,8 +11,7 @@ copyright: true
 这是了解到的三种打包。
 第一种是直接打包，没有用插件，问题是不会把项目的依赖包打包，作为执行包可能会出错。
 后面两个是插件。网上说(2)有bug，多个依赖包可能会依赖不同版本的同一个包，这时会把这个包的某一个版本打包，然后就会出错。
-插件(3)会把这个包的所有版本都打包。
-
+插件(3)会把这个包的所有版本都打包。（2）的goal有single、help；（3）的goal的goal有shade、help
 ```xml
 <plugins>
         <!--tomcat插件，使用mvn:tomcat7 clean run-->
@@ -45,10 +44,56 @@ copyright: true
       
       <!--maven-shade-plugin插件-->
       <plugin>  
+      <!--都是org.apache.maven.plugins， 可以省略-->
         <groupId>org.apache.maven.plugins</groupId>  
         <artifactId>maven-shade-plugin</artifactId>  
-        <version>1.4</version>  
-      </plugin>  
+        <version>3.1.1</version>
+        <executions>
+            <execution>
+               <!--将shade插件的shade:shade加入到Maven的package阶段-->
+               <!--可以通过命令mvn clean package 也执行shade:shade阶段-->
+               <phase>package</phase>
+               <goals>
+                    <goal>shade</goal>
+               </goals>
+               <!--直接在代码里指定主函数，使用run jar时，不再需要指定主函数-->
+               <!--例如，hadoop的run jar执行时只需要 hadoop jar jar包 参数-->
+               <configuration>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>
+                                        com.mr.wordcount.WordCountJob
+                                    </mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+            </execution>
+        </executions>  
+      </plugin>
+      
+      <!--maven-assembly-plugin插件-->
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+            <execution>
+                <phase>package</phase>
+                <goals>
+                    <goal>single</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <descriptorRefs>
+                <descriptorRef>jar-with-dependencies</descriptorRef>
+            </descriptorRefs>
+            <archive>
+                <index>true</index>
+                <manifest>
+                    <mainClass>com.mr.wordcount.WordCountJob</mainClass>
+                </manifest>
+            </archive>
+        </configuration>
+      </plugin>
       
       <plugin> 
          <groupId>org.apache.maven.plugins</groupId> 
@@ -71,3 +116,28 @@ maven-compiler-plugin用来编译Java代码，maven-resources-plugin则用来处
 
 总结自：http://chenzhou123520.iteye.com/blog/1706242
 链接：https://www.jianshu.com/p/ce01bb1615a8
+
+在项目下pom.xml的project节点下创建了开发环境和线上环境的profile
+```xml
+<profiles>
+        <profile>
+            <id>dev</id>
+            <properties>
+                <env>dev</env>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <profile>
+            <id>prd</id>
+            <properties>
+                <env>prd</env>
+            </properties>
+        </profile>
+    </profiles>
+```
+其中id代表这个环境的唯一标识.
+properties下我们我们自己自定义了标签env，内容分别是dev和prd。
+activeByDefault=true代表如果不指定某个固定id的profile，那么就使用这个环境.
+参考：https://www.cnblogs.com/nfcm/p/7550772.html

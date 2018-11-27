@@ -409,39 +409,3 @@ ssh 192.168.231.129
 export HADOOP_CONF_DIR=~/HadoopCluterTest/conf
 $HADOOP_HOME/bin/start-all.sh
 ```
-# HDFS常用操作
-hadoop dfs -ls 列出HDFS下的文件  
-hadoop dfs -ls in 列出HDFS下某个文档中的文件  
-hadoop dfs -put test1.txt test 上传文件到指定目录并且重新命名，只有所有的DataNode都接收完数据才算成功  
-hadoop dfs -get in getin 从HDFS获取文件并且重新命名为getin，同put一样可操作文件也可操作目录  
-hadoop dfs -rmr out 删除指定文件从HDFS上  
-hadoop dfs -cat in/* 查看HDFS上in目录的内容  
-hadoop dfsadmin -report 查看HDFS的基本统计信息   
-hadoop dfsadmin -safemode leave 退出安全模式  
-hadoop dfsadmin -safemode enter 进入安全模式  
-
-## test
-使用方法：hadoop fs -test -[ezd] URI
-选项：
--e 检查文件是否存在。如果存在则返回0。
--z 检查文件是否是0字节。如果是则返回0。 
--d 如果路径是个目录，则返回1，否则返回0。
-示例：`hadoop fs -test -e filename`
-
-## hadoop fs -ls -d
-使用帮助命令`hadoop fs -help ls` 看到-d对应的是`Directories are listed as plain files.`
-
-遇到的情况是`hadoop fs -ls -d /user/hive/warehouse/test.db/t/*/*` 假设表test.t是分区表，而且有两个分区，这条命令就可以输出该表所有的分区值。  
-
-## hadoop fs -count < hdfs path >
-输出 目录个数，文件个数，文件总计大小，输入路径
-例如：
-```bash
-hadoop fs -count /data/dltb3yi/
- 1        24000       253953854502 /data/dltb3yi/      # 获得24000个文件
-```
-
-# 参考
-hadoop常用命令：https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test
-https://www.cnblogs.com/zhaosk/p/4391294.html
-https://blog.csdn.net/litianxiang_kaola/article/details/71154302（wordcount例子）
