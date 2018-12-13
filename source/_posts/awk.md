@@ -14,6 +14,7 @@ copyright: true
 （3）内值函数`NF`是一行被分割的列数。`awk -F"_" '{for(i=1; i<= NF; i++){print i,$i}}'`
 （4）`BEGIN` `END`必须是大写。
 （5）由上面的（2），外面是单引号，那里面字符必须使用双引号。
+（6）每个print之后都会输出一个ORS。
 
 # print 单/双引号
 双引号：使用`\`转义`awk '{print "version=\"1.0\""}'` 输出结果`version="1.0"`

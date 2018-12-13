@@ -60,6 +60,10 @@ ELSE '人妖'
 END
 ```
 ### sql join
+join=inner join;
+left join、right join、full join属于outer join，即等于可以left/right/full [outer] join
+CROSS JOIN 把表A和表B的数据进行一个N*M的组合，即笛卡尔积
+
 ![](2.png)
 #### （ inner）join on
 输出两张表中的列。
@@ -78,7 +82,7 @@ UNION 结果集中的列名总是等于 UNION 中第一个 SELECT 语句中的�
 
 #### FULL
 full join 返回左右表所有的行，即使只有表没有相互匹配。
-不过mysql对full join不支持，可以用join+union的方式来代替。
+**_不过mysql对full join不支持_**，可以用join+union的方式来代替。
 MySQL Full Join的实现 因为MySQL不支持FULL JOIN,下面是替代方法
 left join + union(可去除重复数据)+ right join
 ```mysql

@@ -20,7 +20,7 @@ Hive相关的配置属性总结
 `set hive.exec.dynamic.partition=true;`
 `set hive.exec.dynamic.partition.mode=nonstrict;` 设置可以动态分区；因为严格模式下，不允许所有的分区都被动态指定。（详细使用看上面“导出数据到表”章节）
 `set hive.exec.max.dynamic.partitions=100;` 默认是1000；在所有执行的MR节点上，一共可以创建最大动态分区数
-`set hive.exec.max.dynamic.partitions.pernode=100;`  默认是100；在每个执行MR的节点上，最大可以创建多少个动态分区。该参数需要根据实际的数据来设定。比如：源数据中包含了一年的数据，即day字段有365个值，那么该参数就需要设置成大于365，如果使用默认值100，则会报错。
+`set hive.exec.max.dynamic.partitions.pernode=100;`  (上面参数也要加上)默认是100；在每个执行MR的节点上，最大可以创建多少个动态分区。该参数需要根据实际的数据来设定。比如：源数据中包含了一年的数据，即day字段有365个值，那么该参数就需要设置成大于365，如果使用默认值100，则会报错。
 
 动态分区参考：http://lxw1234.com/archives/2015/06/286.htm
 
@@ -52,13 +52,17 @@ yarn.nodemanager.vmem-pmem-ratio 的比率，默认是2.1.这个比率的控制�
 ![](yasuo1.png)
 `set hive.exec.compress.intermediate=true;` 中间数据map压缩，不影响最终结果。但是job中间数据输出要写在硬盘并通过网络传输到reduce，传送数据量变小，因为shuffle sort（混洗排序）数据被压缩了。
 `set mapred.map.output.compression.codec=org.apache.hadoop.io.compress.SnappyCodec;` 为中间数据配置压锁编解码器 ，通常配置Snappy更好。
+压缩Map的输出，这样做有两个好处：
+a)压缩是在内存中进行，所以写入map本地磁盘的数据就会变小，大大减少了本地IO次数
+b) Reduce从每个map节点copy数据，也会明显降低网络传输的时间
+注：数据序列化其实效果会更好，无论是磁盘IO还是数据大小，都会明显的降低。
 
 `set hive.exec.compress.output=true;`  打开job最终输出压缩的开关，设置之后必须设置下面这行，否则还是没有压缩效果
 `set mapred.output.compression.codec=org.apache.hadoop.io.compress.GzipCodec;`  设置压缩类型
 `set mapred.output.compression.type=BLOCK;` 大文件压缩仍然会耗时，而且影响mapper并行（mapper并行和文件的个数有关），这个设置，使大的文件可以分割成小文件进行压缩
 
+gzip是一种数据格式，默认且目前仅使用deflate算法压缩data部分；deflate是一种压缩算法。
 **_gzip不支持切片，切片参数都不管用。如果要压缩成gzip格式，做好控制在170M，mr的效果是最好的。_**
-
 这种处理文件压缩的能力并非是hive特有的，实际上，使用了hadoop的TextInputFormat进行处理，它可以识别后缀名是.deflate或.gz的压缩文件，并可以轻松处理。
 hive无需关心底层文件是否是压缩的，以及如何压缩的。
 
@@ -71,6 +75,15 @@ hive无需关心底层文件是否是压缩的，以及如何压缩的。
 
 ### reducer个数
 `set mapreduce.job.reduces=15;` 指定reducer个数
+
+### 推测式执行配置项
+`mapred.map.tasks.speculative.execution=true`
+`mapred.reduce.tasks.speculative.execution=true`
+这是两个推测式执行的配置项,默认是true
+所谓的推测执行，就是当所有task都开始运行之后，Job Tracker会统计所有任务的平均进度，如果某个task所在的task node机器配
+置比较低或者CPU load很高（原因很多），导致任务执行比总体任务的平均执行要慢，此时Job Tracker会启动一个新的任务
+（duplicate task），原有任务和新任务哪个先执行完就把另外一个kill掉，这也是我们经常在Job Tracker页面看到任务执行成功，但
+是总有些任务被kill，就是这个原因。
 
 ### join只允许等值操作
 ```sql

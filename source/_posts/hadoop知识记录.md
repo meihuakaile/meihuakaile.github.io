@@ -23,10 +23,17 @@ hadoop dfsadmin -safemode enter 进入安全模式
 ## test
 使用方法：hadoop fs -test -[ezd] URI
 选项：
--e 检查文件是否存在。如果存在则返回0。
+-e 检查目录/文件是否存在。如果存在则返回0。
 -z 检查文件是否是0字节。如果是则返回0。 
 -d 如果路径是个目录，则返回1，否则返回0。
-示例：`hadoop fs -test -e filename`
+示例1：`hadoop fs -test -e filename`
+示例2：shell判断hdfs目录是否存在:
+```sh
+hadoop fs -test -e /hdfs_dir
+if [ $? -ne 0 ]; then
+    echo "Directory not exists!"
+fi
+```
 
 ## hadoop fs -ls -d
 使用帮助命令`hadoop fs -help ls` 看到-d对应的是`Directories are listed as plain files.`

@@ -142,3 +142,10 @@ emmmm，我的mysql没有`password`字段。。。。
 `drop user ‘username’@‘host’ `/`delete from mysql.user where user='username' and host='host'`
 
 参考：https://www.cnblogs.com/lyhabc/p/3822267.html 
+
+### `Lock wait timeout exceeded;`
+`ERROR 1205 (HY000) at line 1: Lock wait timeout exceeded; try restarting transaction`
+`show full processlist;`
+`kill id;` 杀掉锁住的id进程。
+
+参考：https://blog.csdn.net/wp1603710463/article/details/51721894/

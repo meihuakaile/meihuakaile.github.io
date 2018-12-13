@@ -105,3 +105,15 @@ https://blog.csdn.net/Gpwner/article/details/73457108
 `Hive Warning: Value had a \n character in it`
 遇到这个错误一般是hive query的格式问题， 哪里缺了个分号  `；`
 我这次是几个set语句后面忘记加分号了。
+
+### 堆内存出错 Java heap space
+`FAILED: Execution Error, return code -101 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask. Java heap space`
+设置 `set io.sort.mb=10;` 默认值是100
+需要与`mapred.child.java.opts`相配 默认：-Xmx200m；不能超过`mapred.child.java.opt`设置，否则会OOM。
+一般来说，都是reduce耗费内存比较大，这个选项是用来设置JVM堆的最大可用内存，但不要设置过大，如果超过2G(来自网络)，就应该考虑一下优化程序。
+Input Split的大小，决定了一个Job拥有多少个map，默认128M每个Split（版本之间不同，低版本是64M），如果输入的数据量巨大，那么默认的64M的block会有特别多Map Task，集群的网络传输会很大，给Job Tracker的调度、队列、内存都会带来很大压力。
+
+
+### 参考
+http://www.voidcn.com/article/p-zfiukxcn-hx.html
+https://www.cnblogs.com/cfox/p/3849407.html

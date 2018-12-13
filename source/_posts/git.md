@@ -37,6 +37,15 @@ error: 无法推送一些引用到 'git@XXX.git'
 `git fetch origin`  
 `git merge origin/master（换成你要推送的分支）` 
 
+出错3：
+`The RSA host key for github.com has changed, and the key for the corresponding IP address ××.××.×××.××`
+解决：
+```
+Step 1: Go to Folder or use command+shift+g
+Step 2: type "~/.ssh/"
+Step 3: Open "known_hosts" file and Remove all the content
+Step 4: Now Open terminal and pull from another branch, It will ask for password give your system password.
+```
 
 1、修改后放在了修改区；add之后是暂存区；commit是本地仓库。
 暂存区是存放下次将要提交的图表信息，索引。本地仓库存放原数据，对象数据库。
