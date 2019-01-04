@@ -26,7 +26,7 @@ as some drivers deny compatibility but still work
 xml里有<strong>parameterType</strong>  如果不在mybatis.xml中指定：
 ```xml
 <typeAliases>
-    <package name="com.qunar.data.model"/>
+    <package name="com.data.model"/>
 </typeAliases>
 ```
 parameterType就要把实体类的包路径完全写下来。写了上面的package后会自动去这个包下面找，只需要写类名不需要包路径。
@@ -39,7 +39,7 @@ parameterType就要把实体类的包路径完全写下来。写了上面的pack
         <setting name="useGeneratedKeys" value="true"/>
     </settings>
     <typeAliases>
-        <package name="com.qunar.atp.model"/>
+        <package name="com.atp.model"/>
     </typeAliases>
 </configuration>
 ```

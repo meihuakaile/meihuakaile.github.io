@@ -58,8 +58,11 @@ Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）
 参考：https://blog.csdn.net/skywalker_only/article/details/26219619（三种元数据存储方式）
 http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html
 
+### 引擎 
+hive执行引擎 mr/tez/spark
+
 ### 分区
-hive引入partition和bucket的概念，中文翻译分别为分区和桶，这两个概念都是把数据划分成块，分区是粗粒度的划分桶是细粒度的划分，这样做为了可以让查询发生在小范围的数据上以提高效率。
+hive引入partition和bucket的概念，中文翻译分别为分区和桶，这两个概念都是把数据划分成块，分区是粗粒度的划分，桶是细粒度的划分，这样做为了可以让查询发生在小范围的数据上以提高效率。
 在Hive Select查询中一般会扫描整个表内容，会消耗很多时间做没必要的工作。有时候只需要扫描表中关心的一部分数据，因此建表时引入了partition概念。
 分区表指的是在创建表时指定的partition的分区空间。如果需要创建有分区的表，需要在create表的时候调用可选参数partitioned by。
 一个表可以拥有一个或者多个分区，每个分区以文件夹的形式单独存在表文件夹的目录下。
@@ -232,9 +235,9 @@ lateral view用于和split、explode等UDTF一起使用的，能将一行数据�
 SELECT myCol1, myCol2, col3 FROM baseTable
 LATERAL VIEW explode(col1) myTable1 AS myCol1
 LATERAL VIEW explode(col2) myTable2 AS myCol2;
-``` 
+```
 示例：
-**_执行过程是先执行from到 as cloumn的列过程，在执行select 和where后边的语句；_**
+**_执行过程是先执行from到 as cloumn的列过程，再执行select 和where后边的语句；_**
 sql如下：
 ```mysql
 select datenu,des,type from tb_split 
@@ -263,10 +266,10 @@ lateral view explode(split(type,"//|")) tb2 as type
 参考：http://www.cnblogs.com/judylucky/p/3713774.html
 
 ### group by 1, 2, 3
-`SET hive.groupby.orderby.position.alias=true` 默认是false。
+`SET hive.groupby.orderby.position.alias=true` 默认是false。（mysql可直接使用。）
 打开这个开关后，group by可以通过1， 2， 3这样的数字指定 使用select的第几个字段。
 示例：`SELECT substr(date, 1, 4), count(1) year FROM *** GROUP BY 1;`
-（mysql）可直接使用。
+
 
 ### 【is null】 = 【 = null】？、【is not null】 = 【 <> null】？
 hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 <> null 或 = null（虽然不报错）

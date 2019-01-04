@@ -66,6 +66,7 @@ gzip是一种数据格式，默认且目前仅使用deflate算法压缩data部�
 这种处理文件压缩的能力并非是hive特有的，实际上，使用了hadoop的TextInputFormat进行处理，它可以识别后缀名是.deflate或.gz的压缩文件，并可以轻松处理。
 hive无需关心底层文件是否是压缩的，以及如何压缩的。
 
+https://m.2cto.com/kf/201611/566909.html
 ### 关于Strict Mode 
 
  Hive中的严格模式可以防止用户发出（可以有问题）的查询无意中造成不良的影响。 将hive.mapred.mode设置成strict可以禁止三种类型的查询：

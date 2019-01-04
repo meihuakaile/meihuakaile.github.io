@@ -50,6 +50,13 @@ ps -ef | grep 8080
 ```
 pid是进程id（一般kill的时候用） ppid是父进程id  c是cpu占用率 其他看http://blog.csdn.net/lg632/article/details/52556139
 
+### lsof查看文件被什么进程占用
+lsof=list open files
+`lsof 文件名`  查看某个文件被哪些进程在读写
+
+### set -e/set -o pipefail
+`set -e` 表示一旦脚本中有命令的返回值为非0，则脚本立即退出，后续命令不再执行;
+`set -o pipefail` 表示在管道连接的命令序列中，只要有任何一个命令返回非0值，则整个管道返回非0值，即使最后一个命令返回0. 
 ### 解压纯 .gz文件
 方法（1）：gunzip 文件       方法（2）：zcat输出 之后用 > 保存
 

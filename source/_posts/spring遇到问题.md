@@ -18,8 +18,8 @@ javax.management.RuntimeMBeanException: java.lang.UnsupportedOperationException:
         at servlet.server.TomcatServer.<init>(TomcatServer.java:14) [common-core-8.3.2.jar:na]
         at ServletWatcher.portOf(ServletWatcher.java:240) [common-core-8.3.2.jar:na]
         at ServletWatcher.fixPort(ServletWatcher.java:232) [common-core-8.3.2.jar:na]
-        at qunar.ServletWatcher.init(ServletWatcher.java:91) [common-core-8.3.2.jar:na]
-        at qunar.ServletWatcher.contextInitialized(ServletWatcher.java:58) [common-core-8.3.2.jar:na]
+        at ServletWatcher.init(ServletWatcher.java:91) [common-core-8.3.2.jar:na]
+        at ServletWatcher.contextInitialized(ServletWatcher.java:58) [common-core-8.3.2.jar:na]
         at org.apache.catalina.core.StandardContext.listenerStart(StandardContext.java:5016) [tomcat-embed-core-7.0.59.jar:7.0.59]
         at org.apache.catalina.core.StandardContext.startInternal(StandardContext.java:5524) [tomcat-embed-core-7.0.59.jar:7.0.59]
         at org.apache.catalina.util.LifecycleBase.start(LifecycleBase.java:150) [tomcat-embed-core-7.0.59.jar:7.0.59]
@@ -55,6 +55,6 @@ Caused by: java.lang.UnsupportedOperationException: Usage threshold is not suppo
 
 参考：https://stackoverflow.com/questions/12283207/unable-to-connect-with-jmxmp-in-tomcat/12337393#12337393?s=d4f50b7dc0164ed298b008d97968de5b
 
-# Error instantiating class com.qunar.market.model. with invalid types () or values (). Cause: java.lang.NoSuchMethodException: com.qunar.market.model.MaterialDeliverModel
+# Error instantiating class com.market.model. with invalid types () or values (). Cause: java.lang.NoSuchMethodException: com.market.model.MaterialDeliverModel
 原因：构造函数被重载过，但是没有空的构造函数。
 参考：https://blog.csdn.net/qq_25821067/article/details/54811165
