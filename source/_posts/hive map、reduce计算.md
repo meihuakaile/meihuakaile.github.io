@@ -77,7 +77,7 @@ https://www.iteblog.com/archives/1697.html
 
 # shuffle
 讲的很棒：https://www.iteblog.com/archives/1119.html
-
+https://www.cnblogs.com/ljy2013/articles/4435657.html
 # 数据倾斜
 定义：某一个或几个key的数据相比于其他key特别多，导致他们对应的reduce非常慢，其他数据量少的reduce早就执行完了，但是还要等待。
 最容易的原因：（1）大量的key为空join连接的情况，空的key都hash到一个reduce上去了.

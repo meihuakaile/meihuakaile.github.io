@@ -170,6 +170,11 @@ after field_name;
 #### 修改表属性
 `alter table table_name set tblproperties(...)` 可以增加新的表属性，或者修改已经存在的属性，但是无法删除属性
 
+### MSCK
+`MSCK REPAIR TABLE table_name;`
+Hive会检测如果HDFS目录下存在但表的metastore中不存在的partition元信息，更新到metastore中。
+代替手动通过`alter table add partition`方式增加Hive分区的方式。
+
 ### 自定义表的存储格式
 `inputformat`对象将输入流分割成记录；`outputformat`对象将记录格式化为输出流（如查询的输出结果）；一个SerDe在读数据时将记录解析列，在写数据时将列编码成记录。
 SerDe决定了记录是如何分解成字段的（反序列化过程），以及字段是如何写入到存储中的（序列化过程）。
@@ -478,6 +483,7 @@ select 部分不能用括号，否则会被认为是表1的字段；
 `load`命令不支持动态分区，必须指定分区。(可以把数据先转到非分区表，再利用上面小节“导出数据到表”的方法把非分区表的数据导入到分区表)。不指定分区，会报错`FAILED: SemanticException org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Invalid partition key & values; keys [dt, ], values [])`
 load不能加载桶表数据，只能从另一张表加载数据。(和动态分区的解决方案一样，建一个中间表作为过渡表)。
 
+hive不会检验用户装载的数据和表的模式是否匹配，但是会验证装载文件的类型和表的定义类型是否匹配。比如，表的定义是sequencefile，则数据文件必须是sequencefile
 ### 同时插入多个表
 ```mysql
 from test t
