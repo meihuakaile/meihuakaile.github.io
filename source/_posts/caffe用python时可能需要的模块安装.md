@@ -1,10 +1,9 @@
 ---
 title: caffe用python时可能需要的模块安装
-date: "2018/04/08" 
+date: "2018/09/08" 
 tags: ['python', 'caffe']
 categories: ['caffe安装&&问题&&解决']
 copyright: true
-top: 2
 ---
 <strong>!!!经验 [ 换源 ](/2018/04/08/ubuntu 安装numpy的烂问题libgfortran3依赖) 之后再装。  </strong>
 

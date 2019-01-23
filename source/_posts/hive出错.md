@@ -113,6 +113,217 @@ https://blog.csdn.net/Gpwner/article/details/73457108
 一般来说，都是reduce耗费内存比较大，这个选项是用来设置JVM堆的最大可用内存，但不要设置过大，如果超过2G(来自网络)，就应该考虑一下优化程序。
 Input Split的大小，决定了一个Job拥有多少个map，默认128M每个Split（版本之间不同，低版本是64M），如果输入的数据量巨大，那么默认的64M的block会有特别多Map Task，集群的网络传输会很大，给Job Tracker的调度、队列、内存都会带来很大压力。
 
+### Error: java.io.IOException: invalid block type
+```bash
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000140_1, Status : FAILED
+Error: java.io.IOException: invalid block type
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000143_1, Status : FAILED
+Error: java.io.IOException: incorrect data check
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000131_1, Status : FAILED
+Error: java.io.IOException: invalid block type
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000145_1, Status : FAILED
+Error: java.io.IOException: incorrect data check
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000128_1, Status : FAILED
+Error: java.io.IOException: invalid block type
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000124_1, Status : FAILED
+Error: java.io.IOException: invalid stored block lengths
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+
+19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000142_1, Status : FAILED
+Error: java.io.IOException: invalid block type
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)
+	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+
+Container killed by the ApplicationMaster.
+Container killed on request. Exit code is 143
+```
+解决：加参数，`-D mapred.skip.map.max.skip.records=1` map task最多允许的跳过记录数，默认值0。
+参考：https://forums.aws.amazon.com/thread.jspa?threadID=92747
+
+###
+```bash
+Error: java.io.EOFException: Unexpected end of input stream
+	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:145)
+	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)
+	at java.io.InputStream.read(InputStream.java:101)
+	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)
+	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)
+	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.moveToNext(MapTask.java:197)
+	at org.apache.hadoop.mapred.MapTask$TrackedRecordReader.next(MapTask.java:183)
+	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)
+	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)
+	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)
+	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)
+	at org.apache.hadoop.mapred.YarnChild$2.run(YarnChild.java:162)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at javax.security.auth.Subject.doAs(Subject.java:422)
+	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)
+	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)
+```
+这个主要是hdfs文件的问题。文件的压缩有问题，现在解压失败报错。
+从日志中可以找到出错的文件名，然后get下来后，尝试手动解压失败，确定问题。
 
 ### 参考
 http://www.voidcn.com/article/p-zfiukxcn-hx.html

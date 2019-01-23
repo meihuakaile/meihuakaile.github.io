@@ -1,13 +1,11 @@
 ---
 title: faster rcnn的源码理解（一）SmoothL1LossLayer论文与代码的结合理解
-date: "2018/04/08"
+date: "2018/09/08"
 tags: ['深度学习', 'faster rcnn源码理解']
 categories: ['faster rcnn', 'faster cnn源码理解']
 copyright: true
-top: 6
 ---
-<img src="49.jpg">
-<!--more-->
+
 ### 源码
 ```c++
     // ------------------------------------------------------------------

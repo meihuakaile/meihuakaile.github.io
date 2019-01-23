@@ -16,6 +16,9 @@ Hive相关的配置属性总结
 `hive.support.sql11.reserved.keywords`该选项的目的是：是否启用对SQL2011保留关键字的支持。 启用后，将支持部分SQL2011保留关键字。
 `set hive.exec.reducers.bytes.per.reducer` 每个reduce任务处理的数据量，默认为1000^3=1G
 
+###  设置作业优先级
+`mapred.job.priority=VERY_HIGH | HIGH | NORMAL | LOW | VERY_LOW`
+
 ### 动态分区
 `set hive.exec.dynamic.partition=true;`
 `set hive.exec.dynamic.partition.mode=nonstrict;` 设置可以动态分区；因为严格模式下，不允许所有的分区都被动态指定。（详细使用看上面“导出数据到表”章节）
@@ -125,5 +128,10 @@ GROUP BY tmp.time;
 此时使用`union all`，可以再上上面章节的并发优化`set hive.exec.parallel=true;` 
 
 总结自：https://cloud.tencent.com/developer/article/1043838
+
+### mapreduce.task.io.sort.mb
+`mapreduce.task.io.sort.mb` 内存  溢出
+
+Combiner会优化MapReduce的中间结果，所以它在整个模型中会多次使用。那么哪些场景才能使用Combiner呢？从这里分析，Combiner的输出是Reducer的输入，Combiner绝不能改变最终的计算结果。所以从我的想法来看，Combiner只应该用于那种Reduce的输入key/value与输出key/value类型完全一致，且不影响最终结果的场景。比如累加，最大值等。Combiner的使用一定得慎重，如果用好，它对job执行效率有帮助，反之会影响reduce的最终结果。
 ### 参考
 https://blog.csdn.net/yycdaizi/article/details/43341239

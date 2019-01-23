@@ -1,10 +1,9 @@
 ---
 title: caffe 数据库LMDB的读写
-date: "2018/04/08"
+date: "2018/09/08"
 tags: ['caffe', 'lmdb']
 categories: ['cnn图片数据处理、显示']
 copyright: true
-top: 1
 ---
 读写的图片都是灰度图，rgb图类似  
 

@@ -1,10 +1,9 @@
 ---
 title: numpy常用方法
-date: "2018/04/08"
+date: "2018/09/08"
 tags: ['numpy', '数据分析']
 categories: ['cnn图片数据处理、显示']
 copyright: true
-top: 4
 ---
   
 一般参数有axis时，<strong>0是列； 1是行<strong>

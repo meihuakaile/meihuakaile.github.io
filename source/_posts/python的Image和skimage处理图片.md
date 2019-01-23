@@ -1,10 +1,9 @@
 ---
 title: python的Image和skimage处理图片
-date: "2018/04/08"
+date: "2018/09/08"
 tags: ['python', '图片处理']
 categories: ['cnn图片数据处理、显示']
 copyright: true
-top: 3
 ---
 前提
 ```python

@@ -4,7 +4,6 @@ date: "2018/04/08"
 tags: ['python', '图片处理']
 categories: ['cnn图片数据处理、显示']
 copyright: true
-top: 5
 ---
 ### 简单例子
 ```python

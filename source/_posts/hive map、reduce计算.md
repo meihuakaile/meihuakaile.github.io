@@ -7,12 +7,11 @@ categories:
   - hadoop
 copyright: true
 date: 2018-09-19
-top: 1
 ---
 ### map个数计算
-splitsize= Math.max(minSize, Math.min(goalSize, blockSize)),通常这个值=blockSize，输入的文件较小，文件字节数之和小于blocksize时，splitsize=输入文件字节数之和。
+splitsize= Math.max(minSize, Math.min(goalSize, blockSize)),通常这个值=blockSize，输入的文件较小，文件字节数小于blocksize时，splitsize=输入文件字节数之和。
 
-gzip不支持切片，因此一个gzip压缩文件不能通过切片 由多个map执行。
+**_gzip不支持切片，因此一个gzip压缩文件不能通过切片 由多个map执行，只能是有多少个文件，对应有多少个map。_**
 `minSize=max{minSplitSize, mapred.min.split.size}`（minSplitSize大小默认为1B）
 `maxSize=mapred.max.split.size`（不在配置文件中指定时大小为`Long.MAX_VALUE=3G`）
 `splitSize=max{minSize, min{maxSize, blockSize}}`
@@ -26,7 +25,7 @@ gzip不支持切片，因此一个gzip压缩文件不能通过切片 由多个ma
 每一个分片对应一个map任务，这样map任务的数目也就显而易见啦。 
 
 但其实**_一个map可以跨文件处理_**：
-通过实验，gzip、orc、lzo都支持合并。
+通过实验，gzip、orc、lzo都支持文件合并。
 一般在想减少map个数，但是文件大小都小于`blockSize`时，上面已经使不上劲时使用下面参数。
 `set hive.hadoop.supports.splittable.combineinputformat=true;` 开关
 `set hive.input.format=org.apache.hadoop.hive.ql.io.CombineHiveInputFormat;` 执行Map前进行小文件合并
@@ -78,6 +77,8 @@ https://www.iteblog.com/archives/1697.html
 # shuffle
 讲的很棒：https://www.iteblog.com/archives/1119.html
 https://www.cnblogs.com/ljy2013/articles/4435657.html
+
+
 # 数据倾斜
 定义：某一个或几个key的数据相比于其他key特别多，导致他们对应的reduce非常慢，其他数据量少的reduce早就执行完了，但是还要等待。
 最容易的原因：（1）大量的key为空join连接的情况，空的key都hash到一个reduce上去了.

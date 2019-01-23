@@ -9,7 +9,8 @@ copyright: true
 date: 2018-04-19
 top: 1
 ---
-
+<img src="49.jpg">
+<!--more-->
 架构在Hadoop之上，提供简单的sql查询功能，可以**_将sql语句转换为MapReduce任务进行运行(增删改查)_**。
 所有的增删改查操作都是应用在hdfs上的。Hive 中所有的数据都存储在 HDFS 中，Hive 中包含以下数据模型：Table，External Table，Partition，Bucket。
 hive是一个数据仓库工具，作用是可以将结构化的数据文件映射为一张数据库表，并提供简单查询功能，可以将sql语句转化为Mapreduce任务进行，是在Hadoop上的数据库基础架构。
@@ -170,396 +171,10 @@ after field_name;
 #### 修改表属性
 `alter table table_name set tblproperties(...)` 可以增加新的表属性，或者修改已经存在的属性，但是无法删除属性
 
-### MSCK
+### MSCK修复分区
 `MSCK REPAIR TABLE table_name;`
 Hive会检测如果HDFS目录下存在但表的metastore中不存在的partition元信息，更新到metastore中。
 代替手动通过`alter table add partition`方式增加Hive分区的方式。
-
-### 自定义表的存储格式
-`inputformat`对象将输入流分割成记录；`outputformat`对象将记录格式化为输出流（如查询的输出结果）；一个SerDe在读数据时将记录解析列，在写数据时将列编码成记录。
-SerDe决定了记录是如何分解成字段的（反序列化过程），以及字段是如何写入到存储中的（序列化过程）。
-
-### 集合数据类型
-array、map、struct三种。好处是处理p/t级数据时，减少寻址，快。坏处是增大数据冗余等。
-
-### 时间类型
-`Timestamps`类型可以是
-- （1）以秒为单位的整数；
-- （2）带精度的浮点数，最大精确到小数点后9位，纳秒级；
-- （3）java.sql.Timestamp格式的字符串 YYYY-MM-DD hh:mm:ss.fffffffff
-
-`Date` 只支持YYYY-MM-DD格式的日期，其余写法都是错误的，如需带上时分秒，需使用timestamp。
-
-### if
-If 函数语法: if(boolean testCondition, T valueTrue, T valueFalseOrNull)
-返回值: T
-说明:  当条件testCondition为TRUE时，返回valueTrue；否则返回valueFalseOrNull
-举例：
-```mysql
-hive> select if(1=2,100,200) from dual;
-200
-```
-
-### 执行外部命令
-hadoop命令：
-把命令行里的hadoop去掉。
-如直接执行`dfs -ls ...;`此种方法相叫hadoop的命令更为高效，hadoop是新开一个jvm线程执行，前者在当前线程执行。
-
-其他命令，以!开始，以;结束，不能用管道、文件补全、用户交互等操作。
-如`!echo 'li';`
-
-### NVL
-`NVL( str, replace_with)`  
-str为NULL, 则NVL函数返replace_with值，否则返str值
-
-### CONCAT(str1, str2,...)
-连接字符串，如果参数中有null，返回结果也会是null，因此可以结合上面的方面使用。
-
-### CONCAT_WS(separator, str1, str2,...)
-它是一个特殊形式的 CONCAT()。第一个参数是剩余参数间的分隔符。分隔符可以是与剩余参数一样的字符串。如果分隔符是 NULL，返回值也将为 NULL。这个函数会跳过分隔符参数后的任何 NULL 和空字符串。分隔符将被加到被连接的字符串之间
-这个函数会跳过分隔符参数后的任何 NULL 和空字符串，但是**跳过空字符串后还是会有多余的分隔符存在**（非常鸡肋啊）。
-
-### collect_set()
-是 Hive 内置的一个聚合函数, 它返回一个**_消除了重复元素_**的对象集合, 其返回值类型是 array 。
-把group by值一样的分组由列变成行，即变成数组，可以用下标访问。
-collect_set()方法把group by一样的组里的数据组成一个数组。数组从0开始，如果直接select数组，是[item1, ..., itemn]的格式。
-如`select collect_set(uname) unames ....group by uid`，把同一个uid的uname组成数组， 通过别名unames[ind]访问数据。
-`concat_ws(',',collect_set(cast(col_0 as string))) ` 两个一起使用把列变成由逗号分割的行。
-
-### collect_list
-`collect_list(id)` 列出该字段所有的值，列出来**_不去重_**
-
-### explode
-上面的collect_set是把列变成行，explode是把行变成列。
-`explode(array)` 把数组里的数据变成列形式。经常与split一起用。
-例如，在wordcount中有`explode(split(line, ' '))` 或`explode(split(line, '\\s'))`
-
-### LATERAL VIEW
-lateral view用于和split、explode等UDTF一起使用的，能将一行数据拆分成多行数据，在此基础上可以对拆分的数据进行聚合。
-```mysql
-SELECT myCol1, myCol2, col3 FROM baseTable
-LATERAL VIEW explode(col1) myTable1 AS myCol1
-LATERAL VIEW explode(col2) myTable2 AS myCol2;
-```
-示例：
-**_执行过程是先执行from到 as cloumn的列过程，再执行select 和where后边的语句；_**
-sql如下：
-```mysql
-select datenu,des,type from tb_split 
-lateral view explode(split(des,"//|")) tb1 as des
-lateral view explode(split(type,"//|")) tb2 as type
-```
-数据如下：
-```mysql
-20141018  aa|bb 7|9
-20141019  cc|dd  6|1|8
-```
-希望的结果是：
-```mysql
-20141018  aa 7
-20141018  aa 9
-20141018  bb 7
-20141018  bb 9
-20141019  cc  6
-20141019  cc  1
-20141019  cc  8
-20141019  dd  6
-20141019  dd  1
-20141019  dd  8
-```
-
-参考：http://www.cnblogs.com/judylucky/p/3713774.html
-
-### group by 1, 2, 3
-`SET hive.groupby.orderby.position.alias=true` 默认是false。（mysql可直接使用。）
-打开这个开关后，group by可以通过1， 2， 3这样的数字指定 使用select的第几个字段。
-示例：`SELECT substr(date, 1, 4), count(1) year FROM *** GROUP BY 1;`
-
-
-### 【is null】 = 【 = null】？、【is not null】 = 【 <> null】？
-hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 <> null 或 = null（虽然不报错）
-
-### insert
-1.insert into是增加数据
-2.insert overwrite是删除原有数据然后在新增数据，如果有分区那么只会删除指定分区数据，其他分区数据不受影响
-
-### rand
-语法: rand(),rand(int seed)
-返回值: double
-说明:返回一个0到1范围内的随机数。如果指定种子seed，则会等到一个稳定的随机数序列
-
-### cast
-作用：转换
-格式 cast(col as type)
-
-### binary(string|binary)
-将输入的值转换成二进制  
-
-### base64(binary bin)
-将二进制bin转换成64位的字符串
-
-###  设置作业优先级
-mapred.job.priority=VERY_HIGH | HIGH | NORMAL | LOW | VERY_LOW
-
-### row_num() over (...)。
-从1开始，为每个分组的每条记录返回一个数字。
-1例如，`ROW_NUMBER() OVER (ORDER BY xlh DESC)` 是先按照xlh列降序，再为降序以后的每条记录返回一个序号。
-2例
-数据库中有数据
-```
-empid       deptid      salary
------------ ----------- ---------------------------------------
-1           10          5500.00
-2           10          4500.00
-3           20          1900.00
-4           20          4800.00
-5           40          6500.00
-6           40          14500.00
-7           40          44500.00
-8           50          6500.00
-9           50          7500.00
-```
-需求`根据部门分组，显示每个部门的工资等级`
-sql：`SELECT *, Row_Number() OVER (partition by deptid ORDER BY salary desc) rank FROM employee`
-结果：
-```
-empid       deptid      salary                                  rank
------------ ----------- --------------------------------------- --------------------
-1           10          5500.00                                 1
-2           10          4500.00                                 2
-4           20          4800.00                                 1
-3           20          1900.00                                 2
-7           40          44500.00                                1
-6           40          14500.00                                2
-5           40          6500.00                                 3
-9           50          7500.00                                 1
-8           50          6500.00                                 2
-```
-例子参考：https://blog.csdn.net/biaorger/article/details/38523527
-row_number()另一作用可以用来去除重复：先按分组字段分区，再通过 rownum = 1过滤即可。另外，去重还可以借助于group by。
-
-### partition by与group by 的区别
-后者是经典的使用，是对检索结果的保留行进行单纯分组，如果有sum函数，就是先分组再对每个分组求和；
-前者类似虽然也具有分组功能，但同时也具有其他的功能，如果有sum函数，是先分组，再累加，会把分组里累加的过程输出。
-```
-表：
-B  C  D  
-02 02 1
-02 02 13
-
-select b,c,sum(d) e from a group by b,c;   
-结果：
-B   C  E  
-02 02 13
-SELECT b, c, d, SUM(d) OVER(PARTITION BY b,c ORDER BY d) e FROM a;  
-结果：
-B C E  
-02 02 1  
-02 02 13
-```
-从上面的例子中可以看到第二条语句的累加过程
-
-**_hive中group by和mysql不同。mysql可以接受select处理后的别名作为group by，hive的group by不能接受。_**
-
-### ORDER /SORT /DISTRIBUTE BY
-- `ORDER BY` 全局排序，会将所有数据送到同一个Reducer中后再对所有数据进行排序，对于大数据会很慢，谨慎使用
-- `SORT BY` 局部排序，只会在每一个Reducer中对数据进行排序，在每个Reducer输出是有序的，但并非全局排序（每个reducer出来的数据是有序的，但是不能保证所有的数据是有序的——即文件(分区)之间无序，除非只有一个reducer）
-- `DISTRIBUTE BY` 控制map的输出被送到哪个reducer端进行汇总计算，相同字段的map输出会发到一个reduce节点去处理。通过这个特性可以强行使hql有reduce，伴随有减少mapper输出文件个数、减轻数据倾斜等功效，可看下面链接里的例子。
-
-关与`DISTRIBUTE BY`使用非常好的文章：https://www.iteblog.com/archives/1533.html
-
-~~注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写.~~
-
-### find_in_set
-集合查找函数: find_in_set
-语法: find_in_set(string str, string strList) 
-返回值: int
-说明: 返回str在strlist第一次出现的位置，strlist是用逗号分割的字符串。如果没有找该str字符，则返回0
-例子：`select find_in_set('de','ef,ab,de');` 返回3
-
-### hive的默认数据分隔符^A
-hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
-
-最简单的方法就是用sed（**_注意这个^A是按CTRL+V+A打出来的，或者按下crtl+v然后再按下crtl+a就会出来/tmp/out目录(\001)_**，直接输入的^A是不行的。）
-**_也不能通过复制粘贴的方式。前一个地方用的CTRL+V+A，复制粘贴后就失效，要重新CTRL+V+A。_**
-例：sed -i 's/^A/|/g' 000000_0
-
-来自网络：
-在python中可以使用line.split('\x01')来进行切分，也可以使用line.split('\001')，注意其中是单引号
-在java中可以使用split("\\u0001")来进行切分
-### hive默认记录、字段分割符
-
-|分隔符|描述|
-|:---:|:---|
-|\n|换行符。默认记录分隔符，一行一个记录。|
-|^A|用于分割字段。可用八进制\001表示(看上节)|
-|^B|用与分割array、struct、map的key-value对。可用八进制\002表示|
-|^C|用于分割map的key、value对。可用八进制\003表示|
-
-ROW FORMAT DELIMITED必须写在其他字段前，除了stored as。
-
-### decimal
-DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precision, scale) 语法在创建表时来定义Decimal数据类型的precision和scale。
-如果未指定precision，则默认为10。如果未指定scale，它将默认为0（无小数位）。
-**_曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。_**
-
-### export LC_ALL=en_US.UTF-8
-`export LC_ALL=en_US.UTF-8` 解决hive客户端调用脚本中文问题。
-
-https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
-
-### get_json_object
-`get_json_object(json_string,’$.str’)` 得到json字符串json_string的$.str节点的值，$指根节点。
-
-### REGEXP/RLIKE/LIKE
-语法: A REGEXP B
-操作类型: strings
-描述: 功能与RLIKE相同
-
-LIKE:不是正则，而是通配符。这个通配符可以看一下SQL的标准，例如%代表任意多个字符。
-RLIKE:是正则，正则的写法与java一样。功能与REGEXP相同.
-
-### regexp_extract
-regexp_extract(string subject, string pattern, int index)
-通过下标返回正则表达式指定的部分。正则`\`需要转义`\\`,例如'\w'需要使用'\\w'
-index指的是：返回所有匹配的第N个.
-### size
-数组长度。
-注意的是，如果和split一起用`size(split(str, 'operate'))`，如果str为‘’或者null时，返回的结果是1；因为split返回的是有一个空串的数组。
-### left semi join
-hive中没有实现in/exist，使用`left semi join`代替
-`left semi join` 子句中右边的表只能在 ON 子句中设置过滤条件，在 WHERE 子句、SELECT 子句或其他地方过滤都不行。
-例子
-mysql中
-```mysql
-SELECT a.key, a.value 
-  FROM a 
-  WHERE a.key in 
-   (SELECT b.key 
-    FROM B); 
-```
-hive重写为：
-```mysql
-SELECT a.key, a.val 
-FROM a LEFT SEMI JOIN b on (a.key = b.key)
-```
-参考：https://my.oschina.net/leejun2005/blog/188459
-### 导出数据到本地
-hive的-e和-f参数可以用来导出数据。
--e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。
-（1）`hive -e "use test; select * from student where sex = '男'" > /tmp/output.txt`
-（2）`insert overwrite local directory "/tmp/out" select cno,avg(grade) from sc group by(cno);`
-（3）`insert overwrite local directory "/tmp/out" row format delimited fields terminated by ' ' select cno,avg(grade) from sc group by(cno);`
-
-（2）也可以作为（1）中-e的参数执行。
-（2）这条HQL的执行需要启用Mapreduce完成，运行完这条语句之后，将会在本地文件系统的/tmp/out目录下生成文件，这个文件是Reduce产生的结果（这里生成的文件名是000000_0），数据的分割使用的就是上面提到的^A
-（3）通过加入`row format delimited fields terminated by ' ' `使的数据的分割是空格，而不是^A.
-（1）中会直接保存成本地文件，把数据直接保存在/tmp/output.txt中，数据默认由空格分割。
-（2）这条HQL的‘local’去掉，数据会被保存在hdfs系统的/tmp/out目录下。
-（2）不能使用`insert into`或者`insert local`
-
-### 导出数据到表
-把表2的数据导出到表1：
-(1)`insert into table_name1(...) select ... from table_name2`
-(2)`insert overwrite table_name1(...) select ... from table_name2`
-select 部分不能用括号，否则会被认为是表1的字段；
-(...)中是表1的字段，可以省略； `select ...` 可以用`select *` 代替；
-(1)是直接导入，(2)是覆盖原来数据导入。
-
-导入到分区表：
-(1)`insert into table_name1 partition(dt='2018-03-11') select ... from table_name2`
-(2)`set hive.exec.dynamic.partition.mode=nonstrict;insert into table_name1 partition(dt) select ... from table table_name2`
-
-同样可以把`into`换成`overwrite table`以达到覆盖的效果。注意：只会覆盖table_name2中存在的对应分区，table_name1中已经存在的分区，table_name2中没有是不会进行覆盖。 即，覆盖只是覆盖分区里的数据数据、追加分区，原分区不变。
-(1)是导入一个分区的数据 `select ...`部分不用带dt(分区)的值。注意，如果表2也是分区表，此时不能用`select *`，因为它查出来的数据有分区字段，比`insert`的多一个字段。
-(2)是导入多个分区的表，执行前需要`set hive.exec.dynamic.partition.mode=nonstrict;`，因为严格模式下，不允许所有的分区都被动态指定，目的是为了防止生成太多的目录.此时`select ...`必须有dt分区的字段。
-(2)是动态分区，不指定分区，一次可以导入多个分区。
-
-### 文件导入数据到表
-`load data [local] inpath 'file1.txt' [overwrite] into table table_name [partition(partcol=val)]`
-通常情况下，会不只是一个文件，而是一个目录，load操作会把目录下的文件全部拷贝到表的location下。
-`local` 决定文件是来自本地还是hdfs。
-`overwrite` 决定是否要覆盖。
-`load`命令不支持动态分区，必须指定分区。(可以把数据先转到非分区表，再利用上面小节“导出数据到表”的方法把非分区表的数据导入到分区表)。不指定分区，会报错`FAILED: SemanticException org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Invalid partition key & values; keys [dt, ], values [])`
-load不能加载桶表数据，只能从另一张表加载数据。(和动态分区的解决方案一样，建一个中间表作为过渡表)。
-
-hive不会检验用户装载的数据和表的模式是否匹配，但是会验证装载文件的类型和表的定义类型是否匹配。比如，表的定义是sequencefile，则数据文件必须是sequencefile
-### 同时插入多个表
-```mysql
-from test t
-insert into table test1 select ...
-insert into table test3 select ...
-```
-从test中查数同时插入到test1、test3。每个select都必须存在，可以用*
-eg:
-```mysql
-from test_part
-insert into table test_part2 partition(dt='2018-08-19', source='app') select id 
-insert into table test_part4 partition(dt='2018-08-10', source='app') select id;
-```
-### 自定义UDF
-网上介绍了四中方法。只验证过第一种。
-方法（1）最常用也最不被喜欢的方法。
-```mysql
-add jar testUDF-0.0.1-SNAPSHOT.jar;
-create temporary function zodiac as "com.hive.udf.UDFZodiacSign";
-```
-之后就可以在sql里直接使用`zodiac()`。但是这种方法只存在在当前会话中。
-每次会话都要重新add、create。（下面的.hiverc文件可以解决每次都要add、create问题）
-
-其他方法：https://www.cnblogs.com/chushiyaoyue/p/6632090.html?utm_source=itdadao&utm_medium=referral
-### -
-`-e` : 执行短命令
-`-f` :  执行文件（适合脚本封装）
-`-S` : 安静模式，不显示MR的运行过程
-
-### .hiverc文件
-网上说在`${HIVE_HOME}/bin`目录下（我目前遇到别人部署的hive是在用户目录下）
-（`ls -a`命令查看隐藏文件）
-它是在hive启动的时候被调用，可以在里面定义常用的参数。
-写到这个是因为，还可以把上面加载udf的最常用最不被喜欢的第一种方法的add、create语句写到.hiverc文件里，这样每次启动hive时都默认加载了udf方法。
-
-### -i
--i 参数可以指定一个hive启动就被调用的文件。对，默认就是上面的.hiverc文件！
-
-### set变量
-
-|命名空间|使用权限|描述|
-|:------|:---|:-------|
-|hivevar|可读可写|hive 0.18.0 版本及之后。用户自定义变量|
-|hiveconf|可读可写|hive相关的配置属性|
-|system|可读可写|java相关的配置属性|
-|env|只可读|shell环境定义的环境变量|
-
-hivevar例子：
-```
-set hivevar:dd='aa';
-select ${hivevar:dd}
-```
-hivevar的前缀可以省略，但是可能会找不到变量，不建议省略。
-system、env的前缀不能省。
-
-上面是在hive的终端里，另一种是在shell里使用。在实践中使用时，`create_table.sql`需要用`"${hivevar:dd}"`,即需要单/双引号。
-另外`-hivevar`可用`--define`
-`hive -hivevar dd='aa' -f ./create_table.sql`
-**_多个参数_**多次指定`hivevar`： `hive -hivevar dd='aa' -hivevar d='aaa' -f ./create_table.sql`
-
-直接`set`命令可以看到所有变量值。
-`set`单个参数，可以看见这个参数的值。
-
-### tblproperties
-`tblproperties` 主要的作用是以键值对的格式为表增加额外的文档说明。
-（hive和像DymamoDB这样的数据库集成时，`tblproperties` 还有用作数据库连接的必要的元数据信息）
-Hive会自动增加两个表属性：last_modified_by，保存最后修改这个表的用户的用户名；last_modified_time，保存最后一次修改的时间秒，但是如果用户没有手动定义任何的文档说明，这两个属性还是不会自动添加的。
-`show tblproperties table_name` 查看表的`tblproperties`信息
-
-### <> != 区别
-语法: A <> B
-操作类型: 所有基本类型
-描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL，因此比较时要特别注意字段为null的情况（如果有一边等于null，结果就是false）；
-如果表达式A与表达式B不相等，则为TRUE；否则为FALSE
-
-hive中，当两边数据类型不对等时，比较的时候会出现问题。
 
 ### 查看命令
 `describe [extended/formatted] table_name` 查看表信息，类似`desc`  可选的`[extended]`可以看到更详细的信息，`formatted`看更多信息，可读性强
@@ -572,30 +187,9 @@ hive是“读时模式”，对于存储文件的完整性、数据的格式是�
 只有在读数据时才会尽量的把hdfs的文件和表字段进行匹配。
 我遇到的一个典型例子：hdfs文件里数据是3.5，hive表对应字段类型是`decimal`，这样导致读出来的数是4.（decimal没有指定小数精度时，默认是没有小数位）
 
-### 计算时间的月份差
-`select floor(months_between('2018-07-01','2018-02-04')) from default.dual`
-返回值为: 4
-时间格式必须是`yyyy-mm-dd`，如果是`yyyymmdd`需要转换
-`floor`是取整函数
-
-### yyyy-mm-dd、yyyymmdd转换
-方法1: from_unixtime+ unix_timestamp
-```mysql
---20171205转成2017-12-05 
-select from_unixtime(unix_timestamp('20171205','yyyymmdd'),'yyyy-mm-dd') from dual;
-
---2017-12-05转成20171205
-select from_unixtime(unix_timestamp('2017-12-05','yyyy-mm-dd'),'yyyymmdd') from dual;
-```
-
-方法2: substr + concat
-```mysql
---20171205转成2017-12-05 
-select concat(substr('20171205',1,4),'-',substr('20171205',5,2),'-',substr('20171205',7,2)) from dual;
-
---2017-12-05转成20171205
-select concat(substr('2017-12-05',1,4),substr('2017-12-05',6,2),substr('2017-12-05',9,2)) from dual;
-```
+### 自定义表的存储格式
+`inputformat`对象将输入流分割成记录；`outputformat`对象将记录格式化为输出流（如查询的输出结果）；一个SerDe在读数据时将记录解析列，在写数据时将列编码成记录。
+SerDe决定了记录是如何分解成字段的（反序列化过程），以及字段是如何写入到存储中的（序列化过程）。
 
 ### SerDe Library、InputFormat、outputFormat 
 由一个错误引出：`Failed with exception java.io.IOException:java.lang.ClassCastException: org.apache.hadoop.hive.ql.io.orc.OrcStruct cannot be cast to org.apache.hadoop.io.BinaryComparable`
@@ -670,8 +264,454 @@ Row object –> Serializer –> <key, value> –> OutputFileFormat –> HDFS fil
 其他：`serdeproperties`可以传递参数给serde。
 
 这三个参数都可以重写，详细看下面第一个链接。
+
 参考：https://www.coder4.com/archives/4031
 https://stackoverflow.com/questions/42416236/what-is-the-difference-between-inputformat-outputformat-stored-as-in-hive
+
+### hive的默认数据分隔符^A
+hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。
+
+最简单的方法就是用sed（**_注意这个^A是按CTRL+V+A打出来的，或者按下crtl+v然后再按下crtl+a就会出来/tmp/out目录(\001)_**，直接输入的^A是不行的。）
+**_也不能通过复制粘贴的方式。前一个地方用的CTRL+V+A，复制粘贴后就失效，要重新CTRL+V+A。_**
+例：sed -i 's/^A/|/g' 000000_0
+
+来自网络：
+在python中可以使用line.split('\x01')来进行切分，也可以使用line.split('\001')，注意其中是单引号
+在java中可以使用split("\\u0001")来进行切分
+### hive默认记录、字段分割符
+
+|分隔符|描述|
+|:---:|:---|
+|\n|换行符。默认记录分隔符，一行一个记录。|
+|^A|用于分割字段。可用八进制\001表示(看上节)|
+|^B|用与分割array、struct、map的key-value对。可用八进制\002表示|
+|^C|用于分割map的key、value对。可用八进制\003表示|
+
+ROW FORMAT DELIMITED必须写在其他字段前，除了stored as。
+### 集合数据类型
+array、map、struct三种。好处是处理p/t级数据时，减少寻址，快。坏处是增大数据冗余等。
+
+### 时间类型
+`Timestamps`类型可以是
+- （1）以秒为单位的整数；
+- （2）带精度的浮点数，最大精确到小数点后9位，纳秒级；
+- （3）java.sql.Timestamp格式的字符串 YYYY-MM-DD hh:mm:ss.fffffffff
+
+`Date` 只支持YYYY-MM-DD格式的日期，其余写法都是错误的，如需带上时分秒，需使用timestamp。
+
+### 计算时间的月份差
+`select floor(months_between('2018-07-01','2018-02-04')) from default.dual`
+返回值为: 4
+时间格式必须是`yyyy-mm-dd`，如果是`yyyymmdd`需要转换
+`floor`是取整函数
+
+### yyyy-mm-dd、yyyymmdd互转
+方法1: from_unixtime+ unix_timestamp
+```mysql
+--20171205转成2017-12-05 
+select from_unixtime(unix_timestamp('20171205','yyyymmdd'),'yyyy-mm-dd') from dual;
+
+--2017-12-05转成20171205
+select from_unixtime(unix_timestamp('2017-12-05','yyyy-mm-dd'),'yyyymmdd') from dual;
+```
+方法2: substr + concat
+```mysql
+--20171205转成2017-12-05 
+select concat(substr('20171205',1,4),'-',substr('20171205',5,2),'-',substr('20171205',7,2)) from dual;
+
+--2017-12-05转成20171205
+select concat(substr('2017-12-05',1,4),substr('2017-12-05',6,2),substr('2017-12-05',9,2)) from dual;
+```
+### 执行外部命令
+hadoop命令：
+把命令行里的hadoop去掉。
+如直接执行`dfs -ls ...;`此种方法相叫hadoop的命令更为高效，hadoop是新开一个jvm线程执行，前者在当前线程执行。
+
+其他命令，以!开始，以;结束，不能用管道、文件补全、用户交互等操作。
+如`!echo 'li';`
+
+### if
+If 函数语法: if(boolean testCondition, T valueTrue, T valueFalseOrNull)
+返回值: T
+说明:  当条件testCondition为TRUE时，返回valueTrue；否则返回valueFalseOrNull
+举例：
+```mysql
+hive> select if(1=2,100,200) from dual;
+200
+```
+
+### 【is null】 = 【 = null】？、【is not null】 = 【 <> null】？
+hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 <> null 或 = null（虽然不报错）
+
+### <> != 区别
+语法: A <> B
+操作类型: 所有基本类型
+描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL，因此比较时要特别注意字段为null的情况（如果有一边等于null，结果就是false）；
+如果表达式A与表达式B不相等，则为TRUE；否则为FALSE
+
+hive中，当两边数据类型不对等时，比较的时候会出现问题。
+### insert
+1.insert into是增加数据
+2.insert overwrite是删除原有数据然后在新增数据，如果有分区那么只会删除指定分区数据，其他分区数据不受影响
+
+### rand
+语法: rand(),rand(int seed)
+返回值: double
+说明:返回一个0到1范围内的随机数。如果指定种子seed，则会等到一个稳定的随机数序列
+
+### cast
+作用：转换
+格式 cast(col as type)
+
+### binary(string|binary)
+将输入的值转换成二进制  
+
+### base64(binary bin)
+将二进制bin转换成64位的字符串
+
+### find_in_set查找函数
+集合查找函数: find_in_set
+语法: find_in_set(string str, string strList) 
+返回值: int
+说明: 返回str在strlist第一次出现的位置，strlist是用逗号分割的字符串。如果没有找该str字符，则返回0
+例子：`select find_in_set('de','ef,ab,de');` 返回3
+
+### decimal
+DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precision, scale) 语法在创建表时来定义Decimal数据类型的precision和scale。
+如果未指定precision，则默认为10。如果未指定scale，它将默认为0（无小数位）。
+**_曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。_**
+
+### export LC_ALL=en_US.UTF-8
+`export LC_ALL=en_US.UTF-8` 解决hive客户端调用脚本中文问题
+
+https://perlgeek.de/en/article/set-up-a-clean-utf8-environment
+
+### SIZE
+数组长度。
+注意的是，如果和split一起用`size(split(str, 'operate'))`，如果str为‘’或者null时，返回的结果是1；因为split返回的是有一个空串的数组。
+
+### get_json_object
+`get_json_object(json_string,’$.str’)` 得到json字符串json_string的$.str节点的值，$指根节点。
+
+### REGEXP/RLIKE/LIKE
+语法: A REGEXP B
+操作类型: strings
+描述: 功能与RLIKE相同
+
+LIKE:不是正则，而是通配符。这个通配符可以看一下SQL的标准，例如%代表任意多个字符。
+RLIKE:是正则，正则的写法与java一样。功能与REGEXP相同.
+
+### REGEXP_EXTRACT
+regexp_extract(string subject, string pattern, int index)
+通过下标返回正则表达式指定的部分。正则`\`需要转义`\\`,例如'\w'需要使用'\\w'
+index指的是：返回所有匹配的第N个.
+参考：http://www.cnblogs.com/judylucky/p/3713774.html
+### NVL
+`NVL( str, replace_with)`  
+str为NULL, 则NVL函数返replace_with值，否则返str值
+
+### CONCAT(str1, str2,...)
+连接字符串，如果参数中有null，返回结果也会是null，因此可以结合上面的方面使用。
+
+### CONCAT_WS(separator, str1, str2,...)
+它是一个特殊形式的 CONCAT()。第一个参数是剩余参数间的分隔符。分隔符可以是与剩余参数一样的字符串。如果分隔符是 NULL，返回值也将为 NULL。这个函数会跳过分隔符参数后的任何 NULL 和空字符串。分隔符将被加到被连接的字符串之间
+这个函数会跳过分隔符参数后的任何 NULL 和空字符串，但是**跳过空字符串后还是会有多余的分隔符存在**（非常鸡肋啊）。
+
+### COLLECT_SET() 行转列
+是 Hive 内置的一个聚合函数, 它返回一个**_消除了重复元素_**的对象集合, 其返回值类型是 array 。
+把group by值一样的分组由列变成行，即变成数组，可以用下标访问。
+collect_set()方法把group by一样的组里的数据组成一个数组。数组从0开始，如果直接select数组，是[item1, ..., itemn]的格式。
+如`select collect_set(uname) unames ....group by uid`，把同一个uid的uname组成数组， 通过别名unames[ind]访问数据。
+`concat_ws(',',collect_set(cast(col_0 as string))) ` 两个一起使用把列变成由逗号分割的行。
+ 
+### COLLECT_LIST() 行转列去重
+`collect_list(id)` 列出该字段所有的值，列出来**_不去重_**
+
+### EXPLODE 行转列
+上面的collect_set是把列变成行，explode是把行变成列。
+`explode(array)` 把数组里的数据变成列形式。经常与split一起用。
+例如，在wordcount中有`explode(split(line, ' '))` 或`explode(split(line, '\\s'))`
+
+### LATERAL VIEW 一行变多行
+lateral view用于和split、explode等UDTF一起使用的，能将一行数据拆分成多行数据，在此基础上可以对拆分的数据进行聚合。
+```mysql
+SELECT myCol1, myCol2, col3 FROM baseTable
+LATERAL VIEW explode(col1) myTable1 AS myCol1
+LATERAL VIEW explode(col2) myTable2 AS myCol2;
+```
+示例：
+**_执行过程是先执行from到 as cloumn的列过程，再执行select 和where后边的语句；_**
+sql如下：
+```mysql
+select datenu,des,type from tb_split 
+lateral view explode(split(des,"//|")) tb1 as des
+lateral view explode(split(type,"//|")) tb2 as type
+```
+数据如下：
+```mysql
+20141018  aa|bb 7|9
+20141019  cc|dd  6|1|8
+```
+希望的结果是：
+```mysql
+20141018  aa 7
+20141018  aa 9
+20141018  bb 7
+20141018  bb 9
+20141019  cc  6
+20141019  cc  1
+20141019  cc  8
+20141019  dd  6
+20141019  dd  1
+20141019  dd  8
+```
+### json数组行转列
+方法1：
+```sql
+select get_json_object(col, '$.bssid')
+from (
+  select '[{"bssid":"6C:59:40:21:05:C4","ssid":"MERCURY_05C4"},{"bssid":"AC:9C:E4:04:EE:52","appid":"10003","ssid":"and-Business"}]' as str
+  from dual
+) pp
+lateral view explode(split(regexp_replace(regexp_extract(pp.str, '^\\[(.+)\\]$', 1),'\\}\\,\\{', '\\}\\|\\|\\{'),'\\|\\|')) ss as col;
+```
+结果：
+```bash
+6C:59:40:21:05:C4
+AC:9C:E4:04:EE:52
+```
+方法2：
+```mysql
+select get_json_object('[{"bssid":"6C:59:40:21:05:C4","ssid":"MERCURY_05C4"},{"bssid":"AC:9C:E4:04:EE:52","appid":"10003","ssid":"and-Business"}]', '$[@.bssid]') as str
+from dual;
+```
+结果与方法1一样。
+
+差别：第一种可以得到所有的数组，第二中只能得到数组里某个值。
+
+### LEAD LAG FIRST_VALUE LAST_VALUE窗口函数
+
+| 窗口函数     | 描述     | 
+| :------- | :-------- | 
+| LAG() | LAG()窗口函数返回分区中当前行之前行（可以指定第几行）的值。 如果没有行，则返回null。  | 
+| LEAD()    | LEAD()窗口函数返回分区中当前行后面行（可以指定第几行）的值。 如果没有行，则返回null。    | 
+| FIRST_VALUE     | FIRST_VALUE窗口函数返回相对于窗口中第一行的指定列的值。     | 
+| LAST_VALUE     | LAST_VALUE窗口函数返回相对于窗口中最后一行的指定列的值。     | 
+
+语法：
+```sql
+LAG | LEAD
+( <col>, <line_num>, <DEFAULT> )
+OVER ( [ PARTITION BY ] [ ORDER BY ] )
+```
+```sql
+FIRST_VALUE | LAST_VALUE
+( <col>,<ignore nulls as boolean> ) OVER
+( [ PARTITION BY ] [ ORDER BY ][ window_clause ] )
+```
+
+参考：https://blog.csdn.net/sunnyyoona/article/details/56484919
+### row_num() over (...)。
+从1开始，为每个分组的每条记录返回一个数字。
+1例如，`ROW_NUMBER() OVER (ORDER BY xlh DESC)` 是先按照xlh列降序，再为降序以后的每条记录返回一个序号。
+2例
+数据库中有数据
+```
+empid       deptid      salary
+----------- ----------- ---------------------------------------
+1           10          5500.00
+2           10          4500.00
+3           20          1900.00
+4           20          4800.00
+5           40          6500.00
+6           40          14500.00
+7           40          44500.00
+8           50          6500.00
+9           50          7500.00
+```
+需求`根据部门分组，显示每个部门的工资等级`
+sql：`SELECT *, Row_Number() OVER (partition by deptid ORDER BY salary desc) rank FROM employee`
+结果：
+```
+empid       deptid      salary                                  rank
+----------- ----------- --------------------------------------- --------------------
+1           10          5500.00                                 1
+2           10          4500.00                                 2
+4           20          4800.00                                 1
+3           20          1900.00                                 2
+7           40          44500.00                                1
+6           40          14500.00                                2
+5           40          6500.00                                 3
+9           50          7500.00                                 1
+8           50          6500.00                                 2
+```
+例子参考：https://blog.csdn.net/biaorger/article/details/38523527
+row_number()另一作用可以用来去除重复：先按分组字段分区，再通过 rownum = 1过滤即可。另外，去重还可以借助于group by。
+
+### partition by与group by 的区别
+后者是经典的使用，是对检索结果的保留行进行单纯分组，如果有sum函数，就是先分组再对每个分组求和；
+前者类似虽然也具有分组功能，但同时也具有其他的功能，如果有sum函数，是先分组，再累加，会把分组里累加的过程输出。
+```
+表：
+B  C  D  
+02 02 1
+02 02 13
+
+select b,c,sum(d) e from a group by b,c;   
+结果：
+B   C  E  
+02 02 13
+SELECT b, c, d, SUM(d) OVER(PARTITION BY b,c ORDER BY d) e FROM a;  
+结果：
+B C E  
+02 02 1  
+02 02 13
+```
+从上面的例子中可以看到第二条语句的累加过程
+
+**_hive中group by和mysql不同。mysql可以接受select处理后的别名作为group by，hive的group by不能接受。_**
+
+### ORDER /SORT /DISTRIBUTE BY
+- `ORDER BY` 全局排序，会将所有数据送到同一个Reducer中后再对所有数据进行排序，对于大数据会很慢，谨慎使用
+- `SORT BY` 局部排序，只会在每一个Reducer中对数据进行排序，在每个Reducer输出是有序的，但并非全局排序（每个reducer出来的数据是有序的，但是不能保证所有的数据是有序的——即文件(分区)之间无序，除非只有一个reducer）
+- `DISTRIBUTE BY` 控制map的输出被送到哪个reducer端进行汇总计算，相同字段的map输出会发到一个reduce节点去处理。通过这个特性可以强行使hql有reduce，伴随有减少mapper输出文件个数、减轻数据倾斜等功效，可看下面链接里的例子。用distribute by 会对指定的字段按照hashCode值对reduce的个数取模，然后将任务分配到对应的reduce中去执行
+
+关与`DISTRIBUTE BY`使用非常好的文章：https://www.iteblog.com/archives/1533.html
+
+~~注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写.~~
+
+### group by 1, 2, 3
+`SET hive.groupby.orderby.position.alias=true` 默认是false。（mysql可直接使用。）
+打开这个开关后，group by可以通过1， 2， 3这样的数字指定 使用select的第几个字段。
+示例：`SELECT substr(date, 1, 4), count(1) year FROM *** GROUP BY 1;`
+
+### 导出数据到本地
+hive的-e和-f参数可以用来导出数据。
+-e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。
+（1）`hive -e "use test; select * from student where sex = '男'" > /tmp/output.txt`
+（2）`insert overwrite local directory "/tmp/out" select cno,avg(grade) from sc group by(cno);`
+（3）`insert overwrite local directory "/tmp/out" row format delimited fields terminated by ' ' select cno,avg(grade) from sc group by(cno);`
+
+（2）也可以作为（1）中-e的参数执行。
+（2）这条HQL的执行需要启用Mapreduce完成，运行完这条语句之后，将会在本地文件系统的/tmp/out目录下生成文件，这个文件是Reduce产生的结果（这里生成的文件名是000000_0），数据的分割使用的就是上面提到的^A
+（3）通过加入`row format delimited fields terminated by ' ' `使的数据的分割是空格，而不是^A.
+（1）中会直接保存成本地文件，把数据直接保存在/tmp/output.txt中，数据默认由空格分割。
+（2）这条HQL的‘local’去掉，数据会被保存在hdfs系统的/tmp/out目录下。
+（2）不能使用`insert into`或者`insert local`
+
+### into/overwrite 导出数据到表
+把表2的数据导出到表1：
+(1)`insert into table_name1(...) select ... from table_name2`
+(2)`insert overwrite table_name1(...) select ... from table_name2`
+select 部分不能用括号，否则会被认为是表1的字段；
+(...)中是表1的字段，可以省略； `select ...` 可以用`select *` 代替；
+(1)是直接导入，(2)是覆盖原来数据导入。
+
+导入到分区表：
+(1)`insert into table_name1 partition(dt='2018-03-11') select ... from table_name2`
+(2)`set hive.exec.dynamic.partition.mode=nonstrict;insert into table_name1 partition(dt) select ... from table table_name2`
+
+同样可以把`into`换成`overwrite table`以达到覆盖的效果。注意：只会覆盖table_name2中存在的对应分区，table_name1中已经存在的分区，table_name2中没有是不会进行覆盖。 即，覆盖只是覆盖分区里的数据数据、追加分区，原分区不变。
+(1)是导入一个分区的数据 `select ...`部分不用带dt(分区)的值。注意，如果表2也是分区表，此时不能用`select *`，因为它查出来的数据有分区字段，比`insert`的多一个字段。
+(2)是导入多个分区的表，执行前需要`set hive.exec.dynamic.partition.mode=nonstrict;`，因为严格模式下，不允许所有的分区都被动态指定，目的是为了防止生成太多的目录.此时`select ...`必须有dt分区的字段。
+(2)是动态分区，不指定分区，一次可以导入多个分区。
+
+### 文件导入数据到表
+`load data [local] inpath 'file1.txt' [overwrite] into table table_name [partition(partcol=val)]`
+通常情况下，会不只是一个文件，而是一个目录，load操作会把目录下的文件全部拷贝到表的location下。
+`local` 决定文件是来自本地还是hdfs。
+`overwrite` 决定是否要覆盖。
+`load`命令不支持动态分区，必须指定分区。(可以把数据先转到非分区表，再利用上面小节“导出数据到表”的方法把非分区表的数据导入到分区表)。不指定分区，会报错`FAILED: SemanticException org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Invalid partition key & values; keys [dt, ], values [])`
+load不能加载桶表数据，只能从另一张表加载数据。(和动态分区的解决方案一样，建一个中间表作为过渡表)。
+
+hive不会检验用户装载的数据和表的模式是否匹配，但是会验证装载文件的类型和表的定义类型是否匹配。比如，表的定义是sequencefile，则数据文件必须是sequencefile
+### 同时插入多个表
+```mysql
+from test t
+insert into table test1 select ...
+insert into table test3 select ...
+```
+从test中查数同时插入到test1、test3。每个select都必须存在，可以用*
+eg:
+```mysql
+from test_part
+insert into table test_part2 partition(dt='2018-08-19', source='app') select id 
+insert into table test_part4 partition(dt='2018-08-10', source='app') select id;
+```
+### 自定义UDF
+网上介绍了四中方法。只验证过第一种。
+方法（1）最常用也最不被喜欢的方法。
+```mysql
+add jar testUDF-0.0.1-SNAPSHOT.jar;
+create temporary function zodiac as "com.hive.udf.UDFZodiacSign";
+```
+之后就可以在sql里直接使用`zodiac()`。但是这种方法只存在在当前会话中。
+每次会话都要重新add、create。（下面的.hiverc文件可以解决每次都要add、create问题）
+
+其他方法：https://www.cnblogs.com/chushiyaoyue/p/6632090.html?utm_source=itdadao&utm_medium=referral
+### -e/f/S
+`-e` : 执行短命令
+`-f` :  执行文件（适合脚本封装）
+`-S` : 安静模式，不显示MR的运行过程
+
+### .hiverc文件
+网上说在`${HIVE_HOME}/bin`目录下（我目前遇到别人部署的hive是在用户目录下）
+（`ls -a`命令查看隐藏文件）
+它是在hive启动的时候被调用，可以在里面定义常用的参数。
+写到这个是因为，还可以把上面加载udf的最常用最不被喜欢的第一种方法的add、create语句写到.hiverc文件里，这样每次启动hive时都默认加载了udf方法。
+
+### -i
+-i 参数可以指定一个hive启动就被调用的文件。对，默认就是上面的.hiverc文件！
+
+### set变量
+
+|命名空间|使用权限|描述|
+|:------|:---|:-------|
+|hivevar|可读可写|hive 0.18.0 版本及之后。用户自定义变量|
+|hiveconf|可读可写|hive相关的配置属性|
+|system|可读可写|java相关的配置属性|
+|env|只可读|shell环境定义的环境变量|
+
+hivevar例子：
+```
+set hivevar:dd='aa';
+select ${hivevar:dd}
+```
+hivevar的前缀可以省略，但是可能会找不到变量，不建议省略。
+system、env的前缀不能省。
+
+上面是在hive的终端里，另一种是在shell里使用。在实践中使用时，`create_table.sql`需要用`"${hivevar:dd}"`,即需要单/双引号。
+另外`-hivevar`可用`--define`
+`hive -hivevar dd='aa' -f ./create_table.sql`
+**_多个参数_**多次指定`hivevar`： `hive -hivevar dd='aa' -hivevar d='aaa' -f ./create_table.sql`
+
+直接`set`命令可以看到所有变量值。
+`set`单个参数，可以看见这个参数的值。
+
+### tblproperties
+`tblproperties` 主要的作用是以键值对的格式为表增加额外的文档说明。
+（hive和像DymamoDB这样的数据库集成时，`tblproperties` 还有用作数据库连接的必要的元数据信息）
+Hive会自动增加两个表属性：last_modified_by，保存最后修改这个表的用户的用户名；last_modified_time，保存最后一次修改的时间秒，但是如果用户没有手动定义任何的文档说明，这两个属性还是不会自动添加的。
+`show tblproperties table_name` 查看表的`tblproperties`信息
+
+### LEFT SEMI JOIN
+hive中没有实现in/exist，使用`left semi join`代替
+`left semi join` 子句中右边的表只能在 ON 子句中设置过滤条件，在 WHERE 子句、SELECT 子句或其他地方过滤都不行。
+例子
+mysql中
+```mysql
+SELECT a.key, a.value 
+  FROM a 
+  WHERE a.key in 
+   (SELECT b.key 
+    FROM B); 
+```
+hive重写为：
+```mysql
+SELECT a.key, a.val 
+FROM a LEFT SEMI JOIN b on (a.key = b.key)
+```
+参考：https://my.oschina.net/leejun2005/blog/188459
 
 ### join原理、调优
 (join 时，每次 map/reduce 任务的逻辑是这样的：reducer 会缓存 join 序列中除了最后一个表的所有表的记录，再通过最后一个表将结果序列化到文件系统。) 
@@ -726,6 +766,13 @@ NULL下hive关联操作的字段不会作为关联条件,即使是`null=null`的
 export HIVE_HOME=/usr/local/hive
 export PATH=$PATH:$HIVE_HOME/bin
 ```
+
+### hive beeline常用参数
+`myhive --silent=true --outputformat=csv2 --showHeader=false -e "use database;"`
+`--outputformat=csv2` 消除多余的横线
+`--silent=true` 静默模式，不输出多余执行过程
+`--showHeader=false` 不输出表头
+参考：https://www.cnblogs.com/30go/p/8706850.html
 
 ### 参考
 参考：http://www.cnblogs.com/smartloli/p/4288493.html
