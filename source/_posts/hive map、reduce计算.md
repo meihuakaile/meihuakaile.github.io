@@ -9,6 +9,7 @@ copyright: true
 date: 2018-09-19
 ---
 ### map个数计算
+`dfs.block.size`
 splitsize= Math.max(minSize, Math.min(goalSize, blockSize)),通常这个值=blockSize，输入的文件较小，文件字节数小于blocksize时，splitsize=输入文件字节数之和。
 
 **_gzip不支持切片，因此一个gzip压缩文件不能通过切片 由多个map执行，只能是有多少个文件，对应有多少个map。_**
@@ -75,16 +76,15 @@ reduce数量由以下三个参数决定，
 https://www.iteblog.com/archives/1697.html
 
 # shuffle
-讲的很棒：https://www.iteblog.com/archives/1119.html
-https://www.cnblogs.com/ljy2013/articles/4435657.html
+Combiner会优化MapReduce的中间结果，所以它在整个模型中会多次使用。那么哪些场景才能使用Combiner呢？从这里分析，Combiner的输出是Reducer的输入，Combiner绝不能改变最终的计算结果。所以从我的想法来看，Combiner只应该用于那种Reduce的输入key/value与输出key/value类型完全一致，且不影响最终结果的场景。比如累加，最大值等。Combiner的使用一定得慎重，如果用好，它对job执行效率有帮助，反之会影响reduce的最终结果。
 
+讲的很棒：(shuffle过程)https://www.iteblog.com/archives/1119.html
+（过程）https://www.cnblogs.com/ljy2013/articles/4435657.html
+（shuffle优化）https://blog.csdn.net/z_xiaozhut/article/details/82353905
 
 # 数据倾斜
 定义：某一个或几个key的数据相比于其他key特别多，导致他们对应的reduce非常慢，其他数据量少的reduce早就执行完了，但是还要等待。
 最容易的原因：（1）大量的key为空join连接的情况，空的key都hash到一个reduce上去了.
-
-#
-动态分区容易产生多个小文件。
 
 # 参考
 https://www.cnblogs.com/xd502djj/p/3799432.html

@@ -69,3 +69,17 @@ fi
 # 数字等于： [ $z = $v ] 不能用==，等号前后的空格不能省
 # 数字不等： [ $z != $v ]等号前后的空格不能省
 ```
+
+多线程：
+```bash
+# run processes and store pids in array
+for i in $n_procs; do
+    ./procs[${i}] &
+    pids[${i}]=$!
+done
+
+# wait for all pids
+for pid in ${pids[*]}; do
+    wait $pid
+done
+```

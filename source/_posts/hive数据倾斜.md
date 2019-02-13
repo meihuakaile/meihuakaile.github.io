@@ -20,14 +20,14 @@ https://blog.csdn.net/wisgood/article/details/77063606
 ```sql
 select split(uid, '_')[0] uid, sum(names) from
 (
-  select concat_ws('-', uid, substr(rand()*10, 1, 1)) uid, count(name) names
+  select concat_ws('_', uid, substr(rand()*10, 1, 1)) uid, count(name) names
   from 
   (
     select uid, name
     from user
     group by uid, name
   )a
-  group by concat_ws('-', uid, substr(rand()*10, 1, 1))
+  group by concat_ws('_', uid, substr(rand()*10, 1, 1))
 )b
 group by split(uid, '_')[0]
 ```
@@ -42,7 +42,7 @@ group by split(uid, '_')[0]
 `hive.map.aggr.hash.min.reduction=0.5(默认)`预先取100000条数据聚合,如果聚合后的条数/100000>0.5，则不再聚合
 
 # join 数据倾斜
-1、null或者某个无效无效字符太多导致数据倾斜。
+1、null或者某个无效字符太多导致数据倾斜。
    `null=null`结果是null，即false，在join时关联不上，join之前去掉不影响结果；
    ''关联得上，但是不需要时产生不必要的脏数据，可以在join之前把key为null/''的值去掉。
    因为null关联不上如果null有用不能去掉，可以用下面两种方法。
@@ -67,11 +67,16 @@ group by split(uid, '_')[0]
 2、Map输出key数量极少，导致reduce端退化为单机作业。
    **_尽量尽早地过滤数据，减少每个阶段的数据量;把where、group by等操作放在join之前。_**
    先对join的表去重，即把`group by`操作放在join之前，减少join的笛卡尔积大小。
+   或者其中的小表做均匀打散，另一个表加随机数。
 3、Map输出key分布不均，少量key对应大量value，导致reduce端单机瓶颈。
    下面的参考链接用的是切片取样的方法。
    我一般使用上面2中的办法，尽早去重。
+   或者采用`group by`时的办法，加随机数把数据打散。
 4、不同数据类型关联也会产生数据倾斜。 
    在on时强转`On a.auction_id = cast(b.auction_id as string);`
-5、`set hive.skewjoin.key=100000;`join的键对应的记录条数超过这个值则会进行分拆,值根据具体数据量设置； hive 在运行的时候没有办法判断哪个 key 会产生多大的倾斜，所以使用这个参数控制倾斜的阈值，如果超过这个值，新的值会发送给那些还没有达到的 reduce。对`full outer join`无效。
+5、`set hive.optimize.skewjoin=true;`   
+6、`set hive.skewjoin.key=100000;`join的键对应的记录条数超过这个值则会进行分拆,值根据具体数据量设置； hive 在运行的时候没有办法判断哪个 key 会产生多大的倾斜，所以使用这个参数控制倾斜的阈值，如果超过这个值，新的值会发送给那些还没有达到的 reduce。对`full outer join`无效。
+如果你不知道设置多少，可以就按官方默认的1个reduce 只处理1G 的算法，那么  skew_key_threshold  = 1G/平均行长. 或者默认直接设成250000000 (差不多算平均行长4个字节)
 
 reduce倾斜参考：https://www.cnblogs.com/skyl/p/4855099.html
+https://cwiki.apache.org/confluence/display/Hive/Skewed+Join+Optimization

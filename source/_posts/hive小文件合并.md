@@ -1,5 +1,5 @@
 ---
-title: 'hive小文件合并'
+title: 'hive小文件问题'
 date: "2018/10/19"
 tags: [hadoop]
 categories: ['hadoop']
@@ -41,6 +41,8 @@ CombineFileInputFormat 通过将多个“小文件”合并为一个”切片”
 
 合并过程：结果文件进行合并时会执行一个额外的map-only脚本，mapper的数量是文件总大小除以size.per.task参数所得的值。
 ### 解决Hive创建文件数过多的其他方法
+`set hive.exec.reducers.bytes.per.reducer=5120000000;` + `DISTRIBUTE BY rand();`
+`DISTRIBUTE BY rand()` 强制产生reduce，`set hive.exec.reducers.bytes.per.reducer`控制reduce个数（reduce处理数据数量），两者一起使用控制小文件输出。
 动态分区好用，但是会产生很多小文件。原因就在于，假设初始有N个mapper,最后生成了m个分区，最终会有多少个文件生成呢？答案是N*m,是的，每一个mapper会生成m个文件，就是每个分区都会对应一个文件，这样的话你算一下。所以小文件就会成倍的产生。
 怎么解决这个问题，通常处理方式也是像上面那样，让数据尽量聚到少量reducer里面。但是有时候虽然动态分区不会产生reducer,但是也就意味着最后没有进行文件合并,我们也可以用distribute by rand()这句来保证数据聚类到相同的reducer。
 

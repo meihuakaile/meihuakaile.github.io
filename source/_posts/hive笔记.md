@@ -140,6 +140,11 @@ Hive中的表和关系型数据库中的表在概念上很类似，每个表在H
 每天将收集到的网站日志定期流入HDFS文本文件，一天一个目录；
 在Hive中建立外部表作为源表，通过添加分区的方式，将每天HDFS上的原始日志映射到外部表的天分区中；
 在外部表（原始日志表）的基础上做大量的统计分析，用到的中间表、结果表使用内部表存储，数据通过SELECT+INSERT进入内部表。
+### 关于Strict Mode 
+ Hive中的严格模式可以防止用户发出（可以有问题）的查询无意中造成不良的影响。 将hive.mapred.mode设置成strict可以禁止三种类型的查询：
+ 1）、在一个分区表上，如果没有在WHERE条件中指明具体的分区，那么这是不允许的，换句话说，不允许在分区表上全表扫描。这种限制的原因是分区表通常会持非常大的数据集并且可能数据增长迅速，对这样的一个大表做全表扫描会消耗大量资源，必须要再WHERE过滤条件中具体指明分区才可以执行成功的查询。
+ 2）、第二种是禁止执行有ORDER BY的排序要求但没有LIMIT语句的HiveQL查询。因为ORDER BY全局查询会导致有一个单一的reducer对所有的查询结果排序，如果对大数据集做排序，这将导致不可预期的执行时间，必须要加上limit条件才可以执行成功的查询。
+ 3）、第三种是禁止产生笛卡尔集(full Cartesian product)。在JION接连查询中没有ON连接key而通过WHERE条件语句会产生笛卡尔集，需要改为JOIN...ON语句。  
 
 ### 修改表
 所有通过`alter`，修改的只是表的元数据，表里存的数据并不会改变。
@@ -342,6 +347,7 @@ hive> select if(1=2,100,200) from dual;
 
 ### 【is null】 = 【 = null】？、【is not null】 = 【 <> null】？
 hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 <> null 或 = null（虽然不报错）
+null在hive底层默认是用'\N'来存储的，可以通过alter table test SET SERDEPROPERTIES('serialization.null.format' = 'a');来修改。
 
 ### <> != 区别
 语法: A <> B
@@ -647,8 +653,12 @@ create temporary function zodiac as "com.hive.udf.UDFZodiacSign";
 ```
 之后就可以在sql里直接使用`zodiac()`。但是这种方法只存在在当前会话中。
 每次会话都要重新add、create。（下面的.hiverc文件可以解决每次都要add、create问题）
-
 其他方法：https://www.cnblogs.com/chushiyaoyue/p/6632090.html?utm_source=itdadao&utm_medium=referral
+
+UDF：可直接应用于select语句，对查询结构做格式化处理后，再输出内容。
+UDTF：用来解决 输入一行输出多行(On-to-many maping) 的需求。`lateral view`一行转多行，有些字段无法使用split等函数剪切成数组。
+UDAF：实现聚类函数（eg，sum/agv）。
+参考：https://blog.csdn.net/liuj2511981/article/details/8523084
 ### -e/f/S
 `-e` : 执行短命令
 `-f` :  执行文件（适合脚本封装）
@@ -786,3 +796,4 @@ mp调优：https://www.cnblogs.com/sunxucool/p/4459006.html
 函数（时间、字符串、数值）：https://blog.csdn.net/duan19056/article/details/17758819
 hive函数（时间、字符串、数值）:https://blog.csdn.net/yyywyr/article/details/51475410
 https://segmentfault.com/a/1190000011889191
+（面试题）https://blog.csdn.net/best_luxi/article/details/82454770

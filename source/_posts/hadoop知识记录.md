@@ -9,7 +9,7 @@ copyright: true
 mr不写reduce时，系统为了架构的完成性，仍然自动生成了一个reduce，这个reduce并不做shuffle和数据拖取，生成的结果文件就是map的输出文件。
 但是可以直接通过`job.setNumReduceTasks(0)`实现将reduce设置成0个。
 
-# HDFS常用操作
+## HDFS常用操作
 hadoop dfs -ls 列出HDFS下的文件  
 hadoop dfs -ls in 列出HDFS下某个文档中的文件  
 hadoop dfs -put test1.txt test 上传文件到指定目录并且重新命名，只有所有的DataNode都接收完数据才算成功  

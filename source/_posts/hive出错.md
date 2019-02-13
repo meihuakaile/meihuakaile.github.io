@@ -105,7 +105,45 @@ https://blog.csdn.net/Gpwner/article/details/73457108
 `Hive Warning: Value had a \n character in it`
 遇到这个错误一般是hive query的格式问题， 哪里缺了个分号  `；`
 我这次是几个set语句后面忘记加分号了。
+### join只允许等值操作
+```sql
+SELECT c.*, t.* FROM c JOIN t 
+ON (t.area1= c.cname OR t.area2 =c.cname OR t.area3 = c.cname)
+WHERE t.time>='20140818' and t.time<='20140824' AND platform='pc'
+GROUP BY t.time;
+```
+报错`FAILED: SemanticException [Error 10019]: Line 5:32 OR not supported in JOIN currently 'cname'`
+hive 受限于 MapReduce 算法模型，只支持 equi-joins（等值 join），要实现上述的非等值 join，可以选择采用笛卡儿积（ full Cartesian product ）来实现。
+笛卡尔积：
+```sql
+SELECT c.*, t.* FROM c JOIN t 
+WHERE t.area1= c.cname OR t.area2 =c.cname OR t.area3 = c.cname and 
+      t.time>='20140818' and t.time<='20140824' AND platform='pc'
+GROUP BY t.time;
+```
+笛卡尔积是m×n的映射，耗时且非内存。
+`or`时，采用`union all`代替：
+```sql
+select * from 
+(
+    SELECT c.*, t.* FROM c JOIN t on t.area1= c.cname
+    WHERE t.time>='20140818' and t.time<='20140824' AND platform='pc'
+    
+    union ALL 
+    
+    SELECT c.*, t.* FROM c JOIN t on t.area2= c.cname
+    WHERE t.time>='20140818' and t.time<='20140824' AND platform='pc'
+    
+    union ALL 
+    
+    SELECT c.*, t.* FROM c JOIN t on t.area3= c.cname
+    WHERE t.time>='20140818' and t.time<='20140824' AND platform='pc'
+)tmp
+GROUP BY tmp.time;
+```
+此时使用`union all`，可以再上上面章节的并发优化`set hive.exec.parallel=true;` 
 
+总结自：https://cloud.tencent.com/developer/article/1043838
 ### 堆内存出错 Java heap space
 `FAILED: Execution Error, return code -101 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask. Java heap space`
 设置 `set io.sort.mb=10;` 默认值是100
@@ -300,7 +338,7 @@ Container killed on request. Exit code is 143
 解决：加参数，`-D mapred.skip.map.max.skip.records=1` map task最多允许的跳过记录数，默认值0。
 参考：https://forums.aws.amazon.com/thread.jspa?threadID=92747
 
-###
+### Unexpected end of input stream
 ```bash
 Error: java.io.EOFException: Unexpected end of input stream
 	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:145)
@@ -324,6 +362,47 @@ Error: java.io.EOFException: Unexpected end of input stream
 ```
 这个主要是hdfs文件的问题。文件的压缩有问题，现在解压失败报错。
 从日志中可以找到出错的文件名，然后get下来后，尝试手动解压失败，确定问题。
+
+### Unsupported major.minor version 52.0
+```sh
+java.lang.UnsupportedClassVersionError: com/mr/udf/UDTFTest : Unsupported major.minor version 52.0
+	at java.lang.ClassLoader.defineClass1(Native Method)
+	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)
+	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)
+	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)
+	at java.net.URLClassLoader.access$100(URLClassLoader.java:71)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:361)
+	at java.net.URLClassLoader$1.run(URLClassLoader.java:355)
+	at java.security.AccessController.doPrivileged(Native Method)
+	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)
+	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)
+	at java.lang.Class.forName0(Native Method)
+	at java.lang.Class.forName(Class.java:270)
+	at org.apache.hadoop.hive.ql.exec.FunctionTask.getUdfClass(FunctionTask.java:309)
+	at org.apache.hadoop.hive.ql.exec.FunctionTask.createTemporaryFunction(FunctionTask.java:165)
+	at org.apache.hadoop.hive.ql.exec.FunctionTask.execute(FunctionTask.java:72)
+	at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:160)
+	at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:88)
+	at org.apache.hadoop.hive.ql.Driver.launchTask(Driver.java:1676)
+	at org.apache.hadoop.hive.ql.Driver.execute(Driver.java:1435)
+	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1218)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1082)
+	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1072)
+	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:213)
+	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:165)
+	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:376)
+	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:736)
+	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:681)
+	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:621)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
+FAILED: Execution Error, return code -101 from org.apache.hadoop.hive.ql.exec.FunctionTask. com/mr/udf/UDTFTest : Unsupported major.minor version 52.0
+```
+原因：hive自定义jar包和hive里的jdk版本不兼容。
 
 ### 参考
 http://www.voidcn.com/article/p-zfiukxcn-hx.html
