@@ -2,37 +2,18 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="d611714d-3f1d-4318-9f65-bd45f35f96b3" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/Yarn/1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hadoop知识记录/1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hadoop知识记录/2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hadoop知识记录/3.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hadoop知识记录/4.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hdfs/1.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hive笔记/48.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/spark/1.jpg" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/spark/2.png" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_drafts/java.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_drafts/mian.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/Yarn.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/hdfs.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/kafka.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/spark.md" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/source/_posts/spring的线程安全.md" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/_config.yml" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/gulpfile.js" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/package.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/source/_drafts/spark.md" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/source/_posts/Container is running beyond memory limits.md" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/themes/next" afterPath="$PROJECT_DIR$/themes/next" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hadoop知识记录.md" afterPath="$PROJECT_DIR$/source/_posts/hadoop知识记录.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive map、reduce计算.md" afterPath="$PROJECT_DIR$/source/_posts/hive map、reduce计算.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive出错.md" afterPath="$PROJECT_DIR$/source/_posts/hive出错.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive压缩.md" afterPath="$PROJECT_DIR$/source/_posts/hive压缩.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/_posts/hive笔记.md" afterPath="$PROJECT_DIR$/source/_posts/hive笔记.md" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/source/about/index.md" afterPath="$PROJECT_DIR$/source/about/index.md" />
+    </list>
+    <list id="182a2a53-8fc0-4460-bd02-d575bb5454ec" name="Revert: leave q" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/_config.yml" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/gulpfile.js" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/package.json" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <file path="$PROJECT_DIR$/_config.yml" ignored="false" />
+    <file path="$PROJECT_DIR$/gulpfile.js" ignored="false" />
+    <file path="$PROJECT_DIR$/package.json" ignored="false" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -130,7 +111,7 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/hive出错.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="166">
+              <first_editor relative-caret-position="1720">
                 <caret line="86" column="3" lean-forward="false" selection-start-line="86" selection-start-column="3" selection-end-line="86" selection-end-column="3" />
                 <folding>
                   <marker date="1553495378963" expanded="true" signature="2443:2534" ph="..." />
@@ -153,8 +134,8 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/hive-set设置.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="232">
-                <caret line="50" column="10" lean-forward="false" selection-start-line="50" selection-start-column="10" selection-end-line="50" selection-end-column="10" />
+              <first_editor relative-caret-position="432">
+                <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -166,8 +147,8 @@
         <entry file="file://$PROJECT_DIR$/source/_posts/hive数据倾斜.md">
           <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
             <state split_layout="SPLIT">
-              <first_editor relative-caret-position="240">
-                <caret line="36" column="33" lean-forward="true" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
+              <first_editor relative-caret-position="720">
+                <caret line="36" column="33" lean-forward="false" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
                 <folding />
               </first_editor>
               <second_editor />
@@ -306,7 +287,7 @@
     <handled-path value="$PROJECT_DIR$/.deploy_git/node_modules" />
     <handled-path value="$PROJECT_DIR$/node_modules" />
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="y" value="-7" />
     <option name="width" value="1366" />
     <option name="height" value="712" />
@@ -326,7 +307,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
@@ -344,31 +324,13 @@
               <item name="blog" type="b2602c69:ProjectViewProjectNode" />
               <item name="blog" type="462c0819:PsiDirectoryNode" />
               <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="_drafts" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="blog" type="b2602c69:ProjectViewProjectNode" />
-              <item name="blog" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
               <item name="_posts" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="blog" type="b2602c69:ProjectViewProjectNode" />
-              <item name="blog" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="_posts" type="462c0819:PsiDirectoryNode" />
-              <item name="hdfs" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="blog" type="b2602c69:ProjectViewProjectNode" />
-              <item name="blog" type="462c0819:PsiDirectoryNode" />
-              <item name="source" type="462c0819:PsiDirectoryNode" />
-              <item name="about" type="462c0819:PsiDirectoryNode" />
             </path>
           </expand>
           <select />
         </subPane>
       </pane>
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -412,6 +374,7 @@
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="d611714d-3f1d-4318-9f65-bd45f35f96b3" name="Default" comment="" />
+      <changelist id="182a2a53-8fc0-4460-bd02-d575bb5454ec" name="Revert: leave q" comment="" />
       <created>1523179291782</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
@@ -429,17 +392,17 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="0" y="-7" width="1366" height="712" extended-state="6" />
+    <frame x="0" y="-7" width="1366" height="712" extended-state="7" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18361153" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.18664643" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3298791" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6355786" sideWeight="0.5030349" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.6183074" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.43177894" sideWeight="0.4969651" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.82728845" sideWeight="0.4969651" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -454,6 +417,32 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="1" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
+              <option name="COLUMN_ORDER">
+                <list>
+                  <option value="0" />
+                  <option value="1" />
+                  <option value="2" />
+                  <option value="3" />
+                </list>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsContentAnnotationSettings">
     <option name="myLimit" value="2678400000" />
@@ -888,7 +877,7 @@
     <entry file="file://$PROJECT_DIR$/source/_posts/hive出错.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="166">
+          <first_editor relative-caret-position="1720">
             <caret line="86" column="3" lean-forward="false" selection-start-line="86" selection-start-column="3" selection-end-line="86" selection-end-column="3" />
             <folding>
               <marker date="1553495378963" expanded="true" signature="2443:2534" ph="..." />
@@ -909,8 +898,8 @@
     <entry file="file://$PROJECT_DIR$/source/_posts/hive数据倾斜.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="240">
-            <caret line="36" column="33" lean-forward="true" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
+          <first_editor relative-caret-position="720">
+            <caret line="36" column="33" lean-forward="false" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
             <folding />
           </first_editor>
           <second_editor />
@@ -920,8 +909,8 @@
     <entry file="file://$PROJECT_DIR$/source/_posts/hive-set设置.md">
       <provider selected="true" editor-type-id="split-provider[text-editor;markdown-preview-editor]">
         <state split_layout="SPLIT">
-          <first_editor relative-caret-position="232">
-            <caret line="50" column="10" lean-forward="false" selection-start-line="50" selection-start-column="10" selection-end-line="50" selection-end-column="10" />
+          <first_editor relative-caret-position="432">
+            <caret line="60" column="0" lean-forward="false" selection-start-line="60" selection-start-column="0" selection-end-line="60" selection-end-column="0" />
             <folding />
           </first_editor>
           <second_editor />
