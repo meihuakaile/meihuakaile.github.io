@@ -8,4 +8,5 @@ toc: false
 一个什么都学的菜鸟
 
 email: 183667028@qq.com
-other blog: https://blog.csdn.net/u010668907
+ielichen@foxmail.com
+other blog: https://blog.csdn.net/u010668907 (已经放弃更新，但是会偶尔看留言等消息)

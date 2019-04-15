@@ -31,6 +31,14 @@ Hive不支持事务。提交查询和返回结果可能有很大的延时，此�
 （2）MapReduce开发非常繁琐复杂，使用hive可以提高效率。
 （3）统一的元数据管理，可与impala/spark共享元数据。
 
+hive模型图
+driver：hive查询的sql都会先提交到driver这里。而driver又由compiler、optimizer、Executor组成。compiler将类sql查询语句进行解析、并且从元数据库取元数据解析优化，成mr job，提交到hadoop集群执行。driver里面有个优化器optimizer。
+它的作用是：
+- 1、去掉不必要的列和分区，优化查询。
+- 2、将多 multiple join 合并为一个 multi-way join；
+- 3、对join、group-by 和自定义的 map-reduce 操作重新进行划分；
+![](48.png)
+
 ### hive在hdfs上的文件结构
 ```
 　　    数据仓库的位置                数据库目录           表目录          表的数据文件
@@ -423,7 +431,7 @@ str为NULL, 则NVL函数返replace_with值，否则返str值
 它是一个特殊形式的 CONCAT()。第一个参数是剩余参数间的分隔符。分隔符可以是与剩余参数一样的字符串。如果分隔符是 NULL，返回值也将为 NULL。这个函数会跳过分隔符参数后的任何 NULL 和空字符串。分隔符将被加到被连接的字符串之间
 这个函数会跳过分隔符参数后的任何 NULL 和空字符串，但是**跳过空字符串后还是会有多余的分隔符存在**（非常鸡肋啊）。
 
-### COLLECT_SET() 行转列
+### COLLECT_SET() 列转行
 是 Hive 内置的一个聚合函数, 它返回一个**_消除了重复元素_**的对象集合, 其返回值类型是 array 。
 把group by值一样的分组由列变成行，即变成数组，可以用下标访问。
 collect_set()方法把group by一样的组里的数据组成一个数组。数组从0开始，如果直接select数组，是[item1, ..., itemn]的格式。
@@ -517,7 +525,7 @@ FIRST_VALUE | LAST_VALUE
 ```
 
 参考：https://blog.csdn.net/sunnyyoona/article/details/56484919
-### row_num() over (...)。
+### row_num()/rank/dense_rank over (...)。
 从1开始，为每个分组的每条记录返回一个数字。
 1例如，`ROW_NUMBER() OVER (ORDER BY xlh DESC)` 是先按照xlh列降序，再为降序以后的每条记录返回一个序号。
 2例
@@ -553,6 +561,21 @@ empid       deptid      salary                                  rank
 ```
 例子参考：https://blog.csdn.net/biaorger/article/details/38523527
 row_number()另一作用可以用来去除重复：先按分组字段分区，再通过 rownum = 1过滤即可。另外，去重还可以借助于group by。
+
+```sql
+select a,row_number() over(order by b) row_number,rank() over(order by b) rank,
+dense_rank() over(order by b) dense_rank from test_rank;
+
+result：
+a   row_number  rank    dense_rank
+A       1        1          1
+C       2        2          2
+D       3        3          3
+B       4        3          3
+E       5        5          4
+F       6        6          5
+G       7        7          6
+```
 
 ### partition by与group by 的区别
 后者是经典的使用，是对检索结果的保留行进行单纯分组，如果有sum函数，就是先分组再对每个分组求和；
@@ -590,6 +613,11 @@ B C E
 `SET hive.groupby.orderby.position.alias=true` 默认是false。（mysql可直接使用。）
 打开这个开关后，group by可以通过1， 2， 3这样的数字指定 使用select的第几个字段。
 示例：`SELECT substr(date, 1, 4), count(1) year FROM *** GROUP BY 1;`
+
+### having by
+GROUP BY子句之后使用Having子句
+可应用限定条件进行分组，以便系统仅对满足条件的组返回结果。
+在GROUP BY子句后面包含了一个HAVING子句。HAVING类似于WHERE（唯一的差别是WHERE过滤行，HAVING过滤组）AVING支持所有WHERE操作符。
 
 ### 导出数据到本地
 hive的-e和-f参数可以用来导出数据。
@@ -644,10 +672,10 @@ from test_part
 insert into table test_part2 partition(dt='2018-08-19', source='app') select id 
 insert into table test_part4 partition(dt='2018-08-10', source='app') select id;
 ```
-### 自定义UDF
+### 自定义UDF/UDTF/UDAF
 网上介绍了四中方法。只验证过第一种。
 方法（1）最常用也最不被喜欢的方法。
-```mysql
+```sql
 add jar testUDF-0.0.1-SNAPSHOT.jar;
 create temporary function zodiac as "com.hive.udf.UDFZodiacSign";
 ```
@@ -659,6 +687,58 @@ UDF：可直接应用于select语句，对查询结构做格式化处理后，�
 UDTF：用来解决 输入一行输出多行(On-to-many maping) 的需求。`lateral view`一行转多行，有些字段无法使用split等函数剪切成数组。
 UDAF：实现聚类函数（eg，sum/agv）。
 参考：https://blog.csdn.net/liuj2511981/article/details/8523084
+
+### python-transform
+transform中的值作为输入， 然后传递给python脚本，最后经过python的处理后，输出想要得到的字符串格式。
+```
+add file *.py;
+select transform(intput columns)
+using 'python *.py'
+as (output columns)
+```
+例子：
+hive map中字段自增的写法（转）  
+```sql
+-- 1、建立表结构  
+hive> CREATE TABLE t3 (foo STRING, bar MAP<STRING,INT>)  
+    > ROW FORMAT DELIMITED  
+    > FIELDS TERMINATED BY '/t'  
+    > COLLECTION ITEMS TERMINATED BY ','  
+    > MAP KEYS TERMINATED BY ':'  
+    > STORED AS TEXTFILE;  
+
+-- 2、load test.txt文件  
+jeffgeng        click:13,uid:15 
+-- 3、编写add_mapper，python脚本要去除字典转换后遗留下来的空格，引号，左右花排号等   
+  
+#!/usr/bin/python  
+import sys  
+import datetime  
+  
+for line in sys.stdin:  
+    line = line.strip('/t')  
+    foo, bar = line.split('/t')  
+    d = eval(bar)  
+    d['click'] += 1  
+    d['uid'] += 1  
+    strmap = ''  
+    for x in str(d):  
+        if x in (' ', "'"):  
+            continue  
+        strmap += x  
+    print '/t'.join([foo, strmap])  
+
+-- 4、使用
+add FILE add_mapper.py;
+
+INSERT OVERWRITE TABLE t4  
+SELECT  
+  TRANSFORM (foo, bar)  
+  USING 'python add_mapper.py'  
+  AS (foo string, bar map<string,int>)  
+FROM t3;  
+```
+
 ### -e/f/S
 `-e` : 执行短命令
 `-f` :  执行文件（适合脚本封装）
@@ -779,7 +859,7 @@ export PATH=$PATH:$HIVE_HOME/bin
 
 ### hive beeline常用参数
 `myhive --silent=true --outputformat=csv2 --showHeader=false -e "use database;"`
-`--outputformat=csv2` 消除多余的横线
+`--outputformat=csv2` 消除多余的横线 `--outputformat=tsv2` 
 `--silent=true` 静默模式，不输出多余执行过程
 `--showHeader=false` 不输出表头
 参考：https://www.cnblogs.com/30go/p/8706850.html

@@ -20,7 +20,7 @@ b) Reduce从每个map节点copy数据，也会明显降低网络传输的时间
 `set mapred.output.compression.type=BLOCK;` 大文件压缩仍然会耗时，而且影响mapper并行（mapper并行和文件的个数有关），这个设置，使大的文件可以分割成小文件进行压缩
 
 gzip是一种数据格式，默认且目前仅使用deflate算法压缩data部分；deflate是一种压缩算法。
-**_gzip不支持切片，切片参数都不管用。如果要压缩成gzip格式，做好控制在170M，mr的效果是最好的。_**
+**_gzip不支持切片，切片参数都不管用。如果文件太大，会导致map非常慢。如果要压缩成gzip格式，做好控制在170M，mr的效果是最好的。_**
 这种处理文件压缩的能力并非是hive特有的，实际上，使用了hadoop的TextInputFormat进行处理，它可以识别后缀名是.deflate或.gz的压缩文件，并可以轻松处理。
 hive无需关心底层文件是否是压缩的，以及如何压缩的。
 
