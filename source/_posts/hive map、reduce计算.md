@@ -48,7 +48,7 @@ mapred.min.split.size.per.rack=100
 其特点是: 一个块至多作为一个map的输入，一个文件可能有多个块，一个文件可能因为块多分给做为不同map的输入， 一个map可能处理多个块，可能处理多个文件。
 详细看：[小文件合并](/2018/10/19/hive小文件合并/)
 
-# reduce数量
+### reduce数量
 一个reduce生成一个文件。
 可以在hive运行sql的时，打印出来，如下：
 ```
@@ -75,7 +75,7 @@ reduce数量由以下三个参数决定，
   
 https://www.iteblog.com/archives/1697.html
 
-# shuffle
+### shuffle
 Combiner会优化MapReduce的中间结果，所以它在整个模型中会多次使用。那么哪些场景才能使用Combiner呢？从这里分析，Combiner的输出是Reducer的输入，Combiner绝不能改变最终的计算结果。所以从我的想法来看，Combiner只应该用于那种Reduce的输入key/value与输出key/value类型完全一致，且不影响最终结果的场景。比如累加，最大值等。Combiner的使用一定得慎重，如果用好，它对job执行效率有帮助，反之会影响reduce的最终结果。
 
 讲的很棒：(shuffle过程)https://www.iteblog.com/archives/1119.html

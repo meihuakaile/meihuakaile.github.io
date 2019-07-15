@@ -1,0 +1,31 @@
+---
+title: 'yarn'
+date: "2018/9/19"
+tags: [hadoop]
+categories: ['hadoop']
+copyright: true
+---
+应用提交过程分析：
+![](1.png)
+- 客户端程序向ResourceManager提交应用并请求一个ApplicationMaster实例
+- ResourceManager找到可以运行一个Container的NodeManager，并在这个Container中启动ApplicationMaster实例
+- ApplicationMaster向ResourceManager进行注册，注册之后客户端就可以查询ResourceManager获得自己ApplicationMaster的详细信息，以后就可以和自己的ApplicationMaster直接交互了
+- 在平常的操作过程中，ApplicationMaster根据resource-request协议向ResourceManager发送resource-request请求
+- 当Container被成功分配之后，ApplicationMaster通过向NodeManager发送container-launch-specification信息来启动Container， container-launch-specification信息包含了能够让Container和ApplicationMaster交流所需要的资料
+- 应用程序的代码在启动的Container中运行，并把运行的进度、状态等信息通过application-specific协议发送给ApplicationMaster
+- 在应用程序运行期间，提交应用的客户端主动和ApplicationMaster交流获得应用的运行状态、进度更新等信息，交流的协议也是application-specific协议
+- 但应用程序执行完成并且所有相关工作也已经完成，ApplicationMaster向ResourceManager取消注册然后关闭，用到所有的Container也归还给系统
+
+ApplicationMaster + ResourceManager = JobTracker
+ResourceManager：Scheduler和ApplicationManager。
+   Scheduler的角色是一个纯调度器，主要负责协调集群中各个应用的资源分配，保障整个集群的运行效率，只负责调度Containers，不会关心应用程序监控及其运行状态等信息。同样，它也不能重启因应用失败或者硬件错误而运行失败的任务。
+   ApplicationManager主要负责接收job的提交请求，为应用分配第一个Container来运行ApplicationMaster，还有就是负责监控ApplicationMaster，在遇到失败时重启ApplicationMaster运行的Container。
+
+ApplicationMaster：是向ResourceManager申请资源并和NodeManager协同工作来运行应用的各个任务然后跟踪它们状态及监控各个任务的执行，遇到失败的任务还负责重启它。
+
+NodeManager：接收ResourceManager的资源分配请求，分配具体的Container给应用。Nodemanager定时地向RM汇报本节点上的资源使用情况和各个Container的运行状态（cpu和内存等资源）
+
+Container：YARN中的资源抽象，它封装了某个节点上的多维度资源，如内存、CPU、磁盘、网络等。每个任务分配一个Container，如有100个mapper，就会有对应的100个container。
+
+来源：https://blog.csdn.net/suifeng3051/article/details/49486927 
+内存参数：https://www.cnblogs.com/wcwen1990/p/6737985.html

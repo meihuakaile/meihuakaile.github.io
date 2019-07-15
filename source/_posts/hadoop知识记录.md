@@ -5,6 +5,29 @@ tags: [hadoop]
 categories: ['hadoop']
 copyright: true
 ---
+当一些查询翻译到MapReduce任务时，往往会产生多个Stage，而这些串联的Stage又依赖于底层文件系统（如HDFS）来存储每一个Stage的输出结果。
+Hadoop 包含以下两个主要组件：Hadoop Distributed File System (HDFS) 和一个分布式计算引擎，该引擎支持以 MapReduce 作业的形式实现和运行程序。
+**_新版本：_**
+![](4.png)
+
+**_新旧版本：_**
+主要是把Jobtracker拆成主从的RM + AM
+
+Jobtracker是hadoop1.x中的组件，它的功能相当于：
+　　Resourcemanager + MRAppMaster
+
+TaskTracker 相当于：
+　　Nodemanager + yarnchild
+
+**_旧版本：_**
+hdfs由nameNode管理。
+![](1.png)
+MapReduce由jobtracker管理。
+![](2.png)
+集群分布：
+DataNode和TaskTracker部署在同一台节点上。
+但是NameNode和JobTracker最好分开部署，为了性能和稳定。
+![](3.png)
 ## 设置reduce为0
 mr不写reduce时，系统为了架构的完成性，仍然自动生成了一个reduce，这个reduce并不做shuffle和数据拖取，生成的结果文件就是map的输出文件。
 但是可以直接通过`job.setNumReduceTasks(0)`实现将reduce设置成0个。

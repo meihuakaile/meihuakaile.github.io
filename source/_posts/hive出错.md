@@ -38,7 +38,7 @@ at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
 
 ### 使用SQL2011保留字出错
 报错：`Failed to recognize predicate 'xxx'. Failed rule: 'identifier' in column specification`
-原因：我的HQL中出现`row`作为字段名。在Hive1.2.0版本开始增加了如下配置选项，默认值为true：
+原因：HQL中出现`row`作为字段名。在Hive1.2.0版本开始增加了如下配置选项，默认值为true：
 `hive.support.sql11.reserved.keywords`该选项的目的是：是否启用对SQL2011保留关键字的支持。 启用后，将支持部分SQL2011保留关键字。
 解决方法（1）：放弃`row`，换一个关键字。
 解决方法（2）：弃用对保留关键字的支持。`set hive.support.sql11.reserved.keywords = false ;`
@@ -76,8 +76,19 @@ at org.apache.hadoop.util.RunJar.main(RunJar.java:212)
 yarn.nodemanager.vmem-pmem-ratio 的比率，默认是2.1.这个比率的控制影响着虚拟内存的使用，当yarn计算出来的虚拟内存，比在mapred-site.xml里的mapreduce.map.memory.mb或mapreduce.reduce.memory.mb的2.1倍还要多时，会被kill掉。
 
 参考：https://blog.csdn.net/yisun123456/article/details/81327372
-### join出错
-报错`FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask`
+
+### dynamic partitions
+`The maximum number of dynamic partitions is controlled by hive.exec.max.dynamic.partitions and hive.exec.max.dynamic.partitions.pernode. Maximum was set to: 100`
+原因看报错，显而易见，动态分区超过最大动态分区，默认100.
+解决：
+```mysql
+SET hive.exec.max.dynamic.partitions=2048;
+SET hive.exec.max.dynamic.partitions.pernode=256;
+```
+参考：https://blog.csdn.net/oDaiLiDong/article/details/49884571
+
+~~### join出错~~
+~~报错`FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask`~~
 一个join操作导致的，原因不明。
 网上查到解决办法：`SET hive.auto.convert.join=false;` 此操作的原理看上面“join原理、调优”章节里的“map端的join”。
 参考：https://www.cnblogs.com/MOBIN/p/5702580.html
@@ -144,12 +155,13 @@ GROUP BY tmp.time;
 此时使用`union all`，可以再上上面章节的并发优化`set hive.exec.parallel=true;` 
 
 总结自：https://cloud.tencent.com/developer/article/1043838
+
 ### 堆内存出错 Java heap space
 `FAILED: Execution Error, return code -101 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask. Java heap space`
 设置 `set io.sort.mb=10;` 默认值是100
 需要与`mapred.child.java.opts`相配 默认：-Xmx200m；不能超过`mapred.child.java.opt`设置，否则会OOM。
 一般来说，都是reduce耗费内存比较大，这个选项是用来设置JVM堆的最大可用内存，但不要设置过大，如果超过2G(来自网络)，就应该考虑一下优化程序。
-Input Split的大小，决定了一个Job拥有多少个map，默认128M每个Split（版本之间不同，低版本是64M），如果输入的数据量巨大，那么默认的64M的block会有特别多Map Task，集群的网络传输会很大，给Job Tracker的调度、队列、内存都会带来很大压力。
+Input Split的大小，决定了一个Job拥有多少个map，默认128M每个Split（版本之间不同，低版本是64M），如果输入的数据量巨大，那么默认的128M的block会有特别多Map Task，集群的网络传输会很大，给Job Tracker的调度、队列、内存都会带来很大压力。
 
 ### Error: java.io.IOException: invalid block type
 ```bash
