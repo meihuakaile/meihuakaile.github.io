@@ -320,7 +320,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/==%20is%20%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -339,10 +339,14 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/05/24/==%20is%20%E5%8C%BA%E5%88%AB/" itemprop="url">== is 区别</a></h1>
+                <a class="post-title-link" href="/2019/04/19/hive%E7%AC%94%E8%AE%B0/" itemprop="url">hive笔记</a></h1>
         
 
         <div class="post-meta">
+        
+          <i class="fa fa-thumb-tack"></i>
+          <font color="green">置顶</font>
+          <span class="post-meta-divider">|</span>
         
           <span class="post-time">
             
@@ -352,7 +356,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T00:00:00+08:00">2018-05-24</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-19T00:00:00+08:00">2019-04-19</time>
             
 
             
@@ -373,7 +377,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
 
                 
                 
@@ -408,16 +412,15 @@
 
       
         
+          <div class="out-img-topic">
+            <img src=\images\49.jpg class="img-topic">
+          </div>
         
-          
-          == 比较的是数值，自定义对象由eq方法决定； is比较的是 地址。
-基础数据例1：
-123456&gt;&gt;&gt; a = 400&gt;&gt;&gt; b = 400&gt;&gt;&gt; a == bTrue&gt;&gt;&gt; a is bFalse
-123456&gt;&gt;&gt; c = 3&gt;&gt;&gt; d = 3&gt;&gt;&gt; c == dTr
-          ...
+        
+          <!-- <img src="49.jpg"> -->
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/24/==%20is%20%E5%8C%BA%E5%88%AB/#more" rel="contents">
+            <a class="btn" href="/2019/04/19/hive%E7%AC%94%E8%AE%B0/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -472,7 +475,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/(())%E3%80%81%EF%BC%88%EF%BC%89%E3%80%81%5B%5D%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/19/hive-set%E8%AE%BE%E7%BD%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -491,10 +494,14 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/20/(())%E3%80%81%EF%BC%88%EF%BC%89%E3%80%81%5B%5D%E5%8C%BA%E5%88%AB/" itemprop="url">(())、（）、[]区别</a></h1>
+                <a class="post-title-link" href="/2018/10/19/hive-set%E8%AE%BE%E7%BD%AE/" itemprop="url">hive-set设置总结</a></h1>
         
 
         <div class="post-meta">
+        
+          <i class="fa fa-thumb-tack"></i>
+          <font color="green">置顶</font>
+          <span class="post-meta-divider">|</span>
         
           <span class="post-time">
             
@@ -504,610 +511,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T00:00:00+08:00">2018-04-20</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          （）定义数组1array&#x3D;(0 1 2 3)
-以空格为分隔符 分割 字符串为数组。
-123a="1 2 3 4"arr=($&#123;a&#125;)echo $&#123;arr[0]&#125;
-可以利用这个特性把一些函数的输出作为参数，转换成数组。
-命令替换与``一样，用以执行shell命令。需要搭配 $使用。并不是所有的shell解释器都可以使用。至少bash可以使用。用$()
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/20/(())%E3%80%81%EF%BC%88%EF%BC%89%E3%80%81%5B%5D%E5%8C%BA%E5%88%AB/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/24/Base64%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Lily">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="卖姑娘的小火柴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/24/Base64%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86/" itemprop="url">Base64编码原理</a></h1>
-        
-
-        <div class="post-meta">
-        
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-24T00:00:00+08:00">2018-05-24</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          Base64的编码原理就是在有时我们的一些特殊字符无法进行传输，经常可以正确传输都是09,az,AZ，+,/，它们正好可以用power（2,6）表示，即6位就可以了。所以就是3 × 8 = 4 × 6的运算，我们原本的文本都是一个字节（8位）实现的，Base64就是把3个字节表示的内容转成用6位的09,az,AZ，+,/表示。
-总结自：http://blog.csdn.net/xiekuntare
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/05/24/Base64%E7%BC%96%E7%A0%81%E5%8E%9F%E7%90%86/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/19/ERROR%201%20HY000%20Can't%20create%20or%20write%20to%20file%20'user.txt'%20Errcode%2013%20-%20Permission%20denied/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Lily">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="卖姑娘的小火柴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/19/ERROR%201%20HY000%20Can't%20create%20or%20write%20to%20file%20'user.txt'%20Errcode%2013%20-%20Permission%20denied/" itemprop="url">ERROR 1 HY000 Can't create or write to file 'user.txt' Errcode 13 - Permission denied</a></h1>
-        
-
-        <div class="post-meta">
-        
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-19T00:00:00+08:00">2018-04-19</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          把mysql的自动导出数据的目录修改之后的报错“ERROR 1 (HY000): Can’t create/write to file ‘/home/chenliclchen/mysql/user.txt’ (Errcode: 13 - Permission denied)”
-看着是权限的问题，然后各种的chmod chown的命令修改权限和 拥有者。怎么着都不行。 最后的办法是执行：sudo a
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/19/ERROR%201%20HY000%20Can't%20create%20or%20write%20to%20file%20'user.txt'%20Errcode%2013%20-%20Permission%20denied/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/19/ERROR%201290%20HY000%20%20The%20MySQL%20server%20is%20running%20with%20the%20--secure-file-priv%20option%20so%20it%20cannot%20execute%20this%20statement/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Lily">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="卖姑娘的小火柴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/19/ERROR%201290%20HY000%20%20The%20MySQL%20server%20is%20running%20with%20the%20--secure-file-priv%20option%20so%20it%20cannot%20execute%20this%20statement/" itemprop="url">ERROR 1290 HY000  The MySQL server is running with the --secure-file-priv option so it cannot execute this statement</a></h1>
-        
-
-        <div class="post-meta">
-        
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-19T00:00:00+08:00">2018-04-19</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/mysql/" itemprop="url" rel="index"><span itemprop="name">mysql</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          在使用into outfile 进行数据导出时报的错：ERROR 1290 (HY000): The MySQL server is running with the –secure-file-priv option so it cannot execute this statement。
-原因：在MySQL 5.7.6版本之后，导入文件只能在secure_file_priv指定的文件夹下在mys
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/19/ERROR%201290%20HY000%20%20The%20MySQL%20server%20is%20running%20with%20the%20--secure-file-priv%20option%20so%20it%20cannot%20execute%20this%20statement/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/28/Hive%20VS%20HBase/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Lily">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="卖姑娘的小火柴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/05/28/Hive%20VS%20HBase/" itemprop="url">Hive VS HBase</a></h1>
-        
-
-        <div class="post-meta">
-        
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-28T00:00:00+08:00">2018-05-28</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T00:00:00+08:00">2018-10-19</time>
             
 
             
@@ -1165,11 +569,12 @@
         
         
           
-          HBase在Hadoop的生态圈是扮演这一个重要的角色那就是  实时、分布式、高维数据 的数据存储；Hbase和Hive在大数据架构中处在不同位置，Hbase主要解决实时数据查询问题，Hive主要解决数据处理和计算问题，一般是配合使用。HBase是建立在Hadoop文件系统之上的分布式面向列的数据库，是一个数据模型,提供快速随机访问海量结构化数据.HBase当前noSql（非关系型的数据库管理系统
+          直接set命令可以看到所有变量值。set单个参数，可以看见这个参数的值。
+常用hiveconfHive相关的配置属性总结set hive.cli.print.current.db=true; 在cli hive提示符后显示当前数据库。set hive.cli.print.header=true; 显示表头。select时会显示对应字段。set hive.mapred.mode=strict; 防止
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/28/Hive%20VS%20HBase/#more" rel="contents">
+            <a class="btn" href="/2018/10/19/hive-set%E8%AE%BE%E7%BD%AE/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1224,7 +629,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/19/Jackson/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/19/hive%E5%B0%8F%E6%96%87%E4%BB%B6%E5%90%88%E5%B9%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -1243,10 +648,14 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/19/Jackson/" itemprop="url">jackson</a></h1>
+                <a class="post-title-link" href="/2018/10/19/hive%E5%B0%8F%E6%96%87%E4%BB%B6%E5%90%88%E5%B9%B6/" itemprop="url">hive小文件问题</a></h1>
         
 
         <div class="post-meta">
+        
+          <i class="fa fa-thumb-tack"></i>
+          <font color="green">置顶</font>
+          <span class="post-meta-divider">|</span>
         
           <span class="post-time">
             
@@ -1256,7 +665,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T00:00:00+08:00">2017-10-19</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T00:00:00+08:00">2018-10-19</time>
             
 
             
@@ -1277,7 +686,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
 
                 
                 
@@ -1314,13 +723,13 @@
         
         
           
-          参考：http://www.cnblogs.com/kakag/p/5054772.htmlhttp://blog.csdn.net/java_huashan/article/details/46375857
-依赖：
-12345&lt;dependency&gt;	&lt;groupId&gt;com.fasterxml.jackson.core&lt;/groupId&gt;	&lt;artif
+          有多少个reducer（mapper）输出就会生成多少个输出文件，根据shuffle/sort的原理，每个文件按照某个值进行shuffle后的结果。
+小文件带来的问题HDFS的文件元信息，包括位置、大小、分块信息等，都是保存在NameNode的内存中的。每个对象大约占用150个字节，因此一千万个文件及分块就会占用约3G的内存空间，一旦接近这个量级，NameNode的性能就会开始下降了。
+此外，HD
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/10/19/Jackson/#more" rel="contents">
+            <a class="btn" href="/2018/10/19/hive%E5%B0%8F%E6%96%87%E4%BB%B6%E5%90%88%E5%B9%B6/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1375,7 +784,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/26/KNN/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/19/hive%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -1394,10 +803,14 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/26/KNN/" itemprop="url">KNN</a></h1>
+                <a class="post-title-link" href="/2018/10/19/hive%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/" itemprop="url">hive数据倾斜</a></h1>
         
 
         <div class="post-meta">
+        
+          <i class="fa fa-thumb-tack"></i>
+          <font color="green">置顶</font>
+          <span class="post-meta-divider">|</span>
         
           <span class="post-time">
             
@@ -1407,7 +820,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-26T00:00:00+08:00">2018-04-26</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T00:00:00+08:00">2018-10-19</time>
             
 
             
@@ -1428,7 +841,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
 
                 
                 
@@ -1465,12 +878,12 @@
         
         
           
-          优点:精度高、对异常值不敏感、无数据输入假定。缺点:计算复杂度高、空间复杂度高。适用数据范围:数值型和标称型。
-k近邻算法存在一个样本数据集合,也称作训练样本集,并且样本集中每个数据都存在标签,即我们知道样本集中每一数据与所属分类的对应关系。输入没有标签的新数据后,将新数据的每个特征与样本集中数据对应的特征进行比较,然后算法提取样本集中特征最相似数据(最近邻)的分类标签。一般来说,我们只选择样本数
+          分析导致数据倾斜的数据：https://blog.csdn.net/bitcarmanlee/article/details/51694101https://blog.csdn.net/wisgood/article/details/77063606
+group by数据倾斜倾斜原因：select count(distinct name) from user时 使用distinct会将所有的nam
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/04/26/KNN/#more" rel="contents">
+            <a class="btn" href="/2018/10/19/hive%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1525,7 +938,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/08/14/Linux%E8%84%9A%E6%9C%AC%E5%BC%80%E5%A4%B4bash%E5%92%8Csh%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%E4%BB%A5%E5%8F%8A%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/subprocess/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -1544,7 +957,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/08/14/Linux%E8%84%9A%E6%9C%AC%E5%BC%80%E5%A4%B4bash%E5%92%8Csh%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%E4%BB%A5%E5%8F%8A%E5%8C%BA%E5%88%AB/" itemprop="url">Linux脚本开头#!/bin/bash和#!/bin/sh是什么意思以及区别</a></h1>
+                <a class="post-title-link" href="/2020/04/13/subprocess/" itemprop="url">subprocess</a></h1>
         
 
         <div class="post-meta">
@@ -1557,7 +970,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-14T00:00:00+08:00">2018-08-14</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
             
 
             
@@ -1578,7 +991,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
 
                 
                 
@@ -1615,12 +1028,26 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
         
         
           
-          转载自：https://www.cnblogs.com/EasonJim/p/6850319.html
-意思#!/bin/sh是指此脚本使用/bin/sh来解释执行，#!是特殊的表示符，其后面根的是此解释此脚本的shell的路径。其实第一句的#!是对脚本的解释器程序路径，脚本的内容是由解释器解释的，我们可以用各种各样的解释器来写对应的脚本。比如说/bin/csh脚本，/bin/perl脚本，/bi
+          python调用shell比较常用的是subprocess，其他可参看http://www.cnblogs.com/thinker-lj/p/3860123.html
+subprocess的参数：
+
+
+
+名字
+意义
+
+
+
+bufsize
+设置缓冲，负数表示系统默认缓冲，0表示无缓冲，正数表示自定义缓冲行数
+
+
+stdin
+程序的标准输入句柄，NONE表示不进行重定向，继承父进程，PIPE表示创建管
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/08/14/Linux%E8%84%9A%E6%9C%AC%E5%BC%80%E5%A4%B4bash%E5%92%8Csh%E6%98%AF%E4%BB%80%E4%B9%88%E6%84%8F%E6%80%9D%E4%BB%A5%E5%8F%8A%E5%8C%BA%E5%88%AB/#more" rel="contents">
+            <a class="btn" href="/2020/04/13/subprocess/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1675,7 +1102,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/31/Mybatis%E6%8B%A6%E6%88%AA%E5%99%A8%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%88%86%E9%A1%B5%E6%8F%92%E4%BB%B6/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1APScheduler/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -1694,7 +1121,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/05/31/Mybatis%E6%8B%A6%E6%88%AA%E5%99%A8%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%88%86%E9%A1%B5%E6%8F%92%E4%BB%B6/" itemprop="url">Mybatis拦截器介绍及分页插件</a></h1>
+                <a class="post-title-link" href="/2020/04/13/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1APScheduler/" itemprop="url">定时任务APScheduler</a></h1>
         
 
         <div class="post-meta">
@@ -1707,7 +1134,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-31T00:00:00+08:00">2018-05-31</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
             
 
             
@@ -1728,7 +1155,7 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/mybatis/" itemprop="url" rel="index"><span itemprop="name">mybatis</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
 
                 
                 
@@ -1765,11 +1192,613 @@ k近邻算法存在一个样本数据集合,也称作训练样本集,并且样�
         
         
           
-          Mybatis提供了一个Interceptor接口，通过实现该接口就可以定义我们自己的拦截器。该接口中一共定义有三个方法，intercept、plugin和setProperties。plugin方法是拦截器用于封装目标对象的，通过该方法我们可以返回目标对象本身，也可以返回一个它的代理。当返回的是代理的时候我们可以对其中的方法进行拦截来调用intercept方法，当然也可以调用其他方法，这点将在后
+          定时任务APScheduler两种使用方法，注解和代码，参考：http://www.jb51.net/article/117989.htm三种定时，参考：https://www.cnblogs.com/luxiaojun/p/6567132.html
+安装pip install APScheduler
+基础（1）、触发器(trigger)　　包含调度逻辑，每一个作业有它自己的触发器，用于决定接下来
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/05/31/Mybatis%E6%8B%A6%E6%88%AA%E5%99%A8%E4%BB%8B%E7%BB%8D%E5%8F%8A%E5%88%86%E9%A1%B5%E6%8F%92%E4%BB%B6/#more" rel="contents">
+            <a class="btn" href="/2020/04/13/%E5%AE%9A%E6%97%B6%E4%BB%BB%E5%8A%A1APScheduler/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/python+crontab%EF%BC%88os%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/13/python+crontab%EF%BC%88os%EF%BC%89/" itemprop="url">python+crontab（os）</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          使用crontab定时执行python时，os.getcwd() 的返回结果是‘/root’(网上说还可能是’/home’)，而不是python当前的目录。（网上说原因是cwd方法返回的是当前线程的路径，而线程是由crontab在执行的，因此，crontab里的文件都是绝对路径。）如果要使用python脚本当前目录，可以用os.path.abspath(os.path.dirname(__file
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/13/python+crontab%EF%BC%88os%EF%BC%89/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/" itemprop="url">一个奇特的脚本输出日志方式-----记录时间方式</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          我的python是野路子出身，平常会写一些脚本处理少量数据。当然处理数据的过程中，都要有一些输出记录脚本是否是在执行或者是程序中间出错卡死了，一般的办法是在处理完一个文件就做一个输出，但是当要处理的文件很小数量很多，这时每个文件的处理很快脚本的输出会占用很多时间（当输出时间大于处理时间时，嘻嘻嘻～）。我看过的源码一种解决方式是，记录处理个数，每1000个做一次输出。而今天说的是我前几日又看的一段开
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/" itemprop="url">计算机视觉与图像新手的心酸胡扯</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">生活杂记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          我做计算机视觉有半年左右，也是现在现在很火的深度学习。有人说这个是“技术大爆炸”，突然冒出大批人来搞深度学习。但是我现在不想说深度学习，只想说说它的辅助工作-图片处理基础。
+我是因为读研才开始基础计算机视觉，之前什么都不懂，是真的什么都不懂。然后实验室还是新开设的这个项目，也就是说，实验室也不会有人来指导我如何做，那时只有老师说要什么东西，我就得自己各种的查找来完成，现在想想还是很苦逼。
+开始时连
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/%E5%BC%80%E5%8F%91%E8%BF%98%E6%98%AF%E7%AE%97%E6%B3%95%EF%BC%8C%E4%B8%80%E7%9B%B4%E5%9B%B0%E6%83%91%E6%88%91%E7%9A%84%E9%97%AE%E9%A2%98/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2020/04/13/%E5%BC%80%E5%8F%91%E8%BF%98%E6%98%AF%E7%AE%97%E6%B3%95%EF%BC%8C%E4%B8%80%E7%9B%B4%E5%9B%B0%E6%83%91%E6%88%91%E7%9A%84%E9%97%AE%E9%A2%98/" itemprop="url">开发还是算法，一直困惑我的问题</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">生活杂记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          研究生妹纸一枚，方向是深度学习。马上要面临紧张的秋招。
+我原本这个项目很多人都不看好，都说不好找工作。那时我是真头疼，马上要找工作了，没有项目经验。后来”人机大战“，阿尔法狗获得胜利。我也觉得没啥，但身边做这个项目的都特别高兴，好像机器人赢了，就是我们程序员的胜利。我自己本身很喜欢编程，喜欢各种的技术。
+前一个月是实习生招聘，发现我的方向出奇的好找工作，呵呵（猜测是阿尔法狗对很多企业敲响了警钟）。
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2020/04/13/%E5%BC%80%E5%8F%91%E8%BF%98%E6%98%AF%E7%AE%97%E6%B3%95%EF%BC%8C%E4%B8%80%E7%9B%B4%E5%9B%B0%E6%83%91%E6%88%91%E7%9A%84%E9%97%AE%E9%A2%98/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
