@@ -1,0 +1,1360 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="机器学习,python," />
+
+
+<meta name="description" content="annotate 画箭头例子1234567891011121314151617181920212223242526# -*- coding:utf-8 -*-# __author__&#x3D;&#39;chenliclchen&#39;from matplotlib import pyplot as pltdef plot_node(node_text, parent_pt, center_parent, nodetyp">
+<meta property="og:type" content="article">
+<meta property="og:title" content="python annotate练习画决策树">
+<meta property="og:url" content="http://yoursite.com/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="annotate 画箭头例子1234567891011121314151617181920212223242526# -*- coding:utf-8 -*-# __author__&#x3D;&#39;chenliclchen&#39;from matplotlib import pyplot as pltdef plot_node(node_text, parent_pt, center_parent, nodetyp">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/1.png">
+<meta property="og:image" content="http://yoursite.com/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/2.png">
+<meta property="article:published_time" content="2018-05-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.539Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="机器学习">
+<meta property="article:tag" content="python">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/1.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/05/04/python annotate练习画决策树/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>python annotate练习画决策树 | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">python annotate练习画决策树</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-05-04T00:00:00+08:00">2018-05-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="annotate-画箭头例子"><a href="#annotate-画箭头例子" class="headerlink" title="annotate 画箭头例子"></a>annotate 画箭头例子</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="comment"># __author__='chenliclchen'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_node</span><span class="params">(node_text, parent_pt, center_parent, nodetype)</span>:</span></span><br><span class="line">    <span class="comment"># s 标签； xy 注释的位置（就是箭头的起始位置）；xytext 标签的位置；</span></span><br><span class="line">    <span class="comment"># xycoords 注释位置（xy）坐标的类型；textcoords 标签位置(xytext)坐标的类型；arrowprops 字典，箭头的属性</span></span><br><span class="line">    <span class="comment"># https: // matplotlib.org / users / annotations.html</span></span><br><span class="line">    ax.annotate(node_text, xy=parent_pt, xytext=center_parent,</span><br><span class="line">                xycoords=<span class="string">'axes fraction'</span>, textcoords=<span class="string">'axes fraction'</span>,</span><br><span class="line">                va=<span class="string">'center'</span>, ha=<span class="string">'center'</span>, bbox=nodetype, arrowprops=arrow_args)</span><br><span class="line"></span><br><span class="line">tree = &#123;<span class="string">'no surfacing'</span>: &#123;<span class="number">0</span>: <span class="string">'no'</span>, <span class="number">1</span>: &#123;<span class="string">'flippers'</span>: &#123;<span class="number">0</span>: <span class="string">'no'</span>, <span class="number">1</span>: <span class="string">'yes'</span>&#125;&#125;&#125;&#125;</span><br><span class="line">decisionNode = dict(boxstyle=<span class="string">"sawtooth"</span>, fc=<span class="string">"0.8"</span>)</span><br><span class="line">leafNode = dict(boxstyle=<span class="string">"round4"</span>, fc=<span class="string">"0.8"</span>)</span><br><span class="line">arrow_args = dict(arrowstyle=<span class="string">"&lt;-"</span>)</span><br><span class="line"><span class="comment"># 1(num)是作为一个id，如果这个id已经存在就激活返回引用否则就创建返回引用</span></span><br><span class="line"><span class="comment"># figsize 元组，图片大小，宽高; dpi 图片分辨率； facecolor 是背景色; edgecolor 边框色；</span></span><br><span class="line">fig = plt.figure(<span class="number">1</span>, facecolor=<span class="string">'w'</span>)</span><br><span class="line">fig.clf()</span><br><span class="line"><span class="comment"># frameon=False 是否显示坐标轴架构</span></span><br><span class="line">ax = plt.subplot(<span class="number">111</span>, frameon=<span class="literal">False</span>)</span><br><span class="line">plot_node(<span class="string">'de'</span>, (<span class="number">0.1</span>, <span class="number">0.5</span>), (<span class="number">0.5</span>, <span class="number">0.1</span>), decisionNode)</span><br><span class="line">plot_node(<span class="string">'leaf'</span>, (<span class="number">0.3</span>, <span class="number">0.8</span>), (<span class="number">0.8</span>, <span class="number">0.1</span>), leafNode)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>效果：<img src="1.png" alt=""></p>
+<h1 id="annotate-画决策树"><a href="#annotate-画决策树" class="headerlink" title="annotate 画决策树"></a>annotate 画决策树</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding:utf-8 -*-</span></span><br><span class="line"><span class="comment"># __author__='chenliclchen'</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> matplotlib <span class="keyword">import</span> pyplot <span class="keyword">as</span> plt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 画每个节点</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_node</span><span class="params">(node_text, parent_pt, center_parent, nodetype)</span>:</span></span><br><span class="line">    <span class="comment"># s 标签； xy 注释的位置（就是箭头的起始位置）；xytext 标签的位置；</span></span><br><span class="line">    <span class="comment"># xycoords 注释位置（xy）坐标的类型； textcoords 标签位置(xytext)坐标的类型； arrowprops 字典，箭头的属性</span></span><br><span class="line">    ax.annotate(node_text, xy=parent_pt, xytext=center_parent,</span><br><span class="line">                xycoords=<span class="string">'axes fraction'</span>, textcoords=<span class="string">'axes fraction'</span>,</span><br><span class="line">                va=<span class="string">'center'</span>, ha=<span class="string">'center'</span>, bbox=nodetype, arrowprops=arrow_args)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 画箭头上的内容，也就是每个节点的选择值</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">plot_text</span><span class="params">(parent_pt, center_parent, text)</span>:</span></span><br><span class="line">    x = (parent_pt[<span class="number">0</span>] - center_parent[<span class="number">0</span>]) / <span class="number">2</span> + center_parent[<span class="number">0</span>]</span><br><span class="line">    y = (parent_pt[<span class="number">1</span>] - center_parent[<span class="number">1</span>]) / <span class="number">2</span> + center_parent[<span class="number">1</span>]</span><br><span class="line">    ax.text(x, y, text)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算树的深度，为了画树的y坐标做准备</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_tree_deep</span><span class="params">(tree)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> isinstance(tree, str):</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span> isinstance(tree, dict):</span><br><span class="line">        key = tree.keys()[<span class="number">0</span>]</span><br><span class="line">        value = tree[key]</span><br><span class="line">        deep = <span class="number">0</span></span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> value.keys():</span><br><span class="line">            this_deep = <span class="number">1</span> + get_tree_deep(value[item])</span><br><span class="line">            deep = this_deep <span class="keyword">if</span> this_deep &gt; deep <span class="keyword">else</span> deep</span><br><span class="line">        <span class="keyword">return</span> deep</span><br><span class="line"></span><br><span class="line"><span class="comment"># 计算叶子节点，为画树时的x坐标准备</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_leafnode_num</span><span class="params">(tree, leafnode_num)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> isinstance(tree, str):</span><br><span class="line">        leafnode_num += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> leafnode_num</span><br><span class="line">    <span class="keyword">elif</span> isinstance(tree, dict):</span><br><span class="line">        key = tree.keys()[<span class="number">0</span>]</span><br><span class="line">        value = tree[key]</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> value.keys():</span><br><span class="line">            leafnode_num = get_leafnode_num(value[item], leafnode_num)</span><br><span class="line">        <span class="keyword">return</span> leafnode_num</span><br><span class="line"></span><br><span class="line"><span class="comment"># node_text是节点里的内容； parent_pt是箭头出发的位置； center_parent箭头结束的位置 ；</span></span><br><span class="line"><span class="comment"># key是箭头上的标示，也是决策树的选择值； had_draw_leafnode 已经画过的叶子节点，为了计算下一个叶子节点的x坐标</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">draw_tree</span><span class="params">(node_text, parent_pt, center_parent, key, had_draw_leafnode)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> isinstance(node_text, str):</span><br><span class="line">        plot_text(parent_pt, center_parent, key)</span><br><span class="line">        plot_node(node_text, parent_pt, center_parent, decisionNode)</span><br><span class="line">        had_draw_leafnode += <span class="number">1</span></span><br><span class="line">        <span class="keyword">return</span> had_draw_leafnode</span><br><span class="line">    <span class="keyword">elif</span> isinstance(node_text, dict):</span><br><span class="line">        next_key = node_text.keys()[<span class="number">0</span>]</span><br><span class="line">        value = node_text[next_key]</span><br><span class="line">        plot_text(parent_pt, center_parent, key)</span><br><span class="line">        plot_node(next_key, parent_pt, center_parent, leafNode)</span><br><span class="line">        <span class="keyword">for</span> item <span class="keyword">in</span> value.keys():</span><br><span class="line">            this_leafnum_node = get_leafnode_num(value[item], <span class="number">0</span>)</span><br><span class="line">            next_xind = had_draw_leafnode * x_off + (this_leafnum_node - <span class="number">1</span>) * x_off / <span class="number">2</span></span><br><span class="line">            had_draw_leafnode = draw_tree(value[item], center_parent, (next_xind, center_parent[<span class="number">1</span>]-y_off), item, had_draw_leafnode)</span><br><span class="line">        <span class="keyword">return</span> had_draw_leafnode</span><br><span class="line"></span><br><span class="line"><span class="comment"># tree = &#123;'no surfacing': &#123;0: 'no', 1: &#123;'flippers': &#123;0: 'no', 1: 'yes'&#125;&#125;&#125;&#125;</span></span><br><span class="line"><span class="comment"># tree = &#123;'no surfacing': &#123;0: 'no', 1: &#123;'flippers': &#123;0: &#123;'head': &#123;0: 'no', 1: 'yes'&#125;&#125;, 1: 'no'&#125;&#125;&#125;&#125;</span></span><br><span class="line"><span class="comment"># tree = &#123;'no surfacing': &#123;0: 'no', 1: &#123;'flippers': &#123;0: 'no', 1: 'yes'&#125;&#125;, 3: 'maybe'&#125;&#125;</span></span><br><span class="line">tree = &#123;<span class="string">'no surfacing'</span>: &#123;<span class="number">0</span>: <span class="string">'no'</span>, <span class="number">1</span>: &#123;<span class="string">'flippers'</span>: &#123;<span class="number">0</span>: &#123;<span class="string">'head'</span>: &#123;<span class="number">0</span>: <span class="string">'no'</span>, <span class="number">1</span>: <span class="string">'yes'</span>&#125;&#125;, <span class="number">1</span>: <span class="string">'no'</span>&#125;&#125;, <span class="number">3</span>: <span class="string">'maybe'</span>&#125;&#125;</span><br><span class="line"></span><br><span class="line">decisionNode = dict(boxstyle=<span class="string">"sawtooth"</span>, fc=<span class="string">"0.8"</span>)</span><br><span class="line">leafNode = dict(boxstyle=<span class="string">"round4"</span>, fc=<span class="string">"0.8"</span>)</span><br><span class="line">arrow_args = dict(arrowstyle=<span class="string">"&lt;-"</span>)</span><br><span class="line"><span class="comment"># 1(num)是作为一个id，如果这个id已经存在就激活返回引用否则就创建返回引用</span></span><br><span class="line"><span class="comment"># figsize 元组，图片大小，宽高; dpi 图片分辨率； facecolor 是背景色; edgecolor 边框色；</span></span><br><span class="line">fig = plt.figure(<span class="number">1</span>, facecolor=<span class="string">'w'</span>)</span><br><span class="line">fig.clf()</span><br><span class="line"><span class="comment"># 不显示坐标数据</span></span><br><span class="line">axprops = dict(xticks=[], yticks=[])</span><br><span class="line"><span class="comment"># frameon=False 是否显示坐标轴架构</span></span><br><span class="line">ax = plt.subplot(<span class="number">111</span>, frameon=<span class="literal">False</span>, **axprops)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 为了计算画每个节点时xy坐标需要移动的大小</span></span><br><span class="line">tree_deep = get_tree_deep(tree)</span><br><span class="line">leafnum_node = get_leafnode_num(tree, <span class="number">0</span>)</span><br><span class="line">x_off = <span class="number">1.0</span> / (leafnum_node - <span class="number">1</span>)</span><br><span class="line">y_off = <span class="number">1.0</span> / (tree_deep - <span class="number">1</span>)</span><br><span class="line"><span class="comment"># 画树并展示</span></span><br><span class="line">draw_tree(tree, (<span class="number">0.5</span>, <span class="number">1.0</span>), (<span class="number">0.5</span>, <span class="number">1.0</span>), <span class="string">''</span>, <span class="number">0</span>)</span><br><span class="line">plt.show()</span><br></pre></td></tr></table></figure>
+<p>效果：<img src="2.png" alt=""><br>ax.annotate方法的xy（箭头起始位置）和xytext（箭头结束位置）一样时，箭头会消失，只画方格里的内容，用此原理画根节点。</p>
+<p>以上代码最麻烦的就是如何画每个节点的x坐标。<br>我最开始的计划是每个节点的子节点以当前节点左右分开，因此使用当前节点的x坐标通过子节点的下标加减得到子节点的x坐标。但是效果不太好，而且仔细思考有很多的问题，比如说当前层的其他节点的子节点可能会和当前节点的子节点重合到一起等等一堆的问题。<br>我后来苦思冥想啊，上厕所时终于想到一个极好的办法。简单描述就是：用叶子节点推断当前节点的x坐标的方法。由下往上推导的方法。<br>具体：<br>（1）所有叶子节点在x轴均匀分布，因此算出两个叶子节点的x轴距离x_off。<br>（2）假设当前节点有四个叶子节点，然后当前节点的x坐标肯定在这四个叶子节点的中间啊，因此可以算出当前节点在四个叶子节点的x坐标是<code>(this_leafnum - 1) * x_off / 2</code><br>（3）这时我们只需知道当前节点的四个叶子节点的最左边叶子节点的x轴刻度，然后加上步骤（2）的结果就可以得到当前节点的x轴的刻度。这时我们只需知道我们已经画了多少个叶子节点（因为我们是从左往右画的），已经画的叶子节点数乘以x_off就得到四个叶子节点最左边叶子节点的x轴刻度。<br>因此代码<code>had_draw_leafnode * x_off + (this_leafnum - 1) * x_off / 2</code>得到x轴坐标。</p>
+<h1 id="代码下载地址"><a href="#代码下载地址" class="headerlink" title="代码下载地址"></a>代码下载地址</h1><p><a href="https://github.com/meihuakaile/decision_tree" target="_blank" rel="noopener">代码地址</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/" title="python annotate练习画决策树">/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2018/05/04/python%20annotate%E7%BB%83%E4%B9%A0%E7%94%BB%E5%86%B3%E7%AD%96%E6%A0%91/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"># 机器学习</a>
+          
+            <a href="/tags/python/" rel="tag"># python</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/05/03/join%20on%E5%92%8C%20where%20%E6%9D%A1%E4%BB%B6%E6%94%BE%E7%BD%AE%E5%8C%BA%E5%88%AB/" rel="next" title="join on和 where 条件放置区别">
+                <i class="fa fa-chevron-left"></i> join on和 where 条件放置区别
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/05/11/%E6%95%B0%E6%8D%AE%E6%9C%AF%E8%AF%AD/" rel="prev" title="数据术语">
+                数据术语 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#annotate-画箭头例子"><span class="nav-number">1.</span> <span class="nav-text">annotate 画箭头例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#annotate-画决策树"><span class="nav-number">2.</span> <span class="nav-text">annotate 画决策树</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#代码下载地址"><span class="nav-number">3.</span> <span class="nav-text">代码下载地址</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="hadoop,hive," />
+
+
+<meta property="og:type" content="article">
+<meta property="og:title" content="hive笔记">
+<meta property="og:url" content="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/49.jpg">
+<meta property="og:image" content="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/48.png">
+<meta property="og:image" content="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/1.jpeg">
+<meta property="article:published_time" content="2019-04-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.559Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="hadoop">
+<meta property="article:tag" content="hive">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/49.jpg">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/19/hive笔记/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>hive笔记 | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">hive笔记</h1>
+        
+
+        <div class="post-meta">
+        
+          <i class="fa fa-thumb-tack"></i>
+          <font color="green">置顶</font>
+          <span class="post-meta-divider">|</span>
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-19T00:00:00+08:00">2019-04-19</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <!-- <img src="49.jpg"> -->
+<a id="more"></a>
+<p>架构在Hadoop之上，提供简单的sql查询功能，可以<strong><em>将sql语句转换为MapReduce任务进行运行(增删改查)</em></strong>。<br>所有的增删改查操作都是应用在hdfs上的。Hive 中所有的数据都存储在 HDFS 中，Hive 中包含以下数据模型：Table，External Table，Partition，Bucket。<br>hive是一个数据仓库工具，作用是可以将结构化的数据文件映射为一张数据库表，并提供简单查询功能，可以将sql语句转化为Mapreduce任务进行，是在Hadoop上的数据库基础架构。<br><strong>Hive 不是一个关系数据库/实时查询和行级更新的语言.</strong></p>
+<p>Hadoop是一个开源框架来存储和处理大型数据在分布式环境中。它包含两个模块，一个是MapReduce，另外一个是Hadoop分布式文件系统（HDFS）:</p>
+<ul>
+<li><strong>MapReduce</strong>：它是一种并行编程模型在大型集群普通硬件可用于处理大型结构化，半结构化和非结构化数据。</li>
+<li><strong>HDFS</strong>：Hadoop分布式文件系统是Hadoop的框架的一部分，用于存储和处理数据集。它提供了一个容错文件系统在普通硬件上运行。</li>
+</ul>
+<p>hive的安装需要安装MySQL,因为hive 默认的数据库是Derby数据库，其与MySQL数据库比较存在缺陷，比如不可以执行两个并发的Hive CLI。<br><strong><em>Hive 将元数据存储在数据库中，如 mysql、derby。Hive 中的元数据包括表的名字，表的列和分区及其属性，表的属性（是否为外部表等），表的数据所在目录等。</em></strong></p>
+<p>Hive只是一个客户端，在安装时，我们可以在Hadoop集群中，选择一台安装Hive。Hive没有集群的概念，但是可以搭建Server/Client端。<br>MapReduce任务(job)的启动需要消耗较长时间，所以Hive的查询延时比较严重。在传统数据库中秒级的任务，在Hive仍需要更长时间。Hive适用不需要实时响应查询的数据仓库程序，不需要记录级别的增删改<br>Hive不支持事务。提交查询和返回结果可能有很大的延时，此时选用NoSQL数据库，Hbase等。</p>
+<h3 id="Hive框架的作用"><a href="#Hive框架的作用" class="headerlink" title="Hive框架的作用"></a>Hive框架的作用</h3><p>（1）可以让不懂java的数据分析人员使用hadoop进行数据分析；<br>（2）MapReduce开发非常繁琐复杂，使用hive可以提高效率。<br>（3）统一的元数据管理，可与impala/spark共享元数据。</p>
+<p>hive模型图<br>driver：hive查询的sql都会先提交到driver这里。而driver又由compiler、optimizer、Executor组成。compiler将类sql查询语句进行解析、并且从元数据库取元数据解析优化，成mr job，提交到hadoop集群执行。driver里面有个优化器optimizer。<br>它的作用是：</p>
+<ul>
+<li>1、去掉不必要的列和分区，优化查询。</li>
+<li>2、将多 multiple join 合并为一个 multi-way join；</li>
+<li>3、对join、group-by 和自定义的 map-reduce 操作重新进行划分；<br><img src="48.png" alt=""></li>
+</ul>
+<h3 id="hive在hdfs上的文件结构"><a href="#hive在hdfs上的文件结构" class="headerlink" title="hive在hdfs上的文件结构"></a>hive在hdfs上的文件结构</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">　　    数据仓库的位置                数据库目录           表目录          表的数据文件</span><br><span class="line">　　&#x2F;user&#x2F;hive&#x2F;warehouse             &#x2F;test.db             &#x2F;row_table       &#x2F;hive_test.txt</span><br></pre></td></tr></table></figure>
+<p>Hive的数据都是存储在HDFS上的，默认有一个根目录，在hive-site.xml中，由参数hive.metastore.warehouse.dir指定。<br>default是默认的数据库：指的就是这个/user/hive/warehouse路径，因此表就直接在这个目录下<br>参考：<a href="https://www.cnblogs.com/xningge/p/8439970.html" target="_blank" rel="noopener">https://www.cnblogs.com/xningge/p/8439970.html</a></p>
+<h3 id="queuename"><a href="#queuename" class="headerlink" title="queuename"></a>queuename</h3><p>hadoop相关,作业提交到的队列，默认是<code>default</code>。通过<code>set mapreduce.job.queuename</code>可以查看当前定义队列名。<br>队列是跟用户对应的，哪个用户要执行，需要指定哪个队列。<br><code>mapred.job.queue.name</code> 一样，这个是老版本v1的，上面是新版本v2的。<br>拥有不同优先级的各种队列只是让Hadoop可以轻松决定处理器可用时下一步该做什么，或者它可以使用多少。</p>
+<p>更多参考：<a href="http://dongxicheng.org/mapreduce-nextgen/hadoop-yarn-configurations-mapreduce/" target="_blank" rel="noopener">http://dongxicheng.org/mapreduce-nextgen/hadoop-yarn-configurations-mapreduce/</a></p>
+<h3 id="元数据"><a href="#元数据" class="headerlink" title="元数据"></a>元数据</h3><p>Hive中表和分区的所有元数据都存储在Hive的元存储（Metastore）中。<br>元数据使用JPOX（Java Persistent Objects）对象关系映射解决方案进行持久化，所以任何被JPOX支持的存储都可以被Hive使用。<br>大多数商业关系型数据库和许多开源的数据存储都被支持，所以就可以被Hive使用存储元数据。Hive支持三种不同的元存储服务器，分别为：内嵌式元存储、本地元存储、远程元存储，每种存储方式使用不同的配置参数，</p>
+<p>内嵌式元存储：主要用于单元测试，在该模式下每次只有一个进程可以连接到元存储，Derby是内嵌式元存储的默认数据库。<br>本地模式：每个Hive客户端都会打开到数据存储的连接并在该连接上请求SQL查询。<br>远程模式：所有的Hive客户端都将打开一个到元数据服务器的连接，该服务器依次查询元数据。</p>
+<p>参考：<a href="https://blog.csdn.net/skywalker_only/article/details/26219619（三种元数据存储方式）" target="_blank" rel="noopener">https://blog.csdn.net/skywalker_only/article/details/26219619（三种元数据存储方式）</a><br><a href="http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html" target="_blank" rel="noopener">http://www.cloudera.com/documentation/cdh/5-1-x/CDH5-Installation-Guide/cdh5ig_hive_metastore_configure.html</a></p>
+<h3 id="引擎"><a href="#引擎" class="headerlink" title="引擎"></a>引擎</h3><p>hive执行引擎 mr/tez/spark</p>
+<h3 id="分区"><a href="#分区" class="headerlink" title="分区"></a>分区</h3><p>hive引入partition和bucket的概念，中文翻译分别为分区和桶，这两个概念都是把数据划分成块，分区是粗粒度的划分，桶是细粒度的划分，这样做为了可以让查询发生在小范围的数据上以提高效率。<br>在Hive Select查询中一般会扫描整个表内容，会消耗很多时间做没必要的工作。有时候只需要扫描表中关心的一部分数据，因此建表时引入了partition概念。<br>分区表指的是在创建表时指定的partition的分区空间。如果需要创建有分区的表，需要在create表的时候调用可选参数partitioned by。<br>一个表可以拥有一个或者多个分区，每个分区以文件夹的形式单独存在表文件夹的目录下。<br>分区是以字段的形式在表结构中存在，通过describe table命令可以查看到字段存在，但是该字段不存放实际的数据内容，仅仅是分区的表示。</p>
+<h3 id="创建单分区-多分区"><a href="#创建单分区-多分区" class="headerlink" title="创建单分区/多分区"></a>创建单分区/多分区</h3><p>关于分区维度的选择，我们应该尽量选取那些<strong><em>有限且少量的数值集</em></strong>作为分区，例如国家、省份就是一个良好的分区，而城市就可能不适合进行分区。<br>分区建表分为2种，一种是单分区，也就是说在表文件夹目录下只有一级文件夹目录。另外一种是多分区，表文件夹下出现多文件夹嵌套模式。<br>a、单分区建表语句：<code>create table day_table (id int, content string) partitioned by (dt string);</code>单分区表，按天分区，在表结构中存在id，content，dt三列。<br>b、双分区建表语句：<code>create table day_hour_table (id int, content string) partitioned by (dt string, hour string);</code>双分区表，按天和小时分区，在表结构中新增加了dt和hour两列。多个分区意味着多级目录。<br>分区是数据表中的一个列名，但是这个列并不占有表的实际存储空间。它作为一个虚拟列而存在。</p>
+<h3 id="查看-增加-删除分区"><a href="#查看-增加-删除分区" class="headerlink" title="查看/增加/删除分区"></a>查看/增加/删除分区</h3><p><code>show partitions table_name [partition(...)]</code> 查看表所有的分区；加上可选<code>[partition(...)]</code>可以查看指定分区是否存在。<br><code>alter table xxx add [if not exist] partition (dt=&#39;2018-05-22&#39;)</code>  对分区名是dt的表增加分区<br><code>alter table table_name drop partition (dt=&#39;2018-05-22&#39;)</code> 删除分区<br><code>alter table table_name partition(dt=&#39;...&#39;) set localtion &#39;...&#39;</code> 修改分区地址（不会修改/删除旧的分区数据）<br><code>alter table table_name drop [if exist] partition (dt=&#39;...&#39;)</code> 删除分区。如果是内部表，还会删除数据。<br><strong><em>当外部表是分区表时，只有建立对应的分区，才能查到数据. 删除内部表的分区会删除相应的数据。</em></strong></p>
+<h3 id="Buckets-桶"><a href="#Buckets-桶" class="headerlink" title="Buckets 桶"></a>Buckets 桶</h3><p>假设我们有一张地域姓名表并按城市分区。那么很有可能，北京分区的人数会远远大于其他分区，该分区的数据I/O吞吐效率将成为查询的瓶颈。如果我们对表中的姓名做分桶，将姓名按哈希值分发到桶中，每个桶将分配到大致均匀的人数。<br>分桶解决的是数据倾斜的问题。</p>
+<p>Hive采用<strong><em>对列值哈希，然后除以桶的个数求余</em></strong>的方式决定该条记录存放在哪个桶当中。<br>对指定列计算 hash，根据 hash 值切分数据，目的是为了并行，每一个 Bucket 对应一个文件。将 user 列分散至 32 个 bucket，首先对 user 列的值计算 hash，对应 hash 值为 0 的 HDFS 目录为：/warehouse/app/dt=20100801/ctry=US/part-00000；hash 值为 20 的 HDFS 目录为：/warehouse/app/dt=20100801/ctry=US/part-00020</p>
+<h4 id="创建桶表"><a href="#创建桶表" class="headerlink" title="创建桶表"></a>创建桶表</h4><p><code>create table table_name() clustered by(col_0) into bucket_num buckets;</code><br>创建表，按照col_0分桶，有bucket_num个桶。<br><code>set hive.enforce.bucketing = true;</code> 强制桶的个数和表定义相同，否则实际桶的个数和reducer一样。</p>
+<h4 id="插入数据"><a href="#插入数据" class="headerlink" title="插入数据"></a>插入数据</h4><p>由文件导入数据时，需要一种中间表，详细看下面‘文件导入数据’小节。</p>
+<h4 id="数据查询"><a href="#数据查询" class="headerlink" title="数据查询"></a>数据查询</h4><p><code>select * from table_name tablesample(bucket x out of y on col_0);</code><br>x:从第x桶开始抽取数据。<br>y:是总桶数的因数或倍数。 从x开始，分隔y个桶取数。<br>col_0:分桶的列。<br>eg：共有4个桶，y=2，x=2，会取第2、4个桶的数据；按照col_0分桶，会取col_0列的哈希值除以4余数是1、3的列。</p>
+<p>总结自：<a href="https://www.cnblogs.com/MrFee/p/hive_bucket.html" target="_blank" rel="noopener">https://www.cnblogs.com/MrFee/p/hive_bucket.html</a><br><a href="https://blog.csdn.net/m0_37534613/article/details/55258928" target="_blank" rel="noopener">https://blog.csdn.net/m0_37534613/article/details/55258928</a></p>
+<h3 id="建表"><a href="#建表" class="headerlink" title="建表"></a>建表</h3><p><img src="1.jpeg" alt=""></p>
+<ul>
+<li>PARTITIONED 表示的是分区，不同的分区会以文件夹的形式存在，在查询的时候指定分区查询将会大大加快查询的时间。</li>
+<li>CLUSTERED表示的是按照某列聚类，例如在插入数据中有两项“张三，数学”和“张三，英语”，若是CLUSTERED BY name，则只会有一项，“张三，(数学，英语)”，这个机制也是为了加快查询的操作。</li>
+<li>STORED是指定排序的形式，是降序还是升序。</li>
+<li>BUCKETS是指定了分桶的信息，这在后面会单独列出来，在这里还不会涉及到。</li>
+<li>ROW FORMAT是指定了行格式字段，如行、列的分隔符，<code>ROW FORMAT DELIMITED FIELDS TERMINATED BY &#39;\t&#39; LINES TERMINATED BY &#39;\n&#39;</code></li>
+<li>STORED AS是指定文件的存储格式。Hive中基本提供两种文件格式：SEQUENCEFILE和TEXTFILE，序列文件是一种压缩的格式，通常可以提供更高的性能，默认是TEXTFILE。</li>
+<li>LOCATION指的是在HDFS上存储的位置。</li>
+</ul>
+<p><code>create [external] table table_name1 like table_name2 [location hdfs_path]</code> 创建一个和表2结构一样的表</p>
+<h3 id="内部-表"><a href="#内部-表" class="headerlink" title="(内部)表"></a>(内部)表</h3><p>表其实就是hdfs目录<br>Hive中的表和关系型数据库中的表在概念上很类似，每个表在HDFS中都有相应的目录用来存储表的数据，这个目录可以通过${HIVE_HOME}/conf/hive-site.xml配置文件中的hive.metastore.warehouse.dir属性来配置，这个属性默认的值是/user/hive/warehouse（这个目录在HDFS上），我们可以根据实际的情况来修改这个配置。<br>如果我有一个表wyp在cl库中，那么在HDFS中会创建/user/hive/warehouse/cl.db/wyp目录（这里假定hive.metastore.warehouse.dir配置为/user/hive/warehouse）；wyp表所有的数据都存放在这个目录中。这个例外是外部表。</p>
+<p>参考：<a href="https://www.jianshu.com/p/dd97e0b2d2cf" target="_blank" rel="noopener">https://www.jianshu.com/p/dd97e0b2d2cf</a></p>
+<h3 id="外部表"><a href="#外部表" class="headerlink" title="外部表"></a>外部表</h3><p>数据源不在我们这里，由别人提供，或者其他工具提供。<br>指向已经在 HDFS 中存在的数据，可以创建 Partition。它和 Table 在元数据的组织上是相同的，而实际数据的存储则有较大的差异。</p>
+<h3 id="内部表-外部表-区别"><a href="#内部表-外部表-区别" class="headerlink" title="(内部表)/外部表 区别"></a>(内部表)/外部表 区别</h3><p>外部表在建表时多了‘EXTERNAL’： CREATE EXTERNAL TABLE<br>（1）、在导入数据到外部表，数据并没有移动到自己的数据仓库目录下，也就是说外部表中的数据并不是由它自己来管理的！而表则不一样；<br>（2）、在删除表的时候，Hive将会把属于表的元数据和数据全部删掉；而删除外部表的时候，Hive仅仅删除外部表的元数据，数据是不会删除的！<br>（3）、表有创建过程和数据加载过程（这两个过程可以在同一个语句中完成），在加载数据的过程中，实际数据会被移动到数据仓库目录中；之后对数据对访问将会直接在数据仓库目录中完成。删除表时，表中的数据和元数据将会被同时删除。<br>外部表只有一个过程，加载数据和创建表同时完成（CREATE EXTERNAL TABLE ……LOCATION），实际数据是存储在 LOCATION 后面指定的 HDFS 路径中，并不会移动到数据仓库目录中。</p>
+<p>外部表适用场景：源表，需要定期将外部数据映射到表中。<br>使用场景例子：<br>每天将收集到的网站日志定期流入HDFS文本文件，一天一个目录；<br>在Hive中建立外部表作为源表，通过添加分区的方式，将每天HDFS上的原始日志映射到外部表的天分区中；<br>在外部表（原始日志表）的基础上做大量的统计分析，用到的中间表、结果表使用内部表存储，数据通过SELECT+INSERT进入内部表。</p>
+<h3 id="关于Strict-Mode"><a href="#关于Strict-Mode" class="headerlink" title="关于Strict Mode"></a>关于Strict Mode</h3><p> Hive中的严格模式可以防止用户发出（可以有问题）的查询无意中造成不良的影响。 将hive.mapred.mode设置成strict可以禁止三种类型的查询：<br> 1）、在一个分区表上，如果没有在WHERE条件中指明具体的分区，那么这是不允许的，换句话说，不允许在分区表上全表扫描。这种限制的原因是分区表通常会持非常大的数据集并且可能数据增长迅速，对这样的一个大表做全表扫描会消耗大量资源，必须要再WHERE过滤条件中具体指明分区才可以执行成功的查询。<br> 2）、第二种是禁止执行有ORDER BY的排序要求但没有LIMIT语句的HiveQL查询。因为ORDER BY全局查询会导致有一个单一的reducer对所有的查询结果排序，如果对大数据集做排序，这将导致不可预期的执行时间，必须要加上limit条件才可以执行成功的查询。<br> 3）、第三种是禁止产生笛卡尔集(full Cartesian product)。在JION接连查询中没有ON连接key而通过WHERE条件语句会产生笛卡尔集，需要改为JOIN…ON语句。  </p>
+<h3 id="修改表"><a href="#修改表" class="headerlink" title="修改表"></a>修改表</h3><p>所有通过<code>alter</code>，修改的只是表的元数据，表里存的数据并不会改变。</p>
+<h4 id="改变location"><a href="#改变location" class="headerlink" title="改变location"></a>改变location</h4><p>通过修改表DDL：<code>alter table t_m_cc set location &#39;hdfs://heracles/user/video-mvc/hive/warehouse/t_m_cc&#39;</code><br>直接修改hive 的meta info: <code>update DBS set DB_LOCATION_URI = replace(DB_LOCATION_URI,&quot;oldpath&quot;,&quot;newpath&quot;)</code><br>                        <code>update SDS  set location =replace(location,&#39;oldpath,&#39;newpath&#39;)</code></p>
+<h4 id="修改表名"><a href="#修改表名" class="headerlink" title="修改表名"></a>修改表名</h4><p><code>alter table old_name rename to new_name</code> 改表名</p>
+<h4 id="修改列"><a href="#修改列" class="headerlink" title="修改列"></a>修改列</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">alter table table_name change column old_field_name new_field_name field_type</span><br><span class="line">comment &#39;...&#39;</span><br><span class="line">after field_name;</span><br></pre></td></tr></table></figure>
+<p>修改列名、注释的位置；如果要挪到第一个位置，只需要用<code>first</code>代替<code>after field_name</code>。<br><strong><em>注意前面提到的<code>alter</code>语句只修改表元数据，数据没有任何变化，所以列的位置变化时，数据不会跟着变化</em></strong>。<br>但其实不推荐增加列，因为会有很多的问题。<br><strong><em>增加新的列后，可能发现新增加的列插入的数据都是null。</em></strong>不管是用<code>insert into</code>还是<code>insert overwrite</code>。<br>解决办法（1）：删除对应的分区<code>alter table table_name drop partition(dt=...)</code>，然后可以准确插入数据。<br>解决办法（2）：修改元数据，但一般没有权限，<a href="https://blog.csdn.net/lxpbs8851/article/details/17118841" target="_blank" rel="noopener">参考</a>，没有验证过。</p>
+<p><code>alter table table_name add columns(..., ...)</code>添加新的（多个）字段。<br><code>alter table table replace columns (..., ..., ...);</code>删除/替换列</p>
+<h4 id="修改表属性"><a href="#修改表属性" class="headerlink" title="修改表属性"></a>修改表属性</h4><p><code>alter table table_name set tblproperties(...)</code> 可以增加新的表属性，或者修改已经存在的属性，但是无法删除属性</p>
+<h3 id="MSCK修复分区"><a href="#MSCK修复分区" class="headerlink" title="MSCK修复分区"></a>MSCK修复分区</h3><p><code>MSCK REPAIR TABLE table_name;</code><br>Hive会检测如果HDFS目录下存在但表的metastore中不存在的partition元信息，更新到metastore中。<br>代替手动通过<code>alter table add partition</code>方式增加Hive分区的方式。</p>
+<h3 id="查看命令"><a href="#查看命令" class="headerlink" title="查看命令"></a>查看命令</h3><p><code>describe [extended/formatted] table_name</code> 查看表信息，类似<code>desc</code>  可选的<code>[extended]</code>可以看到更详细的信息，<code>formatted</code>看更多信息，可读性强<br><code>describe database [extended/formatted] database1</code> 查看库信息，可以看到库地址<br><code>drop database database1 cascade/restrict</code>  库不为空时，一般不允许直接删除，<code>cascade</code>保证可以删除，默认是restrict<br><code>show tables in data_base</code> 在别的库里查询库<code>data_base</code>所有的表</p>
+<h3 id="读时模式"><a href="#读时模式" class="headerlink" title="读时模式"></a>读时模式</h3><p>hive是“读时模式”，对于存储文件的完整性、数据的格式是否和表匹配性等方面都没有支配能力。<br>只有在读数据时才会尽量的把hdfs的文件和表字段进行匹配。<br>我遇到的一个典型例子：hdfs文件里数据是3.5，hive表对应字段类型是<code>decimal</code>，这样导致读出来的数是4.（decimal没有指定小数精度时，默认是没有小数位）</p>
+<h3 id="自定义表的存储格式"><a href="#自定义表的存储格式" class="headerlink" title="自定义表的存储格式"></a>自定义表的存储格式</h3><p><code>inputformat</code>对象将输入流分割成记录；<code>outputformat</code>对象将记录格式化为输出流（如查询的输出结果）；一个SerDe在读数据时将记录解析列，在写数据时将列编码成记录。<br>SerDe决定了记录是如何分解成字段的（反序列化过程），以及字段是如何写入到存储中的（序列化过程）。</p>
+<h3 id="SerDe-Library、InputFormat、outputFormat"><a href="#SerDe-Library、InputFormat、outputFormat" class="headerlink" title="SerDe Library、InputFormat、outputFormat"></a>SerDe Library、InputFormat、outputFormat</h3><p>由一个错误引出：<code>Failed with exception java.io.IOException:java.lang.ClassCastException: org.apache.hadoop.hive.ql.io.orc.OrcStruct cannot be cast to org.apache.hadoop.io.BinaryComparable</code><br>问题复现：<br>建一个外部表，建表语句如下，一般inputformat、outputformat写成下面这样的，都是通过<code>show create table table_name</code>得到建表语句：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">CREATE EXTERNAL TABLE test_orc(</span><br><span class="line">id string,</span><br><span class="line">content string</span><br><span class="line">)</span><br><span class="line">PARTITIONED BY (</span><br><span class="line">dt string )</span><br><span class="line">ROW FORMAT DELIMITED</span><br><span class="line">FIELDS TERMINATED BY &#39;\u0001&#39;</span><br><span class="line">STORED AS INPUTFORMAT</span><br><span class="line">&#39;org.apache.hadoop.hive.ql.io.orc.OrcInputFormat&#39;</span><br><span class="line">OUTPUTFORMAT</span><br><span class="line">&#39;org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat&#39;;</span><br></pre></td></tr></table></figure>
+<p>之后使用 <code>select</code>查询该表时报上面的错。</p>
+<p>原因分析：<br>orc格式的表通过show create table得到的建表语句直接建外部表，查数据时会报强转失败的错。<br>因为这个建表语句显式指定了STORED AS INPUTFORMAT/OUTPUTFORMAT，但是没有定义serde，serde使用了默认值 。<br>通过<code>describe formatted test_orc</code>看到<code>SerDe Library</code>的类型和<code>inputformat/outputformat</code>没有对应。<br>Your SerDe library is LazySimpleSerde and your Input Format and Output Format are ORC. Totally not gonna work!：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">| <span class="comment"># Storage Information |</span></span><br><span class="line">| SerDe Library: | org.apache.hadoop.hive.serde2.lazy.LazySimpleSerDe |</span><br><span class="line">| InputFormat:   | org.apache.hadoop.hive.ql.io.orc.OrcInputFormat    |</span><br><span class="line">| OutputFormat:  | org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat   |</span><br></pre></td></tr></table></figure>
+<p>解决办法：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">CREATE EXTERNAL TABLE test_orc(</span><br><span class="line">id string,</span><br><span class="line">content string</span><br><span class="line">)</span><br><span class="line">PARTITIONED BY (</span><br><span class="line">dt string )</span><br><span class="line">ROW FORMAT DELIMITED</span><br><span class="line">FIELDS TERMINATED BY &#39;\u0001&#39;</span><br><span class="line">STORED AS orc;</span><br></pre></td></tr></table></figure>
+<p>之后<code>describe formatted test_orc</code>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Storage Information	 	 </span></span><br><span class="line">SerDe Library:      	org.apache.hadoop.hive.ql.io.orc.OrcSerde	 </span><br><span class="line">InputFormat:        	org.apache.hadoop.hive.ql.io.orc.OrcInputFormat	 </span><br><span class="line">OutputFormat:       	org.apache.hadoop.hive.ql.io.orc.OrcOutputFormat</span><br></pre></td></tr></table></figure>
+<p>三者关系详解：</p>
+<p>Hive中，默认使用的是TextInputFormat，一行表示一条记录。在每条记录(一行中)，默认使用^A分割各个字段。<br>在有些时候，我们往往面对多行，结构化的文档，并需要将其导入Hive处理。<br>有很多可选的办法来存储数据。如把数据放在一个地方，hive通过<code>external</code>包裹它；<br>如直接放在<code>hive warehouse</code>用表<code>table</code>来管理。可以指定<code>inputformat</code>和<code>outputformat</code>指定表的存储。<br>我们在客户端使用sql操作表，但是底层数据可能是 text file or sequence file or hbase table or some other data structure.</p>
+<p>Hive官方说法：<br>SerDe is a short name for “Serializer and Deserializer.”<br>Hive uses SerDe (and !FileFormat) to read and write table rows.<br>HDFS files –&gt; InputFileFormat –&gt; &lt;key, value&gt; –&gt; Deserializer –&gt; Row object<br>Row object –&gt; Serializer –&gt; &lt;key, value&gt; –&gt; OutputFileFormat –&gt; HDFS files</p>
+<p><strong><em>总结一下</em></strong>，当面临一个HDFS上的文件时，Hive将如下处理（以读为例）：<br>(1) 调用InputFormat，将文件切成不同的文档。每篇文档即一行(Row)。<br>(2) 调用SerDe的Deserializer，将一行(Row)，切分为各个字段。<br>(3)SerDe：序列化、反序列化。hive读写表数据(不是文件)。可以理解成一行row和多个字段field转变的过程。<br>(4)InputFormat、outputFormat：hdfs文件到表数据的转化。将文件切成不同的文档row；把row组合成底层的文件。</p>
+<p>其他：<code>serdeproperties</code>可以传递参数给serde。</p>
+<p>这三个参数都可以重写，详细看下面第一个链接。</p>
+<p>参考：<a href="https://www.coder4.com/archives/4031" target="_blank" rel="noopener">https://www.coder4.com/archives/4031</a><br><a href="https://stackoverflow.com/questions/42416236/what-is-the-difference-between-inputformat-outputformat-stored-as-in-hive" target="_blank" rel="noopener">https://stackoverflow.com/questions/42416236/what-is-the-difference-between-inputformat-outputformat-stored-as-in-hive</a></p>
+<h3 id="hive的默认数据分隔符-A"><a href="#hive的默认数据分隔符-A" class="headerlink" title="hive的默认数据分隔符^A"></a>hive的默认数据分隔符^A</h3><p>hive的默认数据分隔符是\001,也就是^A ，属于不可见字符。</p>
+<p>最简单的方法就是用sed（<strong><em>注意这个^A是按CTRL+V+A打出来的，或者按下crtl+v然后再按下crtl+a就会出来/tmp/out目录(\001)</em></strong>，直接输入的^A是不行的。）<br><strong><em>也不能通过复制粘贴的方式。前一个地方用的CTRL+V+A，复制粘贴后就失效，要重新CTRL+V+A。</em></strong><br>例：sed -i ‘s/^A/|/g’ 000000_0</p>
+<p>来自网络：<br>在python中可以使用line.split(‘\x01’)来进行切分，也可以使用line.split(‘\001’)，注意其中是单引号<br>在java中可以使用split(“\u0001”)来进行切分</p>
+<h3 id="hive默认记录、字段分割符"><a href="#hive默认记录、字段分割符" class="headerlink" title="hive默认记录、字段分割符"></a>hive默认记录、字段分割符</h3><table>
+<thead>
+<tr>
+<th align="center">分隔符</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">\n</td>
+<td align="left">换行符。默认记录分隔符，一行一个记录。</td>
+</tr>
+<tr>
+<td align="center">^A</td>
+<td align="left">用于分割字段。可用八进制\001表示(看上节)</td>
+</tr>
+<tr>
+<td align="center">^B</td>
+<td align="left">用与分割array、struct、map的key-value对。可用八进制\002表示</td>
+</tr>
+<tr>
+<td align="center">^C</td>
+<td align="left">用于分割map的key、value对。可用八进制\003表示</td>
+</tr>
+</tbody></table>
+<p>ROW FORMAT DELIMITED必须写在其他字段前，除了stored as。</p>
+<h3 id="集合数据类型"><a href="#集合数据类型" class="headerlink" title="集合数据类型"></a>集合数据类型</h3><p>array、map、struct三种。好处是处理p/t级数据时，减少寻址，快。坏处是增大数据冗余等。</p>
+<h3 id="时间类型"><a href="#时间类型" class="headerlink" title="时间类型"></a>时间类型</h3><p><code>Timestamps</code>类型可以是</p>
+<ul>
+<li>（1）以秒为单位的整数；</li>
+<li>（2）带精度的浮点数，最大精确到小数点后9位，纳秒级；</li>
+<li>（3）java.sql.Timestamp格式的字符串 YYYY-MM-DD hh:mm:ss.fffffffff</li>
+</ul>
+<p><code>Date</code> 只支持YYYY-MM-DD格式的日期，其余写法都是错误的，如需带上时分秒，需使用timestamp。</p>
+<h3 id="计算时间的月份差"><a href="#计算时间的月份差" class="headerlink" title="计算时间的月份差"></a>计算时间的月份差</h3><p><code>select floor(months_between(&#39;2018-07-01&#39;,&#39;2018-02-04&#39;)) from default.dual</code><br>返回值为: 4<br>时间格式必须是<code>yyyy-mm-dd</code>，如果是<code>yyyymmdd</code>需要转换<br><code>floor</code>是取整函数</p>
+<h3 id="yyyy-mm-dd、yyyymmdd互转"><a href="#yyyy-mm-dd、yyyymmdd互转" class="headerlink" title="yyyy-mm-dd、yyyymmdd互转"></a>yyyy-mm-dd、yyyymmdd互转</h3><p>方法1: from_unixtime+ unix_timestamp</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--20171205转成2017-12-05</span><br><span class="line">select from_unixtime(unix_timestamp(&#39;20171205&#39;,&#39;yyyymmdd&#39;),&#39;yyyy-mm-dd&#39;) from dual;</span><br><span class="line"></span><br><span class="line">--2017-12-05转成20171205</span><br><span class="line">select from_unixtime(unix_timestamp(&#39;2017-12-05&#39;,&#39;yyyy-mm-dd&#39;),&#39;yyyymmdd&#39;) from dual;</span><br></pre></td></tr></table></figure>
+<p>方法2: substr + concat</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">--20171205转成2017-12-05</span><br><span class="line">select concat(substr(&#39;20171205&#39;,1,4),&#39;-&#39;,substr(&#39;20171205&#39;,5,2),&#39;-&#39;,substr(&#39;20171205&#39;,7,2)) from dual;</span><br><span class="line"></span><br><span class="line">--2017-12-05转成20171205</span><br><span class="line">select concat(substr(&#39;2017-12-05&#39;,1,4),substr(&#39;2017-12-05&#39;,6,2),substr(&#39;2017-12-05&#39;,9,2)) from dual;</span><br></pre></td></tr></table></figure>
+<h3 id="执行外部命令"><a href="#执行外部命令" class="headerlink" title="执行外部命令"></a>执行外部命令</h3><p>hadoop命令：<br>把命令行里的hadoop去掉。<br>如直接执行<code>dfs -ls ...;</code>此种方法相叫hadoop的命令更为高效，hadoop是新开一个jvm线程执行，前者在当前线程执行。</p>
+<p>其他命令，以!开始，以;结束，不能用管道、文件补全、用户交互等操作。<br>如<code>!echo &#39;li&#39;;</code></p>
+<h3 id="if"><a href="#if" class="headerlink" title="if"></a>if</h3><p>If 函数语法: if(boolean testCondition, T valueTrue, T valueFalseOrNull)<br>返回值: T<br>说明:  当条件testCondition为TRUE时，返回valueTrue；否则返回valueFalseOrNull<br>举例：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">hive&gt; select if(1&#x3D;2,100,200) from dual;</span><br><span class="line">200</span><br></pre></td></tr></table></figure>
+
+<h3 id="【is-null】-【-null】？、【is-not-null】-【-lt-gt-null】？"><a href="#【is-null】-【-null】？、【is-not-null】-【-lt-gt-null】？" class="headerlink" title="【is null】 = 【 = null】？、【is not null】 = 【 &lt;&gt; null】？"></a>【is null】 = 【 = null】？、【is not null】 = 【 &lt;&gt; null】？</h3><p>hive 里（包括IF函数与Where条件里）判断是否为NULL要用 is null或 is not null ，不能使用 &lt;&gt; null 或 = null（虽然不报错）<br>null在hive底层默认是用’\N’来存储的，可以通过alter table test SET SERDEPROPERTIES(‘serialization.null.format’ = ‘a’);来修改。</p>
+<h3 id="lt-gt-区别"><a href="#lt-gt-区别" class="headerlink" title="&lt;&gt; != 区别"></a>&lt;&gt; != 区别</h3><p>语法: A &lt;&gt; B<br>操作类型: 所有基本类型<br>描述: 如果表达式A为NULL，或者表达式B为NULL，返回NULL，因此比较时要特别注意字段为null的情况（如果有一边等于null，结果就是false）；<br>如果表达式A与表达式B不相等，则为TRUE；否则为FALSE</p>
+<p>hive中，当两边数据类型不对等时，比较的时候会出现问题。</p>
+<h3 id="insert"><a href="#insert" class="headerlink" title="insert"></a>insert</h3><p>1.insert into是增加数据<br>2.insert overwrite是删除原有数据然后在新增数据，如果有分区那么只会删除指定分区数据，其他分区数据不受影响</p>
+<h3 id="rand"><a href="#rand" class="headerlink" title="rand"></a>rand</h3><p>语法: rand(),rand(int seed)<br>返回值: double<br>说明:返回一个0到1范围内的随机数。如果指定种子seed，则会等到一个稳定的随机数序列</p>
+<h3 id="cast"><a href="#cast" class="headerlink" title="cast"></a>cast</h3><p>作用：转换<br>格式 cast(col as type)</p>
+<h3 id="binary-string-binary"><a href="#binary-string-binary" class="headerlink" title="binary(string|binary)"></a>binary(string|binary)</h3><p>将输入的值转换成二进制  </p>
+<h3 id="base64-binary-bin"><a href="#base64-binary-bin" class="headerlink" title="base64(binary bin)"></a>base64(binary bin)</h3><p>将二进制bin转换成64位的字符串</p>
+<h3 id="find-in-set查找函数"><a href="#find-in-set查找函数" class="headerlink" title="find_in_set查找函数"></a>find_in_set查找函数</h3><p>集合查找函数: find_in_set<br>语法: find_in_set(string str, string strList)<br>返回值: int<br>说明: 返回str在strlist第一次出现的位置，strlist是用逗号分割的字符串。如果没有找该str字符，则返回0<br>例子：<code>select find_in_set(&#39;de&#39;,&#39;ef,ab,de&#39;);</code> 返回3</p>
+<h3 id="decimal"><a href="#decimal" class="headerlink" title="decimal"></a>decimal</h3><p>DECIMAL Hive 0.11.0引入，Hive 0.13.0开始，用户可以使用DECIMAL(precision, scale) 语法在创建表时来定义Decimal数据类型的precision和scale。<br>如果未指定precision，则默认为10。如果未指定scale，它将默认为0（无小数位）。<br><strong><em>曾遇到这样的问题，创建的外部表没有指定精度，外部表指定的内部表有指定精度，从外部表查数据时仍然截断了小数部分。</em></strong></p>
+<h3 id="export-LC-ALL-en-US-UTF-8"><a href="#export-LC-ALL-en-US-UTF-8" class="headerlink" title="export LC_ALL=en_US.UTF-8"></a>export LC_ALL=en_US.UTF-8</h3><p><code>export LC_ALL=en_US.UTF-8</code> 解决hive客户端调用脚本中文问题</p>
+<p><a href="https://perlgeek.de/en/article/set-up-a-clean-utf8-environment" target="_blank" rel="noopener">https://perlgeek.de/en/article/set-up-a-clean-utf8-environment</a></p>
+<h3 id="SIZE"><a href="#SIZE" class="headerlink" title="SIZE"></a>SIZE</h3><p>数组长度。<br>注意的是，如果和split一起用<code>size(split(str, &#39;operate&#39;))</code>，如果str为‘’或者null时，返回的结果是1；因为split返回的是有一个空串的数组。</p>
+<h3 id="get-json-object"><a href="#get-json-object" class="headerlink" title="get_json_object"></a>get_json_object</h3><p><code>get_json_object(json_string,’$.str’)</code> 得到json字符串json_string的$.str节点的值，$指根节点。</p>
+<h3 id="REGEXP-RLIKE-LIKE"><a href="#REGEXP-RLIKE-LIKE" class="headerlink" title="REGEXP/RLIKE/LIKE"></a>REGEXP/RLIKE/LIKE</h3><p>语法: A REGEXP B<br>操作类型: strings<br>描述: 功能与RLIKE相同</p>
+<p>LIKE:不是正则，而是通配符。这个通配符可以看一下SQL的标准，例如%代表任意多个字符。<br>RLIKE:是正则，正则的写法与java一样。功能与REGEXP相同.</p>
+<h3 id="REGEXP-EXTRACT"><a href="#REGEXP-EXTRACT" class="headerlink" title="REGEXP_EXTRACT"></a>REGEXP_EXTRACT</h3><p>regexp_extract(string subject, string pattern, int index)<br>通过下标返回正则表达式指定的部分。正则<code>\</code>需要转义<code>\\</code>,例如’\w’需要使用’\w’<br>index指的是：返回所有匹配的第N个.<br>参考：<a href="http://www.cnblogs.com/judylucky/p/3713774.html" target="_blank" rel="noopener">http://www.cnblogs.com/judylucky/p/3713774.html</a></p>
+<h3 id="NVL"><a href="#NVL" class="headerlink" title="NVL"></a>NVL</h3><p><code>NVL( str, replace_with)</code><br>str为NULL, 则NVL函数返replace_with值，否则返str值</p>
+<h3 id="CONCAT-str1-str2-…"><a href="#CONCAT-str1-str2-…" class="headerlink" title="CONCAT(str1, str2,…)"></a>CONCAT(str1, str2,…)</h3><p>连接字符串，如果参数中有null，返回结果也会是null，因此可以结合上面的方面使用。</p>
+<h3 id="CONCAT-WS-separator-str1-str2-…"><a href="#CONCAT-WS-separator-str1-str2-…" class="headerlink" title="CONCAT_WS(separator, str1, str2,…)"></a>CONCAT_WS(separator, str1, str2,…)</h3><p>它是一个特殊形式的 CONCAT()。第一个参数是剩余参数间的分隔符。分隔符可以是与剩余参数一样的字符串。如果分隔符是 NULL，返回值也将为 NULL。这个函数会跳过分隔符参数后的任何 NULL 和空字符串。分隔符将被加到被连接的字符串之间<br>这个函数会跳过分隔符参数后的任何 NULL 和空字符串，但是<strong>跳过空字符串后还是会有多余的分隔符存在</strong>（非常鸡肋啊）。</p>
+<h3 id="COLLECT-SET-列转行"><a href="#COLLECT-SET-列转行" class="headerlink" title="COLLECT_SET() 列转行"></a>COLLECT_SET() 列转行</h3><p>是 Hive 内置的一个聚合函数, 它返回一个<strong><em>消除了重复元素</em></strong>的对象集合, 其返回值类型是 array 。<br>把group by值一样的分组由列变成行，即变成数组，可以用下标访问。<br>collect_set()方法把group by一样的组里的数据组成一个数组。数组从0开始，如果直接select数组，是[item1, …, itemn]的格式。<br>如<code>select collect_set(uname) unames ....group by uid</code>，把同一个uid的uname组成数组， 通过别名unames[ind]访问数据。<br><code>concat_ws(&#39;,&#39;,collect_set(cast(col_0 as string)))</code> 两个一起使用把列变成由逗号分割的行。</p>
+<h3 id="COLLECT-LIST-行转列去重"><a href="#COLLECT-LIST-行转列去重" class="headerlink" title="COLLECT_LIST() 行转列去重"></a>COLLECT_LIST() 行转列去重</h3><p><code>collect_list(id)</code> 列出该字段所有的值，列出来<strong><em>不去重</em></strong></p>
+<h3 id="EXPLODE-行转列"><a href="#EXPLODE-行转列" class="headerlink" title="EXPLODE 行转列"></a>EXPLODE 行转列</h3><p>上面的collect_set是把列变成行，explode是把行变成列。<br><code>explode(array)</code> 把数组里的数据变成列形式。经常与split一起用。<br>例如，在wordcount中有<code>explode(split(line, &#39; &#39;))</code> 或<code>explode(split(line, &#39;\\s&#39;))</code></p>
+<h3 id="LATERAL-VIEW-一行变多行"><a href="#LATERAL-VIEW-一行变多行" class="headerlink" title="LATERAL VIEW 一行变多行"></a>LATERAL VIEW 一行变多行</h3><p>lateral view用于和split、explode等UDTF一起使用的，能将一行数据拆分成多行数据，在此基础上可以对拆分的数据进行聚合。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">SELECT myCol1, myCol2, col3 FROM baseTable</span><br><span class="line">LATERAL VIEW explode(col1) myTable1 AS myCol1</span><br><span class="line">LATERAL VIEW explode(col2) myTable2 AS myCol2;</span><br></pre></td></tr></table></figure>
+<p>示例：<br><strong><em>执行过程是先执行from到 as cloumn的列过程，再执行select 和where后边的语句；</em></strong><br>sql如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">select datenu,des,type from tb_split</span><br><span class="line">lateral view explode(split(des,&quot;&#x2F;&#x2F;|&quot;)) tb1 as des</span><br><span class="line">lateral view explode(split(type,&quot;&#x2F;&#x2F;|&quot;)) tb2 as type</span><br></pre></td></tr></table></figure>
+<p>数据如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">20141018  aa|bb 7|9</span><br><span class="line">20141019  cc|dd  6|1|8</span><br></pre></td></tr></table></figure>
+<p>希望的结果是：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">20141018  aa 7</span><br><span class="line">20141018  aa 9</span><br><span class="line">20141018  bb 7</span><br><span class="line">20141018  bb 9</span><br><span class="line">20141019  cc  6</span><br><span class="line">20141019  cc  1</span><br><span class="line">20141019  cc  8</span><br><span class="line">20141019  dd  6</span><br><span class="line">20141019  dd  1</span><br><span class="line">20141019  dd  8</span><br></pre></td></tr></table></figure>
+<h3 id="json数组行转列"><a href="#json数组行转列" class="headerlink" title="json数组行转列"></a>json数组行转列</h3><p>方法1：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> get_json_object(<span class="keyword">col</span>, <span class="string">'$.bssid'</span>)</span><br><span class="line"><span class="keyword">from</span> (</span><br><span class="line">  <span class="keyword">select</span> <span class="string">'[&#123;"bssid":"6C:59:40:21:05:C4","ssid":"MERCURY_05C4"&#125;,&#123;"bssid":"AC:9C:E4:04:EE:52","appid":"10003","ssid":"and-Business"&#125;]'</span> <span class="keyword">as</span> <span class="keyword">str</span></span><br><span class="line">  <span class="keyword">from</span> dual</span><br><span class="line">) pp</span><br><span class="line"><span class="keyword">lateral</span> <span class="keyword">view</span> <span class="keyword">explode</span>(<span class="keyword">split</span>(regexp_replace(regexp_extract(pp.str, <span class="string">'^\\[(.+)\\]$'</span>, <span class="number">1</span>),<span class="string">'\\&#125;\\,\\&#123;'</span>, <span class="string">'\\&#125;\\|\\|\\&#123;'</span>),<span class="string">'\\|\\|'</span>)) ss <span class="keyword">as</span> <span class="keyword">col</span>;</span><br></pre></td></tr></table></figure>
+<p>结果：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">6C:59:40:21:05:C4</span><br><span class="line">AC:9C:E4:04:EE:52</span><br></pre></td></tr></table></figure>
+<p>方法2：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">select get_json_object(&#39;[&#123;&quot;bssid&quot;:&quot;6C:59:40:21:05:C4&quot;,&quot;ssid&quot;:&quot;MERCURY_05C4&quot;&#125;,&#123;&quot;bssid&quot;:&quot;AC:9C:E4:04:EE:52&quot;,&quot;appid&quot;:&quot;10003&quot;,&quot;ssid&quot;:&quot;and-Business&quot;&#125;]&#39;, &#39;$[@.bssid]&#39;) as str</span><br><span class="line">from dual;</span><br></pre></td></tr></table></figure>
+<p>结果与方法1一样。</p>
+<p>差别：第一种可以得到所有的数组，第二中只能得到数组里某个值。</p>
+<h3 id="LEAD-LAG-FIRST-VALUE-LAST-VALUE窗口函数"><a href="#LEAD-LAG-FIRST-VALUE-LAST-VALUE窗口函数" class="headerlink" title="LEAD LAG FIRST_VALUE LAST_VALUE窗口函数"></a>LEAD LAG FIRST_VALUE LAST_VALUE窗口函数</h3><table>
+<thead>
+<tr>
+<th align="left">窗口函数</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">LAG()</td>
+<td align="left">LAG()窗口函数返回分区中当前行之前行（可以指定第几行）的值。 如果没有行，则返回null。</td>
+</tr>
+<tr>
+<td align="left">LEAD()</td>
+<td align="left">LEAD()窗口函数返回分区中当前行后面行（可以指定第几行）的值。 如果没有行，则返回null。</td>
+</tr>
+<tr>
+<td align="left">FIRST_VALUE</td>
+<td align="left">FIRST_VALUE窗口函数返回相对于窗口中第一行的指定列的值。</td>
+</tr>
+<tr>
+<td align="left">LAST_VALUE</td>
+<td align="left">LAST_VALUE窗口函数返回相对于窗口中最后一行的指定列的值。</td>
+</tr>
+</tbody></table>
+<p>语法：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">LAG | LEAD</span><br><span class="line">( &lt;col&gt;, &lt;line_num&gt;, &lt;DEFAULT&gt; )</span><br><span class="line">OVER ( [ PARTITION BY ] [ ORDER BY ] )</span><br></pre></td></tr></table></figure>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">FIRST_VALUE | LAST_VALUE</span><br><span class="line">( &lt;col&gt;,&lt;ignore nulls as boolean&gt; ) OVER</span><br><span class="line">( [ PARTITION BY ] [ ORDER BY ][ window_clause ] )</span><br></pre></td></tr></table></figure>
+
+<p>参考：<a href="https://blog.csdn.net/sunnyyoona/article/details/56484919" target="_blank" rel="noopener">https://blog.csdn.net/sunnyyoona/article/details/56484919</a></p>
+<h3 id="row-num-rank-dense-rank-over-…-。"><a href="#row-num-rank-dense-rank-over-…-。" class="headerlink" title="row_num()/rank/dense_rank over (…)。"></a>row_num()/rank/dense_rank over (…)。</h3><p>从1开始，为每个分组的每条记录返回一个数字。<br>1例如，<code>ROW_NUMBER() OVER (ORDER BY xlh DESC)</code> 是先按照xlh列降序，再为降序以后的每条记录返回一个序号。<br>2例<br>数据库中有数据</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">empid       deptid      salary</span><br><span class="line">----------- ----------- ---------------------------------------</span><br><span class="line">1           10          5500.00</span><br><span class="line">2           10          4500.00</span><br><span class="line">3           20          1900.00</span><br><span class="line">4           20          4800.00</span><br><span class="line">5           40          6500.00</span><br><span class="line">6           40          14500.00</span><br><span class="line">7           40          44500.00</span><br><span class="line">8           50          6500.00</span><br><span class="line">9           50          7500.00</span><br></pre></td></tr></table></figure>
+<p>需求<code>根据部门分组，显示每个部门的工资等级</code><br>sql：<code>SELECT *, Row_Number() OVER (partition by deptid ORDER BY salary desc) rank FROM employee</code><br>结果：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">empid       deptid      salary                                  rank</span><br><span class="line">----------- ----------- --------------------------------------- --------------------</span><br><span class="line">1           10          5500.00                                 1</span><br><span class="line">2           10          4500.00                                 2</span><br><span class="line">4           20          4800.00                                 1</span><br><span class="line">3           20          1900.00                                 2</span><br><span class="line">7           40          44500.00                                1</span><br><span class="line">6           40          14500.00                                2</span><br><span class="line">5           40          6500.00                                 3</span><br><span class="line">9           50          7500.00                                 1</span><br><span class="line">8           50          6500.00                                 2</span><br></pre></td></tr></table></figure>
+<p>例子参考：<a href="https://blog.csdn.net/biaorger/article/details/38523527" target="_blank" rel="noopener">https://blog.csdn.net/biaorger/article/details/38523527</a><br>row_number()另一作用可以用来去除重复：先按分组字段分区，再通过 rownum = 1过滤即可。另外，去重还可以借助于group by。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> a,row_number() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> b) row_number,<span class="keyword">rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> b) <span class="keyword">rank</span>,</span><br><span class="line"><span class="keyword">dense_rank</span>() <span class="keyword">over</span>(<span class="keyword">order</span> <span class="keyword">by</span> b) <span class="keyword">dense_rank</span> <span class="keyword">from</span> test_rank;</span><br><span class="line"></span><br><span class="line">result：</span><br><span class="line">a   row_number  rank    dense_rank</span><br><span class="line">A       1        1          1</span><br><span class="line">C       2        2          2</span><br><span class="line">D       3        3          3</span><br><span class="line">B       4        3          3</span><br><span class="line">E       5        5          4</span><br><span class="line">F       6        6          5</span><br><span class="line">G       7        7          6</span><br></pre></td></tr></table></figure>
+
+<h3 id="partition-by与group-by-的区别"><a href="#partition-by与group-by-的区别" class="headerlink" title="partition by与group by 的区别"></a>partition by与group by 的区别</h3><p>后者是经典的使用，是对检索结果的保留行进行单纯分组，如果有sum函数，就是先分组再对每个分组求和；<br>前者类似虽然也具有分组功能，但同时也具有其他的功能，如果有sum函数，是先分组，再累加，会把分组里累加的过程输出。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">表：</span><br><span class="line">B  C  D  </span><br><span class="line">02 02 1</span><br><span class="line">02 02 13</span><br><span class="line"></span><br><span class="line">select b,c,sum(d) e from a group by b,c;   </span><br><span class="line">结果：</span><br><span class="line">B   C  E  </span><br><span class="line">02 02 13</span><br><span class="line">SELECT b, c, d, SUM(d) OVER(PARTITION BY b,c ORDER BY d) e FROM a;  </span><br><span class="line">结果：</span><br><span class="line">B C E  </span><br><span class="line">02 02 1  </span><br><span class="line">02 02 13</span><br></pre></td></tr></table></figure>
+<p>从上面的例子中可以看到第二条语句的累加过程</p>
+<p><strong><em>hive中group by和mysql不同。mysql可以接受select处理后的别名作为group by，hive的group by不能接受。</em></strong></p>
+<h3 id="ORDER-SORT-DISTRIBUTE-BY"><a href="#ORDER-SORT-DISTRIBUTE-BY" class="headerlink" title="ORDER /SORT /DISTRIBUTE BY"></a>ORDER /SORT /DISTRIBUTE BY</h3><ul>
+<li><code>ORDER BY</code> 全局排序，会将所有数据送到同一个Reducer中后再对所有数据进行排序，对于大数据会很慢，谨慎使用</li>
+<li><code>SORT BY</code> 局部排序，只会在每一个Reducer中对数据进行排序，在每个Reducer输出是有序的，但并非全局排序（每个reducer出来的数据是有序的，但是不能保证所有的数据是有序的——即文件(分区)之间无序，除非只有一个reducer）</li>
+<li><code>DISTRIBUTE BY</code> 控制map的输出被送到哪个reducer端进行汇总计算，相同字段的map输出会发到一个reduce节点去处理。通过这个特性可以强行使hql有reduce，伴随有减少mapper输出文件个数、减轻数据倾斜等功效，可看下面链接里的例子。用distribute by 会对指定的字段按照hashCode值对reduce的个数取模，然后将任务分配到对应的reduce中去执行</li>
+</ul>
+<p>关与<code>DISTRIBUTE BY</code>使用非常好的文章：<a href="https://www.iteblog.com/archives/1533.html" target="_blank" rel="noopener">https://www.iteblog.com/archives/1533.html</a></p>
+<p><del>注：HIVE reducer分区个数由mapreduce.job.reduces来决定，该选项只决定使用哪些字段做为分区依据，如果没通过DISTRIBUTE BY指定分区字段，则默认将整个文本行做为分区依据。分区算法默认是HASH，也可以自己实现。这里DISTRIBUTE BY讲的分区概念是指Hadoop里的，而非我们HIVE数据文本存储分区。Hadoop里的Partition主要作用就是将map的结果发送到相应的reduce，默认使用HASH算法，不过可以重写.</del></p>
+<h3 id="group-by-1-2-3"><a href="#group-by-1-2-3" class="headerlink" title="group by 1, 2, 3"></a>group by 1, 2, 3</h3><p><code>SET hive.groupby.orderby.position.alias=true</code> 默认是false。（mysql可直接使用。）<br>打开这个开关后，group by可以通过1， 2， 3这样的数字指定 使用select的第几个字段。<br>示例：<code>SELECT substr(date, 1, 4), count(1) year FROM *** GROUP BY 1;</code></p>
+<h3 id="having-by"><a href="#having-by" class="headerlink" title="having by"></a>having by</h3><p>GROUP BY子句之后使用Having子句<br>可应用限定条件进行分组，以便系统仅对满足条件的组返回结果。<br>在GROUP BY子句后面包含了一个HAVING子句。HAVING类似于WHERE（唯一的差别是WHERE过滤行，HAVING过滤组）AVING支持所有WHERE操作符。</p>
+<h3 id="导出数据到本地"><a href="#导出数据到本地" class="headerlink" title="导出数据到本地"></a>导出数据到本地</h3><p>hive的-e和-f参数可以用来导出数据。<br>-e 表示后面直接接带双引号的sql语句；而-f是接一个文件，文件的内容为sql语句。<br>（1）<code>hive -e &quot;use test; select * from student where sex = &#39;男&#39;&quot; &gt; /tmp/output.txt</code><br>（2）<code>insert overwrite local directory &quot;/tmp/out&quot; select cno,avg(grade) from sc group by(cno);</code><br>（3）<code>insert overwrite local directory &quot;/tmp/out&quot; row format delimited fields terminated by &#39; &#39; select cno,avg(grade) from sc group by(cno);</code></p>
+<p>（2）也可以作为（1）中-e的参数执行。<br>（2）这条HQL的执行需要启用Mapreduce完成，运行完这条语句之后，将会在本地文件系统的/tmp/out目录下生成文件，这个文件是Reduce产生的结果（这里生成的文件名是000000_0），数据的分割使用的就是上面提到的^A<br>（3）通过加入<code>row format delimited fields terminated by &#39; &#39;</code>使的数据的分割是空格，而不是^A.<br>（1）中会直接保存成本地文件，把数据直接保存在/tmp/output.txt中，数据默认由空格分割。<br>（2）这条HQL的‘local’去掉，数据会被保存在hdfs系统的/tmp/out目录下。<br>（2）不能使用<code>insert into</code>或者<code>insert local</code></p>
+<h3 id="into-overwrite-导出数据到表"><a href="#into-overwrite-导出数据到表" class="headerlink" title="into/overwrite 导出数据到表"></a>into/overwrite 导出数据到表</h3><p>把表2的数据导出到表1：<br>(1)<code>insert into table_name1(...) select ... from table_name2</code><br>(2)<code>insert overwrite table_name1(...) select ... from table_name2</code><br>select 部分不能用括号，否则会被认为是表1的字段；<br>(…)中是表1的字段，可以省略； <code>select ...</code> 可以用<code>select *</code> 代替；<br>(1)是直接导入，(2)是覆盖原来数据导入。</p>
+<p>导入到分区表：<br>(1)<code>insert into table_name1 partition(dt=&#39;2018-03-11&#39;) select ... from table_name2</code><br>(2)<code>set hive.exec.dynamic.partition.mode=nonstrict;insert into table_name1 partition(dt) select ... from table table_name2</code></p>
+<p>同样可以把<code>into</code>换成<code>overwrite table</code>以达到覆盖的效果。注意：只会覆盖table_name2中存在的对应分区，table_name1中已经存在的分区，table_name2中没有是不会进行覆盖。 即，覆盖只是覆盖分区里的数据数据、追加分区，原分区不变。<br>(1)是导入一个分区的数据 <code>select ...</code>部分不用带dt(分区)的值。注意，如果表2也是分区表，此时不能用<code>select *</code>，因为它查出来的数据有分区字段，比<code>insert</code>的多一个字段。<br>(2)是导入多个分区的表，执行前需要<code>set hive.exec.dynamic.partition.mode=nonstrict;</code>，因为严格模式下，不允许所有的分区都被动态指定，目的是为了防止生成太多的目录.此时<code>select ...</code>必须有dt分区的字段。<br>(2)是动态分区，不指定分区，一次可以导入多个分区。</p>
+<h3 id="文件导入数据到表"><a href="#文件导入数据到表" class="headerlink" title="文件导入数据到表"></a>文件导入数据到表</h3><p><code>load data [local] inpath &#39;file1.txt&#39; [overwrite] into table table_name [partition(partcol=val)]</code><br>通常情况下，会不只是一个文件，而是一个目录，load操作会把目录下的文件全部拷贝到表的location下。<br><code>local</code> 决定文件是来自本地还是hdfs。<br><code>overwrite</code> 决定是否要覆盖。<br><code>load</code>命令不支持动态分区，必须指定分区。(可以把数据先转到非分区表，再利用上面小节“导出数据到表”的方法把非分区表的数据导入到分区表)。不指定分区，会报错<code>FAILED: SemanticException org.apache.hadoop.hive.ql.metadata.HiveException: MetaException(message:Invalid partition key &amp; values; keys [dt, ], values [])</code><br>load不能加载桶表数据，只能从另一张表加载数据。(和动态分区的解决方案一样，建一个中间表作为过渡表)。</p>
+<p>hive不会检验用户装载的数据和表的模式是否匹配，但是会验证装载文件的类型和表的定义类型是否匹配。比如，表的定义是sequencefile，则数据文件必须是sequencefile</p>
+<h3 id="同时插入多个表"><a href="#同时插入多个表" class="headerlink" title="同时插入多个表"></a>同时插入多个表</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">from test t</span><br><span class="line">insert into table test1 select ...</span><br><span class="line">insert into table test3 select ...</span><br></pre></td></tr></table></figure>
+<p>从test中查数同时插入到test1、test3。每个select都必须存在，可以用*<br>eg:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">from test_part</span><br><span class="line">insert into table test_part2 partition(dt&#x3D;&#39;2018-08-19&#39;, source&#x3D;&#39;app&#39;) select id</span><br><span class="line">insert into table test_part4 partition(dt&#x3D;&#39;2018-08-10&#39;, source&#x3D;&#39;app&#39;) select id;</span><br></pre></td></tr></table></figure>
+<h3 id="自定义UDF-UDTF-UDAF"><a href="#自定义UDF-UDTF-UDAF" class="headerlink" title="自定义UDF/UDTF/UDAF"></a>自定义UDF/UDTF/UDAF</h3><p>网上介绍了四中方法。只验证过第一种。<br>方法（1）最常用也最不被喜欢的方法。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">add jar testUDF-0.0.1-SNAPSHOT.jar;</span><br><span class="line"><span class="keyword">create</span> <span class="keyword">temporary</span> <span class="keyword">function</span> zodiac <span class="keyword">as</span> <span class="string">"com.hive.udf.UDFZodiacSign"</span>;</span><br></pre></td></tr></table></figure>
+<p>之后就可以在sql里直接使用<code>zodiac()</code>。但是这种方法只存在在当前会话中。<br>每次会话都要重新add、create。（下面的.hiverc文件可以解决每次都要add、create问题）<br>其他方法：<a href="https://www.cnblogs.com/chushiyaoyue/p/6632090.html?utm_source=itdadao&amp;utm_medium=referral" target="_blank" rel="noopener">https://www.cnblogs.com/chushiyaoyue/p/6632090.html?utm_source=itdadao&amp;utm_medium=referral</a></p>
+<p>UDF：可直接应用于select语句，对查询结构做格式化处理后，再输出内容。<br>UDTF：用来解决 输入一行输出多行(On-to-many maping) 的需求。<code>lateral view</code>一行转多行，有些字段无法使用split等函数剪切成数组。<br>UDAF：实现聚类函数（eg，sum/agv）。<br>参考：<a href="https://blog.csdn.net/liuj2511981/article/details/8523084" target="_blank" rel="noopener">https://blog.csdn.net/liuj2511981/article/details/8523084</a></p>
+<h3 id="python-transform"><a href="#python-transform" class="headerlink" title="python-transform"></a>python-transform</h3><p>transform中的值作为输入， 然后传递给python脚本，最后经过python的处理后，输出想要得到的字符串格式。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">add file *.py;</span><br><span class="line">select transform(intput columns)</span><br><span class="line">using &#39;python *.py&#39;</span><br><span class="line">as (output columns)</span><br></pre></td></tr></table></figure>
+<p>例子：<br>hive map中字段自增的写法（转）  </p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">-- 1、建立表结构  </span></span><br><span class="line">hive&gt; CREATE TABLE t3 (foo STRING, bar MAP&lt;STRING,INT&gt;)  </span><br><span class="line">    &gt; ROW FORMAT DELIMITED  </span><br><span class="line">    &gt; FIELDS TERMINATED BY '/t'  </span><br><span class="line">    &gt; COLLECTION ITEMS TERMINATED BY ','  </span><br><span class="line">    &gt; MAP KEYS TERMINATED BY ':'  </span><br><span class="line">    &gt; STORED AS TEXTFILE;  </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 2、load test.txt文件  </span></span><br><span class="line">jeffgeng        click:13,uid:15</span><br><span class="line"><span class="comment">-- 3、编写add_mapper，python脚本要去除字典转换后遗留下来的空格，引号，左右花排号等   </span></span><br><span class="line"></span><br><span class="line"><span class="comment">#!/usr/bin/python  </span></span><br><span class="line">import sys  </span><br><span class="line">import datetime  </span><br><span class="line"></span><br><span class="line">for line in sys.stdin:  </span><br><span class="line">    line = line.strip('/t')  </span><br><span class="line">    foo, bar = line.split('/t')  </span><br><span class="line">    d = eval(bar)  </span><br><span class="line">    d['click'] += 1  </span><br><span class="line">    d['uid'] += 1  </span><br><span class="line">    strmap = ''  </span><br><span class="line">    for x in str(d):  </span><br><span class="line">        if x in (' ', "'"):  </span><br><span class="line">            continue  </span><br><span class="line">        strmap += x  </span><br><span class="line">    print '/t'.join([foo, strmap])  </span><br><span class="line"></span><br><span class="line"><span class="comment">-- 4、使用</span></span><br><span class="line">add FILE add_mapper.py;</span><br><span class="line"></span><br><span class="line"><span class="keyword">INSERT</span> OVERWRITE <span class="keyword">TABLE</span> t4  </span><br><span class="line"><span class="keyword">SELECT</span>  </span><br><span class="line">  TRANSFORM (foo, bar)  </span><br><span class="line">  <span class="keyword">USING</span> <span class="string">'python add_mapper.py'</span>  </span><br><span class="line">  <span class="keyword">AS</span> (foo <span class="keyword">string</span>, bar <span class="keyword">map</span>&lt;<span class="keyword">string</span>,<span class="built_in">int</span>&gt;)  </span><br><span class="line"><span class="keyword">FROM</span> t3;</span><br></pre></td></tr></table></figure>
+
+<h3 id="e-f-S"><a href="#e-f-S" class="headerlink" title="-e/f/S"></a>-e/f/S</h3><p><code>-e</code> : 执行短命令<br><code>-f</code> :  执行文件（适合脚本封装）<br><code>-S</code> : 安静模式，不显示MR的运行过程</p>
+<h3 id="hiverc文件"><a href="#hiverc文件" class="headerlink" title=".hiverc文件"></a>.hiverc文件</h3><p>网上说在<code>${HIVE_HOME}/bin</code>目录下（我目前遇到别人部署的hive是在用户目录下）<br>（<code>ls -a</code>命令查看隐藏文件）<br>它是在hive启动的时候被调用，可以在里面定义常用的参数。<br>写到这个是因为，还可以把上面加载udf的最常用最不被喜欢的第一种方法的add、create语句写到.hiverc文件里，这样每次启动hive时都默认加载了udf方法。</p>
+<h3 id="i"><a href="#i" class="headerlink" title="-i"></a>-i</h3><p>-i 参数可以指定一个hive启动就被调用的文件。对，默认就是上面的.hiverc文件！</p>
+<h3 id="set变量"><a href="#set变量" class="headerlink" title="set变量"></a>set变量</h3><table>
+<thead>
+<tr>
+<th align="left">命名空间</th>
+<th align="left">使用权限</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">hivevar</td>
+<td align="left">可读可写</td>
+<td align="left">hive 0.18.0 版本及之后。用户自定义变量</td>
+</tr>
+<tr>
+<td align="left">hiveconf</td>
+<td align="left">可读可写</td>
+<td align="left">hive相关的配置属性</td>
+</tr>
+<tr>
+<td align="left">system</td>
+<td align="left">可读可写</td>
+<td align="left">java相关的配置属性</td>
+</tr>
+<tr>
+<td align="left">env</td>
+<td align="left">只可读</td>
+<td align="left">shell环境定义的环境变量</td>
+</tr>
+</tbody></table>
+<p>hivevar例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">set hivevar:dd&#x3D;&#39;aa&#39;;</span><br><span class="line">select $&#123;hivevar:dd&#125;</span><br></pre></td></tr></table></figure>
+<p>hivevar的前缀可以省略，但是可能会找不到变量，不建议省略。<br>system、env的前缀不能省。</p>
+<p>上面是在hive的终端里，另一种是在shell里使用。在实践中使用时，<code>create_table.sql</code>需要用<code>&quot;${hivevar:dd}&quot;</code>,即需要单/双引号。<br>另外<code>-hivevar</code>可用<code>--define</code><br><code>hive -hivevar dd=&#39;aa&#39; -f ./create_table.sql</code><br><strong><em>多个参数</em></strong>多次指定<code>hivevar</code>： <code>hive -hivevar dd=&#39;aa&#39; -hivevar d=&#39;aaa&#39; -f ./create_table.sql</code></p>
+<p>直接<code>set</code>命令可以看到所有变量值。<br><code>set</code>单个参数，可以看见这个参数的值。</p>
+<h3 id="tblproperties"><a href="#tblproperties" class="headerlink" title="tblproperties"></a>tblproperties</h3><p><code>tblproperties</code> 主要的作用是以键值对的格式为表增加额外的文档说明。<br>（hive和像DymamoDB这样的数据库集成时，<code>tblproperties</code> 还有用作数据库连接的必要的元数据信息）<br>Hive会自动增加两个表属性：last_modified_by，保存最后修改这个表的用户的用户名；last_modified_time，保存最后一次修改的时间秒，但是如果用户没有手动定义任何的文档说明，这两个属性还是不会自动添加的。<br><code>show tblproperties table_name</code> 查看表的<code>tblproperties</code>信息</p>
+<h3 id="LEFT-SEMI-JOIN"><a href="#LEFT-SEMI-JOIN" class="headerlink" title="LEFT SEMI JOIN"></a>LEFT SEMI JOIN</h3><p>hive中没有实现in/exist，使用<code>left semi join</code>代替<br><code>left semi join</code> 子句中右边的表只能在 ON 子句中设置过滤条件，在 WHERE 子句、SELECT 子句或其他地方过滤都不行。<br>例子<br>mysql中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">SELECT a.key, a.value</span><br><span class="line">  FROM a</span><br><span class="line">  WHERE a.key in</span><br><span class="line">   (SELECT b.key</span><br><span class="line">    FROM B);</span><br></pre></td></tr></table></figure>
+<p>hive重写为：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT a.key, a.val</span><br><span class="line">FROM a LEFT SEMI JOIN b on (a.key &#x3D; b.key)</span><br></pre></td></tr></table></figure>
+<p>参考：<a href="https://my.oschina.net/leejun2005/blog/188459" target="_blank" rel="noopener">https://my.oschina.net/leejun2005/blog/188459</a></p>
+<h3 id="join原理、调优"><a href="#join原理、调优" class="headerlink" title="join原理、调优"></a>join原理、调优</h3><p>(join 时，每次 map/reduce 任务的逻辑是这样的：reducer 会缓存 join 序列中除了最后一个表的所有表的记录，再通过最后一个表将结果序列化到文件系统。)<br>hive允许多个表进行join，如果多个表的on字段都是依据的同一列，将只需要一个MR任务。流程是，前两个表放在reduce内存中，第三个表经过shuffle后通过流式的方式一行一行进入前面的reduce。<br>很好理解，一般来说（map side join除外）Map过程负责分发数据，具体JOIN操作在Reduce完成，因此，如果多表基于不同的列做JOIN，则无法在一轮MapReduce任务中将所有相关数据Shuffle到同一个Reduce。<br>因此把数据量大的表放在最后join，也可以通过关键字STREAMTABLE指定流式进入的表，这样可以节省reduce不必要的内存。</p>
+<p>例如：以下将被“翻译”成1个MapReduce任务(join都基于table2.key1)<br><code>SELECT talble1.val,table2.val,table3.val from table1 JOIN table2 ON (table1.key=table2.key1) JOIN table3 ON(table3.key = table2.key1)</code><br>以下将被“翻译”成2个MapReduce任务<br><code>SElECT table1.val,table2.val,table3.val from table1 JOIN table2 ON(table1.key=table2.key1) JOIN table3 ON(table3.key = table2.key2)；</code></p>
+<p>通过“STREAMTABLE”显示指定Reduce流式读入的表：<br><code>SELECT STREAMTABLE(table1) table1.val,table2.val,table3.val from table1 JOIN table2 on (table1.key = table2.key1) JOIN table3 ON(table3.key = table2.key1)</code></p>
+<p>对于多表JOIN，Hive会将前面的表缓存在Reduce内存中，然后后面的表会流式的进入Reduce和Reduce内存中其他的表做JOIN。例如：<br><code>SELECT table1.val,table2.val,table3.val from a JOIN b on (table1.key = table2.key1) JOIN c ON(table3.key = table2.key1)</code><br>在Reduce中，table1、table2表等待JOIN的数据会放在内存中，这会引发一些问题，如果Reduce个数不足或者table1,table2表数据过大，可能导致Out of Memory<br>因此，需要将数据量最大的表放到最后，或者通过“STREAMTABLE”显示指定Reduce流式读入的表。例如：<br><code>SELECT STREAMTABLE(table1) table1.val,table2.val,table3.val from table1 JOIN table2 on (table1.key = table2.key1) JOIN table3 ON(table3.key = table2.key1)</code><br>此时，table2、table3表数据在Reduce将放在内存中。</p>
+<p><strong><em>map端join：</em></strong><br>这里与下面“join出错”章节有关。<br>假如JOIN两张表，其中有一张表特别小(可以放在内存中),可以使用Map-side JOIN。Join计算时，将小表（驱动表）放在join的左边。<br>MapJoin是Hive的一种优化操作，其适用于小表JOIN大表的场景。表的JOIN操作会在Map端且在内存进行，所以其并不需要启动Reduce任务也就不需要经过shuffle阶段，从而能在一定程度上节省资源提高JOIN效率。<br>在Hive0.11后，Hive默认启动该优化。<br>通过以下两个属性来设置该优化的触发时机<br><code>hive.auto.convert.join</code> 默认值为true，自动开户MAPJOIN优化<br><code>hive.mapjoin.smalltable.filesize</code> 默认值为2500000(25M),通过配置该属性来确定使用该优化的表的大小，如果表的大小小于此值就会被加载进内存中（默认可自动优化，有时没有，可以用下面的语法指定要存起来的小表）。<br><code>hive.ignore.mapjoin.hint；</code>（默认值：true；是否忽略mapjoin hint 即mapjoin标记）<br>Map-Side JOIN是在Mapper中做JOIN,原理是将其中一张JOIN表放到每个Mapper任务的内存中，从而不用Reduce任务，在Mapper中就完成JOIN。<br>Map-SIde JOIN不适合FULL/RIGHT OUTER JOIN。<br>示例如下：<br><code>SELECT /*+MAPJOIN(b)*/ table1.key,table1.value from a join b on table1.key = table2.key;</code></p>
+<p>参考：<a href="https://www.cnblogs.com/MOBIN/p/5702580.html" target="_blank" rel="noopener">https://www.cnblogs.com/MOBIN/p/5702580.html</a></p>
+<p><strong>_join中处空值’’/null的语义区别_：</strong><br>‘’下hive关联操作的字段会被作为关联条件,这样会产生很多垃圾数据,在ETL中数据做了预处理后,<br>建议查询条件增加非空串判断: <code>from stu a join tea b on a.name = b.name and a.name !=&#39;&#39; and b.name != &#39;&#39; ;</code><br>NULL下hive关联操作的字段不会作为关联条件,即使是<code>null=null</code>的结果也是false.<br>实践中，这一语义区别也是经常导致数据倾斜的原因之一.(mysql操作结果一样)</p>
+<p>作者：Bloo_m<br>转载自：<a href="https://www.jianshu.com/p/ae9b952abf6e" target="_blank" rel="noopener">https://www.jianshu.com/p/ae9b952abf6e</a> （原理值得仔细看，讲的很赞，但是有几处错误）</p>
+<h3 id="配置hive"><a href="#配置hive" class="headerlink" title="配置hive"></a>配置hive</h3><p>编辑文件 <code>/etc/profile</code> 增加之后可以通过hive命令访问hive，hadoop相同：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#hive</span></span><br><span class="line"><span class="built_in">export</span> HIVE_HOME=/usr/<span class="built_in">local</span>/hive</span><br><span class="line"><span class="built_in">export</span> PATH=<span class="variable">$PATH</span>:<span class="variable">$HIVE_HOME</span>/bin</span><br></pre></td></tr></table></figure>
+
+<h3 id="hive-beeline常用参数"><a href="#hive-beeline常用参数" class="headerlink" title="hive beeline常用参数"></a>hive beeline常用参数</h3><p><code>myhive --silent=true --outputformat=csv2 --showHeader=false -e &quot;use database;&quot;</code><br><code>--outputformat=csv2</code> 消除多余的横线 <code>--outputformat=tsv2</code><br><code>--silent=true</code> 静默模式，不输出多余执行过程<br><code>--showHeader=false</code> 不输出表头<br>参考：<a href="https://www.cnblogs.com/30go/p/8706850.html" target="_blank" rel="noopener">https://www.cnblogs.com/30go/p/8706850.html</a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>参考：<a href="http://www.cnblogs.com/smartloli/p/4288493.html" target="_blank" rel="noopener">http://www.cnblogs.com/smartloli/p/4288493.html</a><br><a href="https://www.jianshu.com/p/bd7820161a49?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation" target="_blank" rel="noopener">https://www.jianshu.com/p/bd7820161a49?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation</a><br>更多hive看：<a href="https://www.iteblog.com/" target="_blank" rel="noopener">https://www.iteblog.com/</a><br>hive 安装：<a href="https://www.jianshu.com/p/6108e0aed204" target="_blank" rel="noopener">https://www.jianshu.com/p/6108e0aed204</a><br>hive字符串：<a href="https://www.iteblog.com/archives/1639.html" target="_blank" rel="noopener">https://www.iteblog.com/archives/1639.html</a><br>hadoop常用命令：<a href="https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test" target="_blank" rel="noopener">https://hadoop.apache.org/docs/r1.0.4/cn/hdfs_shell.html#test</a><br>hive 常用总结（写的很好）：<a href="https://www.cnblogs.com/jiangzhengjun/p/6349226.html" target="_blank" rel="noopener">https://www.cnblogs.com/jiangzhengjun/p/6349226.html</a><br>mp调优：<a href="https://www.cnblogs.com/sunxucool/p/4459006.html" target="_blank" rel="noopener">https://www.cnblogs.com/sunxucool/p/4459006.html</a><br>函数（时间、字符串、数值）：<a href="https://blog.csdn.net/duan19056/article/details/17758819" target="_blank" rel="noopener">https://blog.csdn.net/duan19056/article/details/17758819</a><br>hive函数（时间、字符串、数值）:<a href="https://blog.csdn.net/yyywyr/article/details/51475410" target="_blank" rel="noopener">https://blog.csdn.net/yyywyr/article/details/51475410</a><br><a href="https://segmentfault.com/a/1190000011889191" target="_blank" rel="noopener">https://segmentfault.com/a/1190000011889191</a><br>（面试题）<a href="https://blog.csdn.net/best_luxi/article/details/82454770" target="_blank" rel="noopener">https://blog.csdn.net/best_luxi/article/details/82454770</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2019/04/19/hive%E7%AC%94%E8%AE%B0/" title="hive笔记">/2019/04/19/hive%E7%AC%94%E8%AE%B0/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2019/04/19/hive%E7%AC%94%E8%AE%B0/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+            <a href="/tags/hive/" rel="tag"># hive</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/11/20/WordCount%E4%B8%8EMapReduce%E8%AE%A1%E6%95%B0%E5%99%A8/" rel="next" title="WordCount与MapReduce计数器">
+                <i class="fa fa-chevron-left"></i> WordCount与MapReduce计数器
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/04/12/hello-world/" rel="prev" title="Hello World">
+                Hello World <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Hive框架的作用"><span class="nav-number">1.</span> <span class="nav-text">Hive框架的作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hive在hdfs上的文件结构"><span class="nav-number">2.</span> <span class="nav-text">hive在hdfs上的文件结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#queuename"><span class="nav-number">3.</span> <span class="nav-text">queuename</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#元数据"><span class="nav-number">4.</span> <span class="nav-text">元数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#引擎"><span class="nav-number">5.</span> <span class="nav-text">引擎</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分区"><span class="nav-number">6.</span> <span class="nav-text">分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建单分区-多分区"><span class="nav-number">7.</span> <span class="nav-text">创建单分区&#x2F;多分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看-增加-删除分区"><span class="nav-number">8.</span> <span class="nav-text">查看&#x2F;增加&#x2F;删除分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Buckets-桶"><span class="nav-number">9.</span> <span class="nav-text">Buckets 桶</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建桶表"><span class="nav-number">9.1.</span> <span class="nav-text">创建桶表</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插入数据"><span class="nav-number">9.2.</span> <span class="nav-text">插入数据</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据查询"><span class="nav-number">9.3.</span> <span class="nav-text">数据查询</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#建表"><span class="nav-number">10.</span> <span class="nav-text">建表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部-表"><span class="nav-number">11.</span> <span class="nav-text">(内部)表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#外部表"><span class="nav-number">12.</span> <span class="nav-text">外部表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内部表-外部表-区别"><span class="nav-number">13.</span> <span class="nav-text">(内部表)&#x2F;外部表 区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关于Strict-Mode"><span class="nav-number">14.</span> <span class="nav-text">关于Strict Mode</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#修改表"><span class="nav-number">15.</span> <span class="nav-text">修改表</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#改变location"><span class="nav-number">15.1.</span> <span class="nav-text">改变location</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改表名"><span class="nav-number">15.2.</span> <span class="nav-text">修改表名</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改列"><span class="nav-number">15.3.</span> <span class="nav-text">修改列</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#修改表属性"><span class="nav-number">15.4.</span> <span class="nav-text">修改表属性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MSCK修复分区"><span class="nav-number">16.</span> <span class="nav-text">MSCK修复分区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查看命令"><span class="nav-number">17.</span> <span class="nav-text">查看命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#读时模式"><span class="nav-number">18.</span> <span class="nav-text">读时模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义表的存储格式"><span class="nav-number">19.</span> <span class="nav-text">自定义表的存储格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SerDe-Library、InputFormat、outputFormat"><span class="nav-number">20.</span> <span class="nav-text">SerDe Library、InputFormat、outputFormat</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hive的默认数据分隔符-A"><span class="nav-number">21.</span> <span class="nav-text">hive的默认数据分隔符^A</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hive默认记录、字段分割符"><span class="nav-number">22.</span> <span class="nav-text">hive默认记录、字段分割符</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集合数据类型"><span class="nav-number">23.</span> <span class="nav-text">集合数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#时间类型"><span class="nav-number">24.</span> <span class="nav-text">时间类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#计算时间的月份差"><span class="nav-number">25.</span> <span class="nav-text">计算时间的月份差</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#yyyy-mm-dd、yyyymmdd互转"><span class="nav-number">26.</span> <span class="nav-text">yyyy-mm-dd、yyyymmdd互转</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#执行外部命令"><span class="nav-number">27.</span> <span class="nav-text">执行外部命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#if"><span class="nav-number">28.</span> <span class="nav-text">if</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#【is-null】-【-null】？、【is-not-null】-【-lt-gt-null】？"><span class="nav-number">29.</span> <span class="nav-text">【is null】 &#x3D; 【 &#x3D; null】？、【is not null】 &#x3D; 【 &lt;&gt; null】？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#lt-gt-区别"><span class="nav-number">30.</span> <span class="nav-text">&lt;&gt; !&#x3D; 区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#insert"><span class="nav-number">31.</span> <span class="nav-text">insert</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rand"><span class="nav-number">32.</span> <span class="nav-text">rand</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#cast"><span class="nav-number">33.</span> <span class="nav-text">cast</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#binary-string-binary"><span class="nav-number">34.</span> <span class="nav-text">binary(string|binary)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#base64-binary-bin"><span class="nav-number">35.</span> <span class="nav-text">base64(binary bin)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#find-in-set查找函数"><span class="nav-number">36.</span> <span class="nav-text">find_in_set查找函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#decimal"><span class="nav-number">37.</span> <span class="nav-text">decimal</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#export-LC-ALL-en-US-UTF-8"><span class="nav-number">38.</span> <span class="nav-text">export LC_ALL&#x3D;en_US.UTF-8</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SIZE"><span class="nav-number">39.</span> <span class="nav-text">SIZE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#get-json-object"><span class="nav-number">40.</span> <span class="nav-text">get_json_object</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REGEXP-RLIKE-LIKE"><span class="nav-number">41.</span> <span class="nav-text">REGEXP&#x2F;RLIKE&#x2F;LIKE</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#REGEXP-EXTRACT"><span class="nav-number">42.</span> <span class="nav-text">REGEXP_EXTRACT</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#NVL"><span class="nav-number">43.</span> <span class="nav-text">NVL</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CONCAT-str1-str2-…"><span class="nav-number">44.</span> <span class="nav-text">CONCAT(str1, str2,…)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CONCAT-WS-separator-str1-str2-…"><span class="nav-number">45.</span> <span class="nav-text">CONCAT_WS(separator, str1, str2,…)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#COLLECT-SET-列转行"><span class="nav-number">46.</span> <span class="nav-text">COLLECT_SET() 列转行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#COLLECT-LIST-行转列去重"><span class="nav-number">47.</span> <span class="nav-text">COLLECT_LIST() 行转列去重</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EXPLODE-行转列"><span class="nav-number">48.</span> <span class="nav-text">EXPLODE 行转列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LATERAL-VIEW-一行变多行"><span class="nav-number">49.</span> <span class="nav-text">LATERAL VIEW 一行变多行</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#json数组行转列"><span class="nav-number">50.</span> <span class="nav-text">json数组行转列</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LEAD-LAG-FIRST-VALUE-LAST-VALUE窗口函数"><span class="nav-number">51.</span> <span class="nav-text">LEAD LAG FIRST_VALUE LAST_VALUE窗口函数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#row-num-rank-dense-rank-over-…-。"><span class="nav-number">52.</span> <span class="nav-text">row_num()&#x2F;rank&#x2F;dense_rank over (…)。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#partition-by与group-by-的区别"><span class="nav-number">53.</span> <span class="nav-text">partition by与group by 的区别</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ORDER-SORT-DISTRIBUTE-BY"><span class="nav-number">54.</span> <span class="nav-text">ORDER &#x2F;SORT &#x2F;DISTRIBUTE BY</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#group-by-1-2-3"><span class="nav-number">55.</span> <span class="nav-text">group by 1, 2, 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#having-by"><span class="nav-number">56.</span> <span class="nav-text">having by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#导出数据到本地"><span class="nav-number">57.</span> <span class="nav-text">导出数据到本地</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#into-overwrite-导出数据到表"><span class="nav-number">58.</span> <span class="nav-text">into&#x2F;overwrite 导出数据到表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文件导入数据到表"><span class="nav-number">59.</span> <span class="nav-text">文件导入数据到表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#同时插入多个表"><span class="nav-number">60.</span> <span class="nav-text">同时插入多个表</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#自定义UDF-UDTF-UDAF"><span class="nav-number">61.</span> <span class="nav-text">自定义UDF&#x2F;UDTF&#x2F;UDAF</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#python-transform"><span class="nav-number">62.</span> <span class="nav-text">python-transform</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e-f-S"><span class="nav-number">63.</span> <span class="nav-text">-e&#x2F;f&#x2F;S</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hiverc文件"><span class="nav-number">64.</span> <span class="nav-text">.hiverc文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#i"><span class="nav-number">65.</span> <span class="nav-text">-i</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#set变量"><span class="nav-number">66.</span> <span class="nav-text">set变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tblproperties"><span class="nav-number">67.</span> <span class="nav-text">tblproperties</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#LEFT-SEMI-JOIN"><span class="nav-number">68.</span> <span class="nav-text">LEFT SEMI JOIN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#join原理、调优"><span class="nav-number">69.</span> <span class="nav-text">join原理、调优</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置hive"><span class="nav-number">70.</span> <span class="nav-text">配置hive</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hive-beeline常用参数"><span class="nav-number">71.</span> <span class="nav-text">hive beeline常用参数</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">72.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

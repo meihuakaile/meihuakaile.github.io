@@ -1,0 +1,1478 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="hadoop," />
+
+
+<meta name="description" content="前言由于安装已经很长时间了，有些问题我已记不得太清，如果哪里有手误敬请指出。但是要记住遇到问题可以直接上网查，就算你不知道为什么有问题你让可以把报错的那句话复制直接查。 我这个大概适用的是1.X版本。要提醒各位，一定要学到东西，即使只是安装。不要犯直接复制别人代码ip&#x2F;别人版本的问题！！！   安装  sun jdk要求不能安装这个一定要是sunjdk，否则后面会后问题. 安装 ssh（hadoo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试">
+<meta property="og:url" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="前言由于安装已经很长时间了，有些问题我已记不得太清，如果哪里有手误敬请指出。但是要记住遇到问题可以直接上网查，就算你不知道为什么有问题你让可以把报错的那句话复制直接查。 我这个大概适用的是1.X版本。要提醒各位，一定要学到东西，即使只是安装。不要犯直接复制别人代码ip&#x2F;别人版本的问题！！！   安装  sun jdk要求不能安装这个一定要是sunjdk，否则后面会后问题. 安装 ssh（hadoo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/25.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/26.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/27.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/28.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/29.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/30.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/31.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/32.png">
+<meta property="og:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/33.png">
+<meta property="article:published_time" content="2018-04-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.521Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="hadoop">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/25.png">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/08/hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试 | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>由于安装已经很长时间了，有些问题我已记不得太清，如果哪里有手误敬请指出。但是要记住遇到问题可以直接上网查，就算你不知道为什么有问题你让可以把报错的那句话复制<br>直接查。</p>
+<p>我这个大概适用的是1.X版本。要提醒各位，一定要学到东西，即使只是安装。不要犯直接复制别人代码ip/别人版本的问题！！！  </p>
+<h2 id="安装-sun-jdk"><a href="#安装-sun-jdk" class="headerlink" title="安装  sun jdk"></a>安装  sun jdk</h2><p>要求不能安装这个一定要是sunjdk，否则后面会后问题.</p>
+<h2 id="安装-ssh"><a href="#安装-ssh" class="headerlink" title="安装 ssh"></a>安装 ssh</h2><p>（hadoop使用ssh来实现cluster中各node的登录认证，即Namenode是通过SSH来启动和停止各个datanode上的各种守护进程的，所以一定要实现免密码登录，免密码ssh的设置在后文中有介绍）  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install ssh</span><br></pre></td></tr></table></figure>
+<h2 id="安装rsync"><a href="#安装rsync" class="headerlink" title="安装rsync"></a>安装rsync</h2><p>（Ubuntu12.10已自带rsync） </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install rsync</span><br></pre></td></tr></table></figure>
+<h2 id="安装vim"><a href="#安装vim" class="headerlink" title="安装vim"></a>安装vim</h2><p>只是为了方便，可以不安装.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ubuntu系统：</span><br><span class="line">普通用户下输入命令：  sudo apt-get install vim-gtk</span><br><span class="line">centos系统：</span><br><span class="line">普通用户下输入命令：  yum -y install vim*</span><br></pre></td></tr></table></figure>
+
+<h1 id="安装Hadoop"><a href="#安装Hadoop" class="headerlink" title="安装Hadoop"></a>安装Hadoop</h1><h2 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h2><p>1. 创建hadoop用户组以及用户</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo addgroup hadoop  </span><br><span class="line">sudo adduser --ingroup hadoop hadoop</span><br></pre></td></tr></table></figure>
+<p>在  /home/下会有一个新的hadoop文件夹，此时最好切换至新建的hadoop用户登陆Ubuntu。 </p>
+<p>2.  将下载的hadoop拷贝至该新建文件夹下：<br>注意此处命令的目录，这是别人的目录，你的下载目录并不一定就在/mnt/hgfs下。  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cp &#x2F;mnt&#x2F;hgfs&#x2F;hadoop-1.2.1-bin.tar.gz &#x2F;home&#x2F;hadoop&#x2F;</span><br></pre></td></tr></table></figure>
+<p>3.  进入该目录（cd /home/hadoop/）之后，解压该文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tar xzf hadoop-  1.2.1-bin.tar.gz</span><br></pre></td></tr></table></figure>
+<p>4.  进入hadoop-env.sh 所在目录（hadoop-1.2.1/conf/），对该文件进行如下内容的修改：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.6.0_07</span><br></pre></td></tr></table></figure>
+<p>注：（/usr/java/jdk1.6.0_07 为 jdk安装目录）</p>
+<p>5.  为了方便执行Hadoop命令，修改/etc/profiles,在最后面加上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export JAVA_HOME&#x3D;&#x2F;usr&#x2F;java&#x2F;jdk1.6.0_07  </span><br><span class="line">export HADOOP_HOME&#x3D;&#x2F;home&#x2F;hadoop&#x2F;hadoop-1.2.1  </span><br><span class="line">export PATH&#x3D;$PATH:$JAVA_HOME&#x2F;bin:$HADOOP_HOME&#x2F;bin  </span><br><span class="line">export CLASSPATH&#x3D;.:$JAVA_HOME&#x2F;lib&#x2F;dt.jar:$JAVA_HOME&#x2F;lib&#x2F;tools.jar:$JAVA_HOME&#x2F;lib&#x2F;htmlconverter.jar:$JAVA_HOME&#x2F;lib&#x2F;jconsole.jar:$JAVA_HOME&#x2F;lib&#x2F;sa-jdi.jar</span><br></pre></td></tr></table></figure>
+<p>重新启动或者直接执行source etc/profile，使得/etc/profiles生效。<br>其实这时你的hadoop已经简单安装单机版。</p>
+<h2 id="测试及文件配置"><a href="#测试及文件配置" class="headerlink" title="测试及文件配置"></a>测试及文件配置</h2><h3 id="单机版测试"><a href="#单机版测试" class="headerlink" title="单机版测试"></a>单机版测试</h3><p>hadoop默认是Standalone Operation。按照官方文档进行测试。<br>1、在  /home/hadoop  目录下建立HadoopStandaloneTest目录：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkdir  HadoopStandaloneTest</span><br></pre></td></tr></table></figure>
+<p>2、在 /home/hadoop/HadoopStandaloneTest目录下执行以下命令：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mkdir input  </span><br><span class="line">cp $HADOOP_HOME&#x2F;conf&#x2F;*.xml input  </span><br><span class="line">hadoop jar $HADOOP_HOME&#x2F;hadoop-examples-1.2.1.jar grep input output &#39;dfs[a-z.]+&#39;</span><br></pre></td></tr></table></figure>
+<p>命令解释： bin/hadoop jar（使用hadoop运行jar包） hadoop-*_examples.jar（jar包的名字） grep （要使用的类，后边的是参数） input output ‘dfs[a-z.]+’<br>就是运行hadoop示例程序中的grep，对应的hdfs上的输入目录为input、输出目录为output<br>3、<strong><em>运行成功标志</em></strong>就是在你的主目录下HadoopStandaloneTest有input，output两个文件夹，且output里会有两个文件，显示执行的结果。建议下个java得反编译的工具查看/hadoop-examples-1.2.1.jar的代码，更能理解这个栗子。</p>
+<h3 id="伪分布配置、测试"><a href="#伪分布配置、测试" class="headerlink" title="伪分布配置、测试"></a>伪分布配置、测试</h3><h4 id="ssh-配置"><a href="#ssh-配置" class="headerlink" title="ssh 配置"></a>ssh 配置</h4><h5 id="启动ssh服务器、客户端"><a href="#启动ssh服务器、客户端" class="headerlink" title="启动ssh服务器、客户端"></a>启动ssh服务器、客户端</h5><p>首先查看ssh服务器和ssh客户端是否启动 </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ps -e|grep ssh</span><br></pre></td></tr></table></figure>
+<p>如看到如下二个进程则  OK<br><img src="25.png" alt=""><br>注！！！如果此处你的ssh-agent没有启动成功，执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">eval ‘ssh-agent’</span><br></pre></td></tr></table></figure>
+<h5 id="实现ssh免密码登录"><a href="#实现ssh免密码登录" class="headerlink" title="实现ssh免密码登录"></a>实现ssh免密码登录</h5><p>测试可否使用ssh登陆localhost<br>$ ssh localhost<br>如果发现需要输入密码则执行一下步骤，否则跳过ssh免密码登陆  </p>
+<p>假设A为客户机器，B为目标机；<br>要达到的目的：  A机器ssh登录B机器无需输入密码；<br>加密方式选rsa|dsa均可以，默认dsa<br>做法：<br>1、登录A机器<br>2、ssh-keygen -t [rsa|dsa]，将会生成密钥文件和私钥文件id_rsa, id_rsa.pub或id_dsa, id_dsa.pub<br>3、将.pub文件复制到B机器的.ssh目录, cat id_dsa.pub &gt;&gt; ~/.ssh/authorized_keys<br>4、大功告成，从A机器登录B机器的目标账户，不再需要密码了；<br>$ ssh-keygen -t dsa –P ‘’ -f ~/.ssh/id_dsa  (先不要着急执行，看下面)<br>其中  </p>
+<ul>
+<li>-t dsa  指定密码算法为  dsa   </li>
+<li>-P ‘’  指不需要  passphrase </li>
+<li>-f ~/.ssh/id_dsa  指定秘钥输出文件 </li>
+</ul>
+<p>其实在真正执行时，上面的那句命令会说太长无法执行，所以其实只输入前面“$ ssh-keygen -t dsa”即可，输入之后会有其他的提示，提示你输入密码时，<strong><em>直接回车就代表密码回空</em></strong>，具体如下：<br><img src="26.png" alt=""><br>之后可以看到  ~/.ssh  目录下多了二个文件：<br><img src="27.png" alt=""><br>将  ssh  公钥追加到  authorized_keys  后面，即可实现免密钥登陆。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ cat ~&#x2F;.ssh&#x2F;id_dsa.pub &gt;&gt; ~&#x2F;.ssh&#x2F;authorized_keys</span><br></pre></td></tr></table></figure>
+<p>修改  ~/.ssh/authorized_keys的权限，要保证.ssh和authorized_keys都只有用户自己有写权限。否则验证无效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ chmod 600 ~&#x2F;.ssh&#x2F;authorized_keys</span><br></pre></td></tr></table></figure>
+<p>~/.ssh 目录的权限为700，因此不用修改。<br>再利用ssh登录，发现不再需要输入密码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ssh localhost</span><br></pre></td></tr></table></figure>
+<h4 id="文件配置"><a href="#文件配置" class="headerlink" title="文件配置"></a>文件配置</h4><p>在/home/hadoop目录下建立HadoopPseudoDistributeTest目录</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir HadoopPseudoDistributeTest  </span><br><span class="line">$ cd HadoopPseudoDistributeTest&#x2F;  </span><br><span class="line">$ mkdir conf  </span><br><span class="line">$ cp $HADOOP_HOME&#x2F;conf&#x2F;* conf  （ 复制  conf  目录下的所有文件）</span><br></pre></td></tr></table></figure>
+<p>编辑HadoopPseudoDistributeTest/conf/下的配置文件  </p>
+<ul>
+<li>core-site.xml:  用于配置Common组件的属性  </li>
+<li>hdfs-site.xml:  用于配置HDFS的属性  </li>
+<li>mapred-site.xml:  用于配置MapReduce的属性  </li>
+<li>masters  指定master节点  </li>
+<li>slaves  指定slave节点</li>
+</ul>
+<p>注：<em><strong>下面配置文件中有两次用到ip地址（ifconfig命令查询IP地址），一定记得改成你自己的ip地址。</strong></em><br>不要在HadoopPseudoDistributeTest创建以下目录tmpdir/hdfs/name tmpdir/hdfs/data【rm -rf 文件夹 命令用来删除非空文件夹】</p>
+<p>core-site.xml:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.default.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--最好不要用localhsot，否则Eclipse插件会出问题 ip地址换成自己的--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://192.168.231.111:9000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--A base for other temporary directories(用来存储其他临时目录的根目录) --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/HadoopPseudoDistributeTest/tmpdir<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.permissions<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>hdfs-site.xml  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.permissions<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">！--指定namenode存储文件系统元数据的目录</span> <span class="attr">--</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.name.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/HadoopPseudoDistributeTest/tmpdir/hdfs/name<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--指定datanode存储数据的目录 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.data.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/HadoopPseudoDistributeTest/tmpdir/hdfs/data<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>mapred-site.xml   </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.job.tracker<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">!-ip地址记得换成自己的--</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">value</span>&gt;</span>192.168.231.111:9001<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>masters:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost</span><br></pre></td></tr></table></figure>
+<p>slave:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">localhost</span><br></pre></td></tr></table></figure>
+<h4 id="运行、测试"><a href="#运行、测试" class="headerlink" title="运行、测试"></a>运行、测试</h4><p>1、格式化HDFS的namenode（管理元数据）创建一个空的文件系统【可以直接不执行这句话，在下面2中第二句命令后执行“hadoop namenode -format”】  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hadoop --config ~&#x2F;HadoopPseudoDistributeTest&#x2F;conf namenode  -format</span><br></pre></td></tr></table></figure>
+<p>注意  --config  后面一定用绝对路径指定配置文件所在的路径<br>2、运行hadoop（切记：首先使用ssh登陆localhost  ）  </p>
+<pre><code>ssh localhost
+export HADOOP_CONF_DIR=~/HadoopPseudoDistributeTest/conf(这样后面就不用带—config选项)
+$HADOOP_HOME/bin/start-all.sh</code></pre><p>3、打开浏览器<br>** NameNode ** - <a href="http://localhost:50070/" target="_blank" rel="noopener">http://localhost:50070/</a><br>** JobTracker ** -  <a href="http://localhost:50030/" target="_blank" rel="noopener">http://localhost:50030/</a> </p>
+<p>4、运行jps命令看相应服务是否启动：</p>
+<p><img src="28.png" alt=""></p>
+<p>5、在伪分布式的模式下运行前面的例子<br>将本地文件系统目录conf拷贝到分布式文件系统的input下（为了执行例子）  </p>
+<pre><code>cd /home/hadoop/HadoopPseudoDistributeTest
+hadoop fs -put conf/*xml input</code></pre><p>查看分布式文件系统的内容</p>
+<pre><code>hadoop fs -ls</code></pre><p>执行例子</p>
+<pre><code>cd ~/HadoopPseudoDistributeTest/
+hadoop jar $HADOOP_HOME/hadoop-examples-1.0.4.jar grep input output &apos;dfs[a-z.]+&apos;
+hadoop fs –ls output   # 查看执行结果</code></pre><p>执行正确效果，在  HadoopPseudoDistributeTest  的目录下有input和output文件夹，output中存放两个文件：<br><img src="29.png" alt=""><br>6、停止daemon</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stop-all.sh</span><br></pre></td></tr></table></figure>
+
+<h3 id="集群配置"><a href="#集群配置" class="headerlink" title="集群配置"></a>集群配置</h3><h4 id="hadoop的基础知识"><a href="#hadoop的基础知识" class="headerlink" title="hadoop的基础知识"></a>hadoop的基础知识</h4><p>Master: NameNode、JobTracker，负责总管分布式数据、分解任务的执行<br>Slave: DataNode、TaskTracker，负责分布式数据存储、任务的执行</p>
+<p>主从结构<br>主节点，只有一个namenode<br>从节点，有很多个datanodes<br>namenode: 接收用户操作请求；维护文件系统的目录结构；管理文件与block之间关系，block与datanode之间关系<br>datanode负责：存储文件；文件被分成block存储在磁盘上；为保证数据安全，文件会有多个副本<br>namenode会有一个离线备份：SecondaryNamenode</p>
+<p>JobTracker负责： 接收客户提交的计算任务， 把计算任务分给TaskTrackers执行， 监控TaskTracker的执行情况<br>TaskTrackers负责：执行JobTracker分配的计算任务</p>
+<h4 id="前提"><a href="#前提" class="headerlink" title="前提"></a>前提</h4><p>现在介绍集群分布之前我的环境： 我是把之前一直安装好的ubuntu虚拟机直接无联系的克隆出来两个ubuntu，也就是说我现在要用三个ubuntu。两个也是可以的。<br>要说明的如果不是克隆出来的，还需要实现几台机器之间ssh登录无密码登录。因为我自己没有做这个不能确保给你们是否正确，可以看看  <a href="http://blog.csdn.net/hguisu/article/details/7237395" target="_blank" rel="noopener"> 这篇文章的4部分</a><br>如果是为了确保也可以使用克隆的方法。之后尝试ssh 到另两台ubuntu上，不需密码即可，如果需要密码，请重新确保不需密码。</p>
+<p>我现在有三台ubuntu，他们的分配：  </p>
+<ul>
+<li>node1：namenode 192.168.231.129  </li>
+<li>node2：datanode 192.168.231.130  </li>
+<li>node3：datanode 192.168.231.131</li>
+</ul>
+<h4 id="配置"><a href="#配置" class="headerlink" title="配置"></a>配置</h4><p>1、在主目录下创建文件夹HadoopClusterTest，并且如上面2.2.2.2中把conf拷贝到这个文件下。 </p>
+<p>2、配置conf下的文件<br>core-site.xml ip是node1的。    </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Put site-specific property overrides in this file. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line"> 		<span class="tag">&lt;<span class="name">name</span>&gt;</span>fs.default.name<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"> 		<span class="tag">&lt;<span class="name">value</span>&gt;</span>hdfs://192.168.231.129:9000<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">  		<span class="tag">&lt;<span class="name">name</span>&gt;</span>hadoop.tmp.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line"> 		<span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/HadoopClusterTest/tmpdir<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.permissions<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>hdfs-site.xml:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Put site-specific property overrides in this file. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.permissions<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.replication<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.name.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/HadoopClusterTest/tmpdir/hdfs/name<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>dfs.data.dir<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>/home/hadoop/HadoopClusterTest/tmpdir/hdfs/data<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>mapred-site.xml ip地址改成自己的！！  </p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- Put site-specific property overrides in this file. --&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.job.tracker<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>192.168.231.129:9001<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.child.java.opts<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>-Xmx512m<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.tasktracker.map.tasks.maximum<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>6<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.tasktracker.reduce.tasks.maximum<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>2<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">name</span>&gt;</span>mapred.job.reuse.jvm.num.tasks<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;<span class="name">value</span>&gt;</span>-1<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>master</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">192.168.231.129</span><br></pre></td></tr></table></figure>
+<p>slaves</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">192.168.231.130</span><br><span class="line">192.168.231.131</span><br></pre></td></tr></table></figure>
+<p>3、用scp命令把HadoopClusterTest拷贝到另外两台ubuntu上：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">scp -r &#x2F;home&#x2F;hadoop&#x2F;HadoopClusterTest 192.168.231.130:&#x2F;home&#x2F;hadoop&#x2F;</span><br></pre></td></tr></table></figure>
+<p><img src="30.png" alt=""><br>然后改变ip地址用相同命令拷到另一台里。这样三台电脑的配置就完成了。</p>
+<h4 id="运行"><a href="#运行" class="headerlink" title="运行"></a>运行</h4><p>下面是它的使用方法（9是我后期稍微熟练之后的开启hadoop的方法）：  </p>
+<p>4、在三个ubuntu都执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">export HADOOP_CONF_DIR&#x3D;~&#x2F;HadoopClusterTest&#x2F;conf</span><br></pre></td></tr></table></figure>
+<p>确保三个ubuntu上HadoopClusterTest都没有的tmpdir文件夹然后执行下面的  </p>
+<p>5、在node1上，即我的192.168.231.129上执行【执行之前确保node1，node2，node3上没有tmpdir文件夹，否则启动namenode和datanode会有问题】：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hadoop namenode -format</span><br></pre></td></tr></table></figure>
+<p>这时在HadoopClusterTest的目录会有tmpdir文件夹，但是node2和node3没有。</p>
+<p>6、在node1上，即我的192.168.231.129上执行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$HADOOP_HOME&#x2F;bin&#x2F;start-all.sh</span><br></pre></td></tr></table></figure>
+<p>然后在node1上执行下面的：<br><img src="31.png" alt=""><br>7、在node1上执行jps查看启动服务：<br><img src="32.png" alt=""><br>在node2、node3上jps查看：<br><img src="33.png" alt=""><br>8、浏览NameNode和JobTracker的网络接口，它们的地址默认为(我的node1为192.168.231.129)：</p>
+<p>NameNode - <a href="http://node1:50070/" target="_blank" rel="noopener">http://node1:50070/</a><br>JobTracker - <a href="http://node1:50030/" target="_blank" rel="noopener">http://node1:50030/</a></p>
+<p>9、我自己后期开启集群方法：打开三个虚拟机（但其实下面的命令是只在一台虚拟机上执行的）</p>
+<p>打开192.168.231.129的终端。依次输入：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ssh 192.168.231.130</span><br><span class="line">export HADOOP_CONF_DIR&#x3D;~&#x2F;HadoopClusterTest&#x2F;conf</span><br><span class="line">ssh 192.168.231.131</span><br><span class="line">export HADOOP_CONF_DIR&#x3D;~&#x2F;HadoopClusterTest&#x2F;conf</span><br><span class="line">ssh 192.168.231.129</span><br><span class="line">export HADOOP_CONF_DIR&#x3D;~&#x2F;HadoopCluterTest&#x2F;conf</span><br><span class="line">$HADOOP_HOME&#x2F;bin&#x2F;start-all.sh</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/" title="hadoop1.2.1在linux中配置安装独立运行Standalone Operation，伪分布Pseudo-Distributed Operation，集群配置三种配置和测试">/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2018/04/08/hadoop1.2.1%E5%9C%A8linux%E4%B8%AD%E9%85%8D%E7%BD%AE%E5%AE%89%E8%A3%85%E7%8B%AC%E7%AB%8B%E8%BF%90%E8%A1%8CStandalone%20Operation%EF%BC%8C%E4%BC%AA%E5%88%86%E5%B8%83Pseudo-Distributed%20Operation%EF%BC%8C%E9%9B%86%E7%BE%A4%E9%85%8D%E7%BD%AE%E4%B8%89%E7%A7%8D%E9%85%8D%E7%BD%AE%E5%92%8C%E6%B5%8B%E8%AF%95/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/08/ignore-resource-not-found%E5%92%8Cignore-unresolvable/" rel="next" title="ignore-resource-not-found和ignore-unresolvable">
+                <i class="fa fa-chevron-left"></i> ignore-resource-not-found和ignore-unresolvable
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8Bimdb.py%E5%92%8Cpascal_voc.py%EF%BC%88%E4%B8%BB%E8%A6%81%E6%98%AFimdb%E5%92%8Croidb%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%A7%A3%E8%AF%B4%EF%BC%89/" rel="prev" title="faster rcnn源码解读（四）之数据类型imdb.py和pascal_voc.py（主要是imdb和roidb数据类型的解说）">
+                faster rcnn源码解读（四）之数据类型imdb.py和pascal_voc.py（主要是imdb和roidb数据类型的解说） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装-sun-jdk"><span class="nav-number">1.1.</span> <span class="nav-text">安装  sun jdk</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装-ssh"><span class="nav-number">1.2.</span> <span class="nav-text">安装 ssh</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装rsync"><span class="nav-number">1.3.</span> <span class="nav-text">安装rsync</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装vim"><span class="nav-number">1.4.</span> <span class="nav-text">安装vim</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#安装Hadoop"><span class="nav-number">2.</span> <span class="nav-text">安装Hadoop</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装"><span class="nav-number">2.1.</span> <span class="nav-text">安装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#测试及文件配置"><span class="nav-number">2.2.</span> <span class="nav-text">测试及文件配置</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#单机版测试"><span class="nav-number">2.2.1.</span> <span class="nav-text">单机版测试</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#伪分布配置、测试"><span class="nav-number">2.2.2.</span> <span class="nav-text">伪分布配置、测试</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ssh-配置"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">ssh 配置</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#启动ssh服务器、客户端"><span class="nav-number">2.2.2.1.1.</span> <span class="nav-text">启动ssh服务器、客户端</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#实现ssh免密码登录"><span class="nav-number">2.2.2.1.2.</span> <span class="nav-text">实现ssh免密码登录</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#文件配置"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">文件配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行、测试"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">运行、测试</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#集群配置"><span class="nav-number">2.2.3.</span> <span class="nav-text">集群配置</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#hadoop的基础知识"><span class="nav-number">2.2.3.1.</span> <span class="nav-text">hadoop的基础知识</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#前提"><span class="nav-number">2.2.3.2.</span> <span class="nav-text">前提</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#配置"><span class="nav-number">2.2.3.3.</span> <span class="nav-text">配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#运行"><span class="nav-number">2.2.3.4.</span> <span class="nav-text">运行</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

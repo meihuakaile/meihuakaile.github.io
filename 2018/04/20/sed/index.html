@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="ubuntu," />
+
+
+<meta name="description" content="sed文本处理，可以配合正则使用。处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有 改变，除非你使用重定向存储输出（除了-i命令）。简化对文件的反复操作。 定界符可以使用任意定界符，如&#x2F;，：，|等。定界符出现在内部时，用\转义。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sed">
+<meta property="og:url" content="http://yoursite.com/2018/04/20/sed/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="sed文本处理，可以配合正则使用。处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有 改变，除非你使用重定向存储输出（除了-i命令）。简化对文件的反复操作。 定界符可以使用任意定界符，如&#x2F;，：，|等。定界符出现在内部时，用\转义。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-19T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.552Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="ubuntu">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/20/sed/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>sed | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/20/sed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">sed</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-20T00:00:00+08:00">2018-04-20</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>sed文本处理，可以配合正则使用。处理时，把当前处理的行存储在临时缓冲区中，称为“模式空间”（pattern space），接着用sed命令处理缓冲区中的内容，处理完成后，把缓冲区的内容送往屏幕。接着处理下一行，这样不断重复，直到文件末尾。文件内容并没有 改变，除非你使用重定向存储输出（除了-i命令）。<br>简化对文件的反复操作。</p>
+<h1 id="定界符"><a href="#定界符" class="headerlink" title="定界符"></a>定界符</h1><p>可以使用任意定界符，如/，：，|等。<br>定界符出现在内部时，用\转义。如把/bin替换成/bin/local：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;\&#x2F;bin&#x2F;\&#x2F;bin\&#x2F;local&#x2F;&#39;</span><br></pre></td></tr></table></figure>
+<h1 id="test-txt"><a href="#test-txt" class="headerlink" title="test.txt"></a>test.txt</h1><p>以下的命令都基于文件 test.txt</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 bike 41000</span><br><span class="line">vivi 2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 bike 63500</span><br></pre></td></tr></table></figure>
+<h1 id="s-替换命令"><a href="#s-替换命令" class="headerlink" title="s 替换命令"></a>s 替换命令</h1><p>把‘bike’替换成‘train’</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;bike&#x2F;train&#x2F;&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">vivi 2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="n-和-p一起只打印发生替换的行。-p是输出的功能。"><a href="#n-和-p一起只打印发生替换的行。-p是输出的功能。" class="headerlink" title="-n 和 p一起只打印发生替换的行。 p是输出的功能。"></a>-n 和 p一起只打印发生替换的行。 p是输出的功能。</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sed -n &#39;s&#x2F;bike&#x2F;train&#x2F;p&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="i会直接编辑原文件并保存"><a href="#i会直接编辑原文件并保存" class="headerlink" title="-i会直接编辑原文件并保存"></a>-i会直接编辑原文件并保存</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed -i &#39;s&#x2F;bike&#x2F;train&#x2F;g&#39; test.txt </span><br><span class="line">cat test.txt 结果：</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">vivi    2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="g会替换每一行所有-Ng可以直接从匹配到的第N个开始替换。"><a href="#g会替换每一行所有-Ng可以直接从匹配到的第N个开始替换。" class="headerlink" title="g会替换每一行所有 Ng可以直接从匹配到的第N个开始替换。"></a>g会替换每一行所有 Ng可以直接从匹配到的第N个开始替换。</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;0&#x2F;7&#x2F;3g&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 car 53077</span><br><span class="line">John　　 2013-01-13 train 41777</span><br><span class="line">vivi 2013-01-18 car 42877</span><br><span class="line">Tom　　 2013-01-27 car 32577</span><br><span class="line">John　　 2013-01-28 train 63577</span><br></pre></td></tr></table></figure>
+<h1 id="d删除-Nd删除第N行-N，Md删除第N到M行（-是以…开头，-是以…结尾）"><a href="#d删除-Nd删除第N行-N，Md删除第N到M行（-是以…开头，-是以…结尾）" class="headerlink" title="d删除 Nd删除第N行  N，Md删除第N到M行（^是以…开头，$是以…结尾）"></a>d删除 Nd删除第N行  N，Md删除第N到M行（^是以…开头，$是以…结尾）</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;^vivi&#x2F;d&#39; test.txt #搜索以vivi开头的行并删除</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br><span class="line">sed &#39;&#x2F;500$&#x2F;d&#39; .&#x2F;test.txt #搜索以500结尾的行并删除</span><br><span class="line">输出：</span><br><span class="line">Tom　　  2012-12-11      car     53000</span><br><span class="line">John　　 2013-01-13      train    41000</span><br><span class="line">vivi    2013-01-18      car     42800</span><br></pre></td></tr></table></figure>
+<h1 id="amp-表示已匹配字符串"><a href="#amp-表示已匹配字符串" class="headerlink" title="&amp; 表示已匹配字符串"></a>&amp; 表示已匹配字符串</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;car\|train&#x2F;[&amp;]&#x2F;g&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 [car] 53000</span><br><span class="line">John　　 2013-01-13 [train] 41000</span><br><span class="line">vivi 2013-01-18 [car] 42800</span><br><span class="line">Tom　　 2013-01-20 [car] 32500</span><br><span class="line">John　　 2013-01-28 [train] 63500</span><br><span class="line">#sed &#39;s&#x2F;\w\+&#x2F;[&amp;]&#x2F;g&#39; test.txt</span><br><span class="line">sed &#39;s&#x2F;\w\+&#x2F;[&amp;]&#x2F;g&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">[Tom]　　 [2012]-[12]-[11] [car] [53000]</span><br><span class="line">[John]　　 [2013]-[01]-[13] [train] [41000]</span><br><span class="line">[vivi] [2013]-[01]-[18] [car] [42800]</span><br><span class="line">[Tom]　　 [2013]-[01]-[20] [car] [32500]</span><br><span class="line">[John]　　 [2013]-[01]-[28] [train] [63500]</span><br></pre></td></tr></table></figure>
+<h1 id="1子串匹配"><a href="#1子串匹配" class="headerlink" title="\1子串匹配"></a>\1子串匹配</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;s&#x2F;2\([0-9]\)&#x2F;\1&#x2F;&#39; test.txt    #\1是正则括号匹配的第一个</span><br><span class="line">输出：</span><br><span class="line">Tom　　 012-12-11 car 53000</span><br><span class="line">John　　 013-01-13 train 41000</span><br><span class="line">vivi 013-01-18 car 42800</span><br><span class="line">Tom　　 013-01-20 car 32500</span><br><span class="line">John　　 013-01-28 train 63500</span><br><span class="line"></span><br><span class="line">sed &#39;s&#x2F;2\([0-9]\)\([0-9]\)&#x2F;\2\1&#x2F;&#39; test.txt  #把匹配到的第一个和第二个位置交换</span><br><span class="line">输出：</span><br><span class="line">Tom　　  102-12-11      car     53000</span><br><span class="line">John　　 103-01-13      train    41000</span><br><span class="line">vivi    103-01-18      car     42800</span><br><span class="line">Tom　　  103-01-20      car     32500</span><br><span class="line">John　　 103-01-28      train    63500</span><br><span class="line"></span><br><span class="line">sed &#39;s&#x2F;2\([0-9]\)1\([0-9]\)&#x2F;2\21\1&#x2F;&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2210-12-11 car 53000</span><br><span class="line">John　　 2310-01-13 train 41000</span><br><span class="line">vivi 2310-01-18 car 42800</span><br><span class="line">Tom　　 2310-01-20 car 32500</span><br><span class="line">John　　 2310-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="引用shell变量"><a href="#引用shell变量" class="headerlink" title="引用shell变量"></a>引用shell变量</h1><h1 id="sed表达式可以使用单引号，但是表达式中有引用字符串（即下面的-test）时就必须用双引号。"><a href="#sed表达式可以使用单引号，但是表达式中有引用字符串（即下面的-test）时就必须用双引号。" class="headerlink" title="sed表达式可以使用单引号，但是表达式中有引用字符串（即下面的$test）时就必须用双引号。"></a>sed表达式可以使用单引号，但是表达式中有引用字符串（即下面的$test）时就必须用双引号。</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;bin&#x2F;sh</span><br><span class="line"></span><br><span class="line">test&#x3D;hello</span><br><span class="line">echo hello | sed &quot;s&#x2F;$test&#x2F;HELLO&#x2F;&quot;</span><br></pre></td></tr></table></figure>
+<h1 id="逗号-分割行范围"><a href="#逗号-分割行范围" class="headerlink" title="逗号 分割行范围"></a>逗号 分割行范围</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">sed -n &#39;2,&#x2F;^Tom&#x2F;p&#39; test.txt   #输出第2行到以Tom开头的行（没有Tom就到文件结尾）</span><br><span class="line">输出：</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">vivi    2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line"></span><br><span class="line">sed &#39;&#x2F;^John&#x2F;,&#x2F;^vivi&#x2F;s&#x2F;$&#x2F; add&#x2F;&#39; test.txt #从以John开头的行到以vivi开头的行 结尾加add（因为s&#x2F;$&#x2F; add，s是替换，$是以...为结尾）</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000 add</span><br><span class="line">vivi    2013-01-18 car 42800 add</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500 add</span><br><span class="line"></span><br><span class="line">sed -e &#39;1,3d&#39; -e &#39;s&#x2F;car&#x2F;train&#x2F;&#39; test.txt  #删除第1到3行，剩下的用car替换train。</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2013-01-20 train 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="e-同一行里执行多条命令"><a href="#e-同一行里执行多条命令" class="headerlink" title="-e 同一行里执行多条命令"></a>-e 同一行里执行多条命令</h1><p>#（更高级的还可以用分号；分割多个命令）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sed -e &#39;1,3d&#39; -e &#39;s&#x2F;car&#x2F;train&#x2F;&#39; test.txt</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2013-01-20 train 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="w-写文件"><a href="#w-写文件" class="headerlink" title="w 写文件"></a>w 写文件</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sed -n &#39;&#x2F;^vivi&#x2F;w test1.txt&#39; test.txt   #把test.txt中以vivi开头的行写到test1.txt中</span><br><span class="line">结果：</span><br><span class="line">cat test1.txt</span><br><span class="line">vivi 2013-01-18 car 42800</span><br></pre></td></tr></table></figure>
+<h1 id="r-读文件"><a href="#r-读文件" class="headerlink" title="r 读文件"></a>r 读文件</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;^vivi&#x2F;r test.txt&#39; test1.txt     #匹配test1.txt中以vivi开头的行，把test.txt的内容跟在后面</span><br><span class="line">输出：</span><br><span class="line">vivi 2013-01-18 car 42800</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">vivi 2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="a-追加文件"><a href="#a-追加文件" class="headerlink" title="a 追加文件"></a>a 追加文件</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;^vivi&#x2F;a\this is vivi&#39; test.txt   #把‘this is vivi’追加到test.txt中以vivi开头的行后面</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">vivi    2013-01-18 car 42800</span><br><span class="line">this is vivi</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="i-追加到行前面"><a href="#i-追加到行前面" class="headerlink" title="i 追加到行前面"></a>i 追加到行前面</h1><p>（如果要直接修改原文件，就写上-i）</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;^vivi&#x2F;i this is vivi&#39; test.txt</span><br><span class="line">输出</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">this is vivi</span><br><span class="line">vivi          2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 car 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">sed -i &#39;&#x2F;^vivi&#x2F;i this is vivi&#39; test.txt  #没有输出，但是直接修改了test.txt文件</span><br></pre></td></tr></table></figure>
+<h1 id="n-匹配到换行"><a href="#n-匹配到换行" class="headerlink" title="n;  匹配到换行"></a>n;  匹配到换行</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;&#x2F;vivi&#x2F;&#123;n; s&#x2F;car&#x2F;bike&#x2F;&#125;&#39; test.txt   #匹配到vivi后换行用bike替换car</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br><span class="line">vivi 2013-01-18 car 42800</span><br><span class="line">Tom　　 2013-01-20 bike 32500</span><br><span class="line">John　　 2013-01-28 train 63500</span><br></pre></td></tr></table></figure>
+<h1 id="y一对一替换"><a href="#y一对一替换" class="headerlink" title="y一对一替换"></a>y一对一替换</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;1,10y&#x2F;abcr&#x2F;ABCR&#x2F;&#39; test.txt   #所有的abcr字符都替换成对应大写</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 CAR 53000</span><br><span class="line">John　　 2013-01-13 tRAin 41000</span><br><span class="line">vivi 2013-01-18 CAR 42800</span><br><span class="line">Tom　　 2013-01-20 CAR 32500</span><br><span class="line">John　　 2013-01-28 tRAin 63500</span><br></pre></td></tr></table></figure>
+<h1 id="q-退出"><a href="#q-退出" class="headerlink" title="q 退出"></a>q 退出</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">sed &#39;2q&#39; test.txt  #输出两行后退出</span><br><span class="line">输出：</span><br><span class="line">Tom　　 2012-12-11 car 53000</span><br><span class="line">John　　 2013-01-13 train 41000</span><br></pre></td></tr></table></figure>
+<h1 id="常用例子"><a href="#常用例子" class="headerlink" title="常用例子"></a>常用例子</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep oldString -rl &#x2F;path | xargs sed -i &quot;s&#x2F;oldString&#x2F;newString&#x2F;g&quot;    #替换一个目录下的所有文件中字符串oldString成newString</span><br></pre></td></tr></table></figure>
+
+<h1 id="保存sed处理结果的方法"><a href="#保存sed处理结果的方法" class="headerlink" title="保存sed处理结果的方法"></a>保存sed处理结果的方法</h1><p>可以用-i命令（比较危险）或者&gt;重定向到另一个文件或者用w命令</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2018/04/20/sed/" title="sed">/2018/04/20/sed/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2018/04/20/sed/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ubuntu/" rel="tag"># ubuntu</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/20/spring%E5%B8%B8%E7%94%A8%E6%B3%A8%E8%A7%A3/" rel="next" title="spring常用注解">
+                <i class="fa fa-chevron-left"></i> spring常用注解
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/20/sendmail/" rel="prev" title="sendmail">
+                sendmail <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#定界符"><span class="nav-number">1.</span> <span class="nav-text">定界符</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#test-txt"><span class="nav-number">2.</span> <span class="nav-text">test.txt</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#s-替换命令"><span class="nav-number">3.</span> <span class="nav-text">s 替换命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#n-和-p一起只打印发生替换的行。-p是输出的功能。"><span class="nav-number">4.</span> <span class="nav-text">-n 和 p一起只打印发生替换的行。 p是输出的功能。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#i会直接编辑原文件并保存"><span class="nav-number">5.</span> <span class="nav-text">-i会直接编辑原文件并保存</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#g会替换每一行所有-Ng可以直接从匹配到的第N个开始替换。"><span class="nav-number">6.</span> <span class="nav-text">g会替换每一行所有 Ng可以直接从匹配到的第N个开始替换。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#d删除-Nd删除第N行-N，Md删除第N到M行（-是以…开头，-是以…结尾）"><span class="nav-number">7.</span> <span class="nav-text">d删除 Nd删除第N行  N，Md删除第N到M行（^是以…开头，$是以…结尾）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#amp-表示已匹配字符串"><span class="nav-number">8.</span> <span class="nav-text">&amp; 表示已匹配字符串</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1子串匹配"><span class="nav-number">9.</span> <span class="nav-text">\1子串匹配</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#引用shell变量"><span class="nav-number">10.</span> <span class="nav-text">引用shell变量</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#sed表达式可以使用单引号，但是表达式中有引用字符串（即下面的-test）时就必须用双引号。"><span class="nav-number">11.</span> <span class="nav-text">sed表达式可以使用单引号，但是表达式中有引用字符串（即下面的$test）时就必须用双引号。</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#逗号-分割行范围"><span class="nav-number">12.</span> <span class="nav-text">逗号 分割行范围</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#e-同一行里执行多条命令"><span class="nav-number">13.</span> <span class="nav-text">-e 同一行里执行多条命令</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#w-写文件"><span class="nav-number">14.</span> <span class="nav-text">w 写文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#r-读文件"><span class="nav-number">15.</span> <span class="nav-text">r 读文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#a-追加文件"><span class="nav-number">16.</span> <span class="nav-text">a 追加文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#i-追加到行前面"><span class="nav-number">17.</span> <span class="nav-text">i 追加到行前面</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#n-匹配到换行"><span class="nav-number">18.</span> <span class="nav-text">n;  匹配到换行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#y一对一替换"><span class="nav-number">19.</span> <span class="nav-text">y一对一替换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#q-退出"><span class="nav-number">20.</span> <span class="nav-text">q 退出</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#常用例子"><span class="nav-number">21.</span> <span class="nav-text">常用例子</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#保存sed处理结果的方法"><span class="nav-number">22.</span> <span class="nav-text">保存sed处理结果的方法</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

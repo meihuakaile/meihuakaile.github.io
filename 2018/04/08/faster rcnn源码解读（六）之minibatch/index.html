@@ -1,0 +1,1375 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="深度学习,faster rcnn源码理解," />
+
+
+<meta name="description" content="faster rcnn用python版本的   https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn minibatch源码：  https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn&#x2F;blob&#x2F;master&#x2F;lib&#x2F;roi_data_layer&#x2F;minibatch.py 源码12345678910111213141516171">
+<meta property="og:type" content="article">
+<meta property="og:title" content="faster rcnn源码解读（六）之minibatch">
+<meta property="og:url" content="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="faster rcnn用python版本的   https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn minibatch源码：  https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn&#x2F;blob&#x2F;master&#x2F;lib&#x2F;roi_data_layer&#x2F;minibatch.py 源码12345678910111213141516171">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.512Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="faster rcnn源码理解">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/08/faster rcnn源码解读（六）之minibatch/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>faster rcnn源码解读（六）之minibatch | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">faster rcnn源码解读（六）之minibatch</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/" itemprop="url" rel="index"><span itemprop="name">faster rcnn</span></a></span>
+
+                
+                
+                  >
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/faster-cnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">faster cnn源码理解</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>faster rcnn用python版本的  <a href="https://github.com/rbgirshick/py-faster-rcnn" target="_blank" rel="noopener"> https://github.com/rbgirshick/py-faster-rcnn</a></p>
+<p>minibatch源码： <a href="https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/minibatch.py" target="_blank" rel="noopener"> https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/minibatch.py</a></p>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># --------------------------------------------------------</span></span><br><span class="line"><span class="comment"># Fast R-CNN</span></span><br><span class="line"><span class="comment"># Copyright (c) 2015 Microsoft</span></span><br><span class="line"><span class="comment"># Licensed under The MIT License [see LICENSE for details]</span></span><br><span class="line"><span class="comment"># Written by Ross Girshick</span></span><br><span class="line"><span class="comment"># --------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="string">"""Compute minibatch blobs for training a Fast R-CNN network."""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> numpy.random <span class="keyword">as</span> npr</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> fast_rcnn.config <span class="keyword">import</span> cfg</span><br><span class="line"><span class="keyword">from</span> utils.blob <span class="keyword">import</span> prep_im_for_blob, im_list_to_blob</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_minibatch</span><span class="params">(roidb, num_classes)</span>:</span></span><br><span class="line">    <span class="string">"""Given a roidb, construct a minibatch sampled from it."""</span></span><br><span class="line">    num_images = len(roidb)</span><br><span class="line">    <span class="comment"># Sample random scales to use for each image in this batch</span></span><br><span class="line">    random_scale_inds = npr.randint(<span class="number">0</span>, high=len(cfg.TRAIN.SCALES),</span><br><span class="line">                                    size=num_images)<span class="comment">#随机索引组成的numpy，大小是roidb的长度</span></span><br><span class="line">    <span class="keyword">assert</span>(cfg.TRAIN.BATCH_SIZE % num_images == <span class="number">0</span>), \</span><br><span class="line">        <span class="string">'num_images (&#123;&#125;) must divide BATCH_SIZE (&#123;&#125;)'</span>. \</span><br><span class="line">        format(num_images, cfg.TRAIN.BATCH_SIZE)</span><br><span class="line">    rois_per_image = cfg.TRAIN.BATCH_SIZE / num_images</span><br><span class="line">    fg_rois_per_image = np.round(cfg.TRAIN.FG_FRACTION * rois_per_image)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Get the input image blob, formatted for caffe</span></span><br><span class="line">    im_blob, im_scales = _get_image_blob(roidb, random_scale_inds)</span><br><span class="line"></span><br><span class="line">    blobs = &#123;<span class="string">'data'</span>: im_blob&#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> cfg.TRAIN.HAS_RPN:</span><br><span class="line">        <span class="keyword">assert</span> len(im_scales) == <span class="number">1</span>, <span class="string">"Single batch only"</span></span><br><span class="line">        <span class="keyword">assert</span> len(roidb) == <span class="number">1</span>, <span class="string">"Single batch only"</span></span><br><span class="line">        <span class="comment"># gt boxes: (x1, y1, x2, y2, cls)</span></span><br><span class="line">        gt_inds = np.where(roidb[<span class="number">0</span>][<span class="string">'gt_classes'</span>] != <span class="number">0</span>)[<span class="number">0</span>]</span><br><span class="line">        gt_boxes = np.empty((len(gt_inds), <span class="number">5</span>), dtype=np.float32)</span><br><span class="line">        gt_boxes[:, <span class="number">0</span>:<span class="number">4</span>] = roidb[<span class="number">0</span>][<span class="string">'boxes'</span>][gt_inds, :] * im_scales[<span class="number">0</span>]</span><br><span class="line">        gt_boxes[:, <span class="number">4</span>] = roidb[<span class="number">0</span>][<span class="string">'gt_classes'</span>][gt_inds]</span><br><span class="line">        blobs[<span class="string">'gt_boxes'</span>] = gt_boxes</span><br><span class="line">        blobs[<span class="string">'im_info'</span>] = np.array(</span><br><span class="line">            [[im_blob.shape[<span class="number">2</span>], im_blob.shape[<span class="number">3</span>], im_scales[<span class="number">0</span>]]],</span><br><span class="line">            dtype=np.float32)</span><br><span class="line">    <span class="keyword">else</span>: <span class="comment"># not using RPN</span></span><br><span class="line">        <span class="comment"># Now, build the region of interest and label blobs</span></span><br><span class="line">        rois_blob = np.zeros((<span class="number">0</span>, <span class="number">5</span>), dtype=np.float32)</span><br><span class="line">        labels_blob = np.zeros((<span class="number">0</span>), dtype=np.float32)</span><br><span class="line">        bbox_targets_blob = np.zeros((<span class="number">0</span>, <span class="number">4</span> * num_classes), dtype=np.float32)</span><br><span class="line">        bbox_inside_blob = np.zeros(bbox_targets_blob.shape, dtype=np.float32)</span><br><span class="line">        <span class="comment"># all_overlaps = []</span></span><br><span class="line">        <span class="keyword">for</span> im_i <span class="keyword">in</span> xrange(num_images):</span><br><span class="line">            labels, overlaps, im_rois, bbox_targets, bbox_inside_weights \</span><br><span class="line">                = _sample_rois(roidb[im_i], fg_rois_per_image, rois_per_image,</span><br><span class="line">                               num_classes)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Add to RoIs blob</span></span><br><span class="line">            rois = _project_im_rois(im_rois, im_scales[im_i])</span><br><span class="line">            batch_ind = im_i * np.ones((rois.shape[<span class="number">0</span>], <span class="number">1</span>))</span><br><span class="line">            rois_blob_this_image = np.hstack((batch_ind, rois))</span><br><span class="line">            rois_blob = np.vstack((rois_blob, rois_blob_this_image))</span><br><span class="line"></span><br><span class="line">            <span class="comment"># Add to labels, bbox targets, and bbox loss blobs</span></span><br><span class="line">            labels_blob = np.hstack((labels_blob, labels))</span><br><span class="line">            bbox_targets_blob = np.vstack((bbox_targets_blob, bbox_targets))</span><br><span class="line">            bbox_inside_blob = np.vstack((bbox_inside_blob, bbox_inside_weights))</span><br><span class="line">            <span class="comment"># all_overlaps = np.hstack((all_overlaps, overlaps))</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># For debug visualizations</span></span><br><span class="line">        <span class="comment"># _vis_minibatch(im_blob, rois_blob, labels_blob, all_overlaps)</span></span><br><span class="line"></span><br><span class="line">        blobs[<span class="string">'rois'</span>] = rois_blob</span><br><span class="line">        blobs[<span class="string">'labels'</span>] = labels_blob</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> cfg.TRAIN.BBOX_REG:</span><br><span class="line">            blobs[<span class="string">'bbox_targets'</span>] = bbox_targets_blob</span><br><span class="line">            blobs[<span class="string">'bbox_inside_weights'</span>] = bbox_inside_blob</span><br><span class="line">            blobs[<span class="string">'bbox_outside_weights'</span>] = \</span><br><span class="line">                np.array(bbox_inside_blob &gt; <span class="number">0</span>).astype(np.float32)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> blobs</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_sample_rois</span><span class="params">(roidb, fg_rois_per_image, rois_per_image, num_classes)</span>:</span></span><br><span class="line">    <span class="string">"""Generate a random sample of RoIs comprising foreground and background</span></span><br><span class="line"><span class="string">    examples.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    <span class="comment"># label = class RoI has max overlap with</span></span><br><span class="line">    labels = roidb[<span class="string">'max_classes'</span>]</span><br><span class="line">    overlaps = roidb[<span class="string">'max_overlaps'</span>]</span><br><span class="line">    rois = roidb[<span class="string">'boxes'</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Select foreground RoIs as those with &gt;= FG_THRESH overlap</span></span><br><span class="line">    fg_inds = np.where(overlaps &gt;= cfg.TRAIN.FG_THRESH)[<span class="number">0</span>]</span><br><span class="line">    <span class="comment"># Guard against the case when an image has fewer than fg_rois_per_image</span></span><br><span class="line">    <span class="comment"># foreground RoIs</span></span><br><span class="line">    fg_rois_per_this_image = np.minimum(fg_rois_per_image, fg_inds.size)</span><br><span class="line">    <span class="comment"># Sample foreground regions without replacement</span></span><br><span class="line">    <span class="keyword">if</span> fg_inds.size &gt; <span class="number">0</span>:</span><br><span class="line">        fg_inds = npr.choice(</span><br><span class="line">                fg_inds, size=fg_rois_per_this_image, replace=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Select background RoIs as those within [BG_THRESH_LO, BG_THRESH_HI)</span></span><br><span class="line">    bg_inds = np.where((overlaps &lt; cfg.TRAIN.BG_THRESH_HI) &amp;</span><br><span class="line">                       (overlaps &gt;= cfg.TRAIN.BG_THRESH_LO))[<span class="number">0</span>]</span><br><span class="line">    <span class="comment"># Compute number of background RoIs to take from this image (guarding</span></span><br><span class="line">    <span class="comment"># against there being fewer than desired)</span></span><br><span class="line">    bg_rois_per_this_image = rois_per_image - fg_rois_per_this_image</span><br><span class="line">    bg_rois_per_this_image = np.minimum(bg_rois_per_this_image,</span><br><span class="line">                                        bg_inds.size)</span><br><span class="line">    <span class="comment"># Sample foreground regions without replacement</span></span><br><span class="line">    <span class="keyword">if</span> bg_inds.size &gt; <span class="number">0</span>:</span><br><span class="line">        bg_inds = npr.choice(</span><br><span class="line">                bg_inds, size=bg_rois_per_this_image, replace=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># The indices that we're selecting (both fg and bg)</span></span><br><span class="line">    keep_inds = np.append(fg_inds, bg_inds)</span><br><span class="line">    <span class="comment"># Select sampled values from various arrays:</span></span><br><span class="line">    labels = labels[keep_inds]</span><br><span class="line">    <span class="comment"># Clamp labels for the background RoIs to 0</span></span><br><span class="line">    labels[fg_rois_per_this_image:] = <span class="number">0</span></span><br><span class="line">    overlaps = overlaps[keep_inds]</span><br><span class="line">    rois = rois[keep_inds]</span><br><span class="line"></span><br><span class="line">    bbox_targets, bbox_inside_weights = _get_bbox_regression_labels(</span><br><span class="line">            roidb[<span class="string">'bbox_targets'</span>][keep_inds, :], num_classes)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> labels, overlaps, rois, bbox_targets, bbox_inside_weights</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_get_image_blob</span><span class="params">(roidb, scale_inds)</span>:</span></span><br><span class="line">    <span class="string">"""Builds an input blob from the images in the roidb at the specified</span></span><br><span class="line"><span class="string">    scales.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    num_images = len(roidb)</span><br><span class="line">    processed_ims = []</span><br><span class="line">    im_scales = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(num_images):</span><br><span class="line">        im = cv2.imread(roidb[i][<span class="string">'image'</span>])</span><br><span class="line">        <span class="keyword">if</span> roidb[i][<span class="string">'flipped'</span>]:</span><br><span class="line">            im = im[:, ::<span class="number">-1</span>, :]</span><br><span class="line">        target_size = cfg.TRAIN.SCALES[scale_inds[i]]</span><br><span class="line">        im, im_scale = prep_im_for_blob(im, cfg.PIXEL_MEANS, target_size,</span><br><span class="line">                                        cfg.TRAIN.MAX_SIZE)prep_im_for_blob： util的blob.py中；用于将图片平均后缩放。<span class="comment">#im_scales： 每张图片的缩放率</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">        <span class="comment">#  cfg.PIXEL_MEANS： 原始图片会集体减去该值达到mean</span></span><br><span class="line">        im_scales.append(im_scale)</span><br><span class="line">        processed_ims.append(im)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Create a blob to hold the input images</span></span><br><span class="line">    blob = im_list_to_blob(processed_ims)<span class="comment">#将以list形式存放的图片数据处理成(batch elem, channel, height, width)的im_blob形式，height，width用的是此次计算所有图片的最大值</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> blob, im_scales<span class="comment">#blob是一个字典，与name_to_top对应，方便把blob数据放进top</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_project_im_rois</span><span class="params">(im_rois, im_scale_factor)</span>:</span></span><br><span class="line">    <span class="string">"""Project image RoIs into the rescaled training image."""</span></span><br><span class="line">    rois = im_rois * im_scale_factor</span><br><span class="line">    <span class="keyword">return</span> rois</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_get_bbox_regression_labels</span><span class="params">(bbox_target_data, num_classes)</span>:</span></span><br><span class="line">    <span class="string">"""Bounding-box regression targets are stored in a compact form in the</span></span><br><span class="line"><span class="string">    roidb.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    This function expands those targets into the 4-of-4*K representation used</span></span><br><span class="line"><span class="string">    by the network (i.e. only one class has non-zero targets). The loss weights</span></span><br><span class="line"><span class="string">    are similarly expanded.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        bbox_target_data (ndarray): N x 4K blob of regression targets</span></span><br><span class="line"><span class="string">        bbox_inside_weights (ndarray): N x 4K blob of loss weights</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    clss = bbox_target_data[:, <span class="number">0</span>]</span><br><span class="line">    bbox_targets = np.zeros((clss.size, <span class="number">4</span> * num_classes), dtype=np.float32)</span><br><span class="line">    bbox_inside_weights = np.zeros(bbox_targets.shape, dtype=np.float32)</span><br><span class="line">    inds = np.where(clss &gt; <span class="number">0</span>)[<span class="number">0</span>]</span><br><span class="line">    <span class="keyword">for</span> ind <span class="keyword">in</span> inds:</span><br><span class="line">        cls = clss[ind]</span><br><span class="line">        start = <span class="number">4</span> * cls</span><br><span class="line">        end = start + <span class="number">4</span></span><br><span class="line">        bbox_targets[ind, start:end] = bbox_target_data[ind, <span class="number">1</span>:]</span><br><span class="line">        bbox_inside_weights[ind, start:end] = cfg.TRAIN.BBOX_INSIDE_WEIGHTS</span><br><span class="line">    <span class="keyword">return</span> bbox_targets, bbox_inside_weights</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_vis_minibatch</span><span class="params">(im_blob, rois_blob, labels_blob, overlaps)</span>:</span></span><br><span class="line">    <span class="string">"""Visualize a mini-batch for debugging."""</span></span><br><span class="line">    <span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> xrange(rois_blob.shape[<span class="number">0</span>]):</span><br><span class="line">        rois = rois_blob[i, :]</span><br><span class="line">        im_ind = rois[<span class="number">0</span>]</span><br><span class="line">        roi = rois[<span class="number">1</span>:]</span><br><span class="line">        im = im_blob[im_ind, :, :, :].transpose((<span class="number">1</span>, <span class="number">2</span>, <span class="number">0</span>)).copy()</span><br><span class="line">        im += cfg.PIXEL_MEANS</span><br><span class="line">        im = im[:, :, (<span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>)]</span><br><span class="line">        im = im.astype(np.uint8)</span><br><span class="line">        cls = labels_blob[i]</span><br><span class="line">        plt.imshow(im)</span><br><span class="line">        <span class="keyword">print</span> <span class="string">'class: '</span>, cls, <span class="string">' overlap: '</span>, overlaps[i]</span><br><span class="line">        plt.gca().add_patch(</span><br><span class="line">            plt.Rectangle((roi[<span class="number">0</span>], roi[<span class="number">1</span>]), roi[<span class="number">2</span>] - roi[<span class="number">0</span>],</span><br><span class="line">                          roi[<span class="number">3</span>] - roi[<span class="number">1</span>], fill=<span class="literal">False</span>,</span><br><span class="line">                          edgecolor=<span class="string">'r'</span>, linewidth=<span class="number">3</span>)</span><br><span class="line">            )</span><br><span class="line">        plt.show()</span><br></pre></td></tr></table></figure>
+<h3 id="代码讲解"><a href="#代码讲解" class="headerlink" title="代码讲解"></a>代码讲解</h3><p>solver.step(1)-&gt;reshape-》forward-&gt;_get_next_minbatch-&gt;_get_next_minbatch_inds-&gt;(前面在layers里,现在进入minibatch组建真正的blob)get_minibatch  </p>
+<p>cfg.TRAIN.SCALES： 图片被缩放的target_size列表<br>random_scale_inds：列表的随机索引组成的numpy，大小是roidb的长度<br>cfg.PIXEL_MEANS： 原始图片会集体减去该值达到mean<br>im_scales  ： 每张图片的缩放率</p>
+<p>缩放率的求法:  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">im_scales = target_size/min(width, height)</span><br><span class="line"><span class="keyword">if</span> im_scales * max(width, height) &gt; cfg.TRAIN.MAX_SIZE:</span><br><span class="line">    im_scales = cfg.TRAIN.MAX_SIZE * max(width, height)</span><br></pre></td></tr></table></figure>
+
+<p>prep_im_for_blob： util的blob.py中；用于将图片平均后缩放。<br>im_list_to_blob(ims)： 将以list形式存放的图片数据处理成(batch elem, channel, height, width)的im_blob形式，height，width用的是此次计算所有图片的最大值</p>
+<p>blob是一个字典, 与name_to_top对应，方便把blob数据放进top: </p>
+<ul>
+<li>data, 一个batch处理过的所有图片数据，即上面的im_blob</li>
+<li>im_info, [im_blob.shape[2], im_blob.shape[3], im_scales[0]]</li>
+<li>gt_boxes, 是前四列是  box  的值，第五列是  box  的类别。</li>
+<li>box, =原box*im_scales</li>
+</ul>
+<p><strong>！！！  minibatch.py  中  34  行的代码表明，  batchsize  即  cfg.TRAIN.IMS_PER_BATCH  只能是1</strong></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/" title="faster rcnn源码解读（六）之minibatch">/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/faster-rcnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" rel="tag"># faster rcnn源码理解</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%9B%9B%EF%BC%89%E4%B9%8B%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8Bimdb.py%E5%92%8Cpascal_voc.py%EF%BC%88%E4%B8%BB%E8%A6%81%E6%98%AFimdb%E5%92%8Croidb%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B%E7%9A%84%E8%A7%A3%E8%AF%B4%EF%BC%89/" rel="next" title="faster rcnn源码解读（四）之数据类型imdb.py和pascal_voc.py（主要是imdb和roidb数据类型的解说）">
+                <i class="fa fa-chevron-left"></i> faster rcnn源码解读（四）之数据类型imdb.py和pascal_voc.py（主要是imdb和roidb数据类型的解说）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/" rel="prev" title="faster rcnn源码解读（五）之layer（网络里的input-data）">
+                faster rcnn源码解读（五）之layer（网络里的input-data） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#源码"><span class="nav-number">1.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#代码讲解"><span class="nav-number">2.</span> <span class="nav-text">代码讲解</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

@@ -1,0 +1,1386 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="hadoop," />
+
+
+<meta name="description" content="易错hive cli 有tab补全的功能，因此，如果hql里有tab时，会出现Display all 479 possibilities? (y or n)的询问。left&#x2F;right join on where时注意条件放在on之后还是where之后，结果会不同。  读orc格式数据hive-0.11版本中的使用方法为：hive --orcfiledump &lt;location-of-orc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="hive出错">
+<meta property="og:url" content="http://yoursite.com/2018/10/19/hive%E5%87%BA%E9%94%99/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="易错hive cli 有tab补全的功能，因此，如果hql里有tab时，会出现Display all 479 possibilities? (y or n)的询问。left&#x2F;right join on where时注意条件放在on之后还是where之后，结果会不同。  读orc格式数据hive-0.11版本中的使用方法为：hive --orcfiledump &lt;location-of-orc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-10-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.499Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="hadoop">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/10/19/hive出错/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>hive出错 | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/10/19/hive%E5%87%BA%E9%94%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">hive出错</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-10-19T00:00:00+08:00">2018-10-19</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="易错"><a href="#易错" class="headerlink" title="易错"></a>易错</h3><p>hive cli 有tab补全的功能，因此，如果hql里有tab时，会出现<code>Display all 479 possibilities? (y or n)</code>的询问。<br><code>left/right join on where</code>时注意条件放在on之后还是where之后，结果会不同。 </p>
+<h3 id="读orc格式数据"><a href="#读orc格式数据" class="headerlink" title="读orc格式数据"></a>读orc格式数据</h3><p>hive-0.11版本中的使用方法为：<code>hive --orcfiledump &lt;location-of-orc-file&gt;</code>，其他版本的使用方法可以去官方文档中查找。</p>
+<p>出错场景：用hive读orc时出错，使用hive版本是0.11，参考hive官网<a href="http://www.bieryun.com/2447.html" target="_blank" rel="noopener">http://www.bieryun.com/2447.html</a> 讲解Hive version 0.11 through 0.14都可以使用上面的方法读orc文件。<br>之后使用1.2.2的版本使用上面命令不会出错，可以select读数据。</p>
+<p>使用时出错：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">Exception in thread &quot;main&quot; com.google.protobuf.InvalidProtocolBufferException: Message missing required fields: columns[1].kind, columns[2].kind, columns[3].kind</span><br><span class="line">at com.google.protobuf.UninitializedMessageException.asInvalidProtocolBufferException(UninitializedMessageException.java:81)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.OrcProto$StripeFooter$Builder.buildParsed(OrcProto.java:5908)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.OrcProto$StripeFooter$Builder.access$10700(OrcProto.java:5834)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.OrcProto$StripeFooter.parseFrom(OrcProto.java:5779)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.RecordReaderImpl.readStripeFooter(RecordReaderImpl.java:1108)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.RecordReaderImpl.readStripe(RecordReaderImpl.java:1114)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.RecordReaderImpl.&lt;init&gt;(RecordReaderImpl.java:94)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.ReaderImpl.rows(ReaderImpl.java:242)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.ReaderImpl.rows(ReaderImpl.java:236)</span><br><span class="line">at org.apache.hadoop.hive.ql.io.orc.FileDump.main(FileDump.java:37)</span><br><span class="line">at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)</span><br><span class="line">at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span><br><span class="line">at java.lang.reflect.Method.invoke(Method.java:606)</span><br><span class="line">at org.apache.hadoop.util.RunJar.main(RunJar.java:212)</span><br></pre></td></tr></table></figure>
+<p>分析：orc的表是别人建的，无法确定当初建表的hive的版本。google.protobuf是一个作为协议的包，类似于序列化。因此猜测是不同版本的hive的orc不一样导致压缩数据和解压数据无法连起来。</p>
+<h3 id="使用SQL2011保留字出错"><a href="#使用SQL2011保留字出错" class="headerlink" title="使用SQL2011保留字出错"></a>使用SQL2011保留字出错</h3><p>报错：<code>Failed to recognize predicate &#39;xxx&#39;. Failed rule: &#39;identifier&#39; in column specification</code><br>原因：HQL中出现<code>row</code>作为字段名。在Hive1.2.0版本开始增加了如下配置选项，默认值为true：<br><code>hive.support.sql11.reserved.keywords</code>该选项的目的是：是否启用对SQL2011保留关键字的支持。 启用后，将支持部分SQL2011保留关键字。<br>解决方法（1）：放弃<code>row</code>，换一个关键字。<br>解决方法（2）：弃用对保留关键字的支持。<code>set hive.support.sql11.reserved.keywords = false ;</code><br>解决方法（3）：弃用对保留关键字的支持。在conf下的hive-site.xml配置文件中修改配置选项：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>hive.support.sql11.reserved.keywords<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">value</span>&gt;</span>false<span class="tag">&lt;/<span class="name">value</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>总结自：<a href="https://blog.csdn.net/SJF0115/article/details/73244762" target="_blank" rel="noopener">https://blog.csdn.net/SJF0115/article/details/73244762</a></p>
+<h3 id="join-on中比较大小报错"><a href="#join-on中比较大小报错" class="headerlink" title="join on中比较大小报错"></a>join on中比较大小报错</h3><p>报错：<code>Both left and right aliases encountered in JOIN &#39;1&#39;</code><br>原因：两个表join的时候，不支持两个表的字段 非相等 操作。Hive 不支持所有非等值的连接，因为非等值连接非常难转化到 map/reduce 任务。<br>解决：可以把不相等条件拿到 where语句中。</p>
+<h3 id="使用distinct报错"><a href="#使用distinct报错" class="headerlink" title="使用distinct报错"></a>使用distinct报错</h3><p>报错<code>HIVE: cannot recognize input near &#39;distinct&#39; &#39;(&#39;</code><br>原因：hive的语法中select的字段分两种，all和distinct，默认是all，加distinct的字段必须放在所有查询字段的最前面（mysql也是）。<br>总结自：<a href="https://stackoverflow.com/questions/38794766/hive-cannot-recognize-input-near-distinct" target="_blank" rel="noopener">https://stackoverflow.com/questions/38794766/hive-cannot-recognize-input-near-distinct</a></p>
+<h3 id="memory-limits"><a href="#memory-limits" class="headerlink" title="memory limits"></a>memory limits</h3><p>报错：<code>is running beyond physical memory limits. Current usage: 2.0 GB of 2 GB physical memory used; 9.9 GB of 40 GB virtual memory used.</code><br>分析：<code>2.0 GB of 2 GB physical memory used</code> 物理内存溢出 OOM为out of memory<br>解决：设置mapper和reducer 物理内存和虚拟内存<br><code>set mapreduce.map.memory.mb=10240;</code>  container的内存 运行mapper的容器的物理内存，1024M = 1G<br><code>set mapreduce.map.java.opts=&#39;-Xmx7680M&#39;;</code>  jvm堆内存<br><code>set mapreduce.reduce.memory.mb=10240;</code><br><code>set mapreduce.reduce.java.opts=&#39;-Xmx7680M&#39;;</code><br>在yarn container这种模式下，map/reduce task是运行在Container之中的，所以上面提到的mapreduce.map(reduce).memory.mb大小<strong><em>都大于</em></strong>mapreduce.map(reduce).java.opts值的大小。mapreduce.{map|reduce}.java.opts能够通过Xmx设置JVM最大的heap的使用，<strong><em>一般设置为0.75倍的memory.mb，因为需要为java code等预留些空间</em></strong>。</p>
+<p>来源于网络：虚拟内存的计算由 物理内存 和 yarn-site.xml中的yarn.nodemanager.vmem-pmem-ratio制定。<br><code>yarn.nodemanager.vmem-pmem-ratio</code>是 一个比例，默认是2.1   虚拟内存 = 物理内存 × 这个比例<br>yarn.nodemanager.vmem-pmem-ratio 的比率，默认是2.1.这个比率的控制影响着虚拟内存的使用，当yarn计算出来的虚拟内存，比在mapred-site.xml里的mapreduce.map.memory.mb或mapreduce.reduce.memory.mb的2.1倍还要多时，会被kill掉。</p>
+<p>参考：<a href="https://blog.csdn.net/yisun123456/article/details/81327372" target="_blank" rel="noopener">https://blog.csdn.net/yisun123456/article/details/81327372</a></p>
+<h3 id="dynamic-partitions"><a href="#dynamic-partitions" class="headerlink" title="dynamic partitions"></a>dynamic partitions</h3><p><code>The maximum number of dynamic partitions is controlled by hive.exec.max.dynamic.partitions and hive.exec.max.dynamic.partitions.pernode. Maximum was set to: 100</code><br>原因看报错，显而易见，动态分区超过最大动态分区，默认100.<br>解决：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SET hive.exec.max.dynamic.partitions&#x3D;2048;</span><br><span class="line">SET hive.exec.max.dynamic.partitions.pernode&#x3D;256;</span><br></pre></td></tr></table></figure>
+<p>参考：<a href="https://blog.csdn.net/oDaiLiDong/article/details/49884571" target="_blank" rel="noopener">https://blog.csdn.net/oDaiLiDong/article/details/49884571</a></p>
+<p><del>### join出错</del><br><del>报错<code>FAILED: Execution Error, return code 1 from org.apache.hadoop.hive.ql.exec.mr.MapredLocalTask</code></del><br>一个join操作导致的，原因不明。<br>网上查到解决办法：<code>SET hive.auto.convert.join=false;</code> 此操作的原理看上面“join原理、调优”章节里的“map端的join”。<br>参考：<a href="https://www.cnblogs.com/MOBIN/p/5702580.html" target="_blank" rel="noopener">https://www.cnblogs.com/MOBIN/p/5702580.html</a></p>
+<h3 id="jobname过长"><a href="#jobname过长" class="headerlink" title="jobname过长"></a>jobname过长</h3><p>报错<code>hive java.io.IOException: Could not find status of job:job_15416269223_3720383</code><br>hive的运行原理：当任务执行结束后，对于每一个jobid，会根据一定规则，生成两个文件，一个是<em>.jhist,另一个是</em>.conf.这两个文件记录了这个job的所有执行信息，这两个文件是要写入到jobhistory所监控的路径的。<br>这部分是根据hive的jobname来决定的，默认是从hql中的开头和结尾截取一部分，如果sql开头或结尾有中文注释的话，会被截取进来，并进行url编码。导致作业的信息名变的非常长，超过了namenode所允许的最大的文件命名长度。导致任务无法写入historyserver。hive在historyserver无法获得这个job的状态，报开头的错误。<br>这里提供一个简单的解决办法：<code>set  hive.jobname.length=10;</code></p>
+<p>原文：<a href="https://blog.csdn.net/zhoudetiankong/article/details/52126760" target="_blank" rel="noopener">https://blog.csdn.net/zhoudetiankong/article/details/52126760</a></p>
+<h3 id="hive启动出错-HADOOP-HOME"><a href="#hive启动出错-HADOOP-HOME" class="headerlink" title="hive启动出错 $HADOOP_HOME"></a>hive启动出错 $HADOOP_HOME</h3><p><code>Cannot find hadoop installation: $HADOOP_HOME or $HADOOP_PREFIX must be set or hadoop must be in the</code><br>解决办法：<br>在hive-env.sh（conf目录下）中添加hadoop的目录：<br><code>export HADOOP_HOME=/home/work/hadoop/hadoop-2.6.0/</code><br>之后<code>source hive-env.sh</code> 就ok了</p>
+<h3 id="配置spark后hive启动出错"><a href="#配置spark后hive启动出错" class="headerlink" title="配置spark后hive启动出错"></a>配置spark后hive启动出错</h3><p><code>ls: cannot access /usr/local/spark/lib/spark-assembly-*.jar: No such file or directory</code><br><a href="https://blog.csdn.net/Gpwner/article/details/73457108" target="_blank" rel="noopener">https://blog.csdn.net/Gpwner/article/details/73457108</a></p>
+<h3 id="缺分号"><a href="#缺分号" class="headerlink" title="缺分号"></a>缺分号</h3><p><code>Hive Warning: Value had a \n character in it</code><br>遇到这个错误一般是hive query的格式问题， 哪里缺了个分号  <code>；</code><br>我这次是几个set语句后面忘记加分号了。</p>
+<h3 id="join只允许等值操作"><a href="#join只允许等值操作" class="headerlink" title="join只允许等值操作"></a>join只允许等值操作</h3><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c.*, t.* <span class="keyword">FROM</span> c <span class="keyword">JOIN</span> t </span><br><span class="line"><span class="keyword">ON</span> (t.area1= c.cname <span class="keyword">OR</span> t.area2 =c.cname <span class="keyword">OR</span> t.area3 = c.cname)</span><br><span class="line"><span class="keyword">WHERE</span> t.time&gt;=<span class="string">'20140818'</span> <span class="keyword">and</span> t.time&lt;=<span class="string">'20140824'</span> <span class="keyword">AND</span> platform=<span class="string">'pc'</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> t.time;</span><br></pre></td></tr></table></figure>
+<p>报错<code>FAILED: SemanticException [Error 10019]: Line 5:32 OR not supported in JOIN currently &#39;cname&#39;</code><br>hive 受限于 MapReduce 算法模型，只支持 equi-joins（等值 join），要实现上述的非等值 join，可以选择采用笛卡儿积（ full Cartesian product ）来实现。<br>笛卡尔积：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> c.*, t.* <span class="keyword">FROM</span> c <span class="keyword">JOIN</span> t </span><br><span class="line"><span class="keyword">WHERE</span> t.area1= c.cname <span class="keyword">OR</span> t.area2 =c.cname <span class="keyword">OR</span> t.area3 = c.cname <span class="keyword">and</span> </span><br><span class="line">      t.time&gt;=<span class="string">'20140818'</span> <span class="keyword">and</span> t.time&lt;=<span class="string">'20140824'</span> <span class="keyword">AND</span> platform=<span class="string">'pc'</span></span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> t.time;</span><br></pre></td></tr></table></figure>
+<p>笛卡尔积是m×n的映射，耗时且非内存。<br><code>or</code>时，采用<code>union all</code>代替：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">select</span> * <span class="keyword">from</span> </span><br><span class="line">(</span><br><span class="line">    <span class="keyword">SELECT</span> c.*, t.* <span class="keyword">FROM</span> c <span class="keyword">JOIN</span> t <span class="keyword">on</span> t.area1= c.cname</span><br><span class="line">    <span class="keyword">WHERE</span> t.time&gt;=<span class="string">'20140818'</span> <span class="keyword">and</span> t.time&lt;=<span class="string">'20140824'</span> <span class="keyword">AND</span> platform=<span class="string">'pc'</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">union</span> <span class="keyword">ALL</span> </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">SELECT</span> c.*, t.* <span class="keyword">FROM</span> c <span class="keyword">JOIN</span> t <span class="keyword">on</span> t.area2= c.cname</span><br><span class="line">    <span class="keyword">WHERE</span> t.time&gt;=<span class="string">'20140818'</span> <span class="keyword">and</span> t.time&lt;=<span class="string">'20140824'</span> <span class="keyword">AND</span> platform=<span class="string">'pc'</span></span><br><span class="line">    </span><br><span class="line">    <span class="keyword">union</span> <span class="keyword">ALL</span> </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">SELECT</span> c.*, t.* <span class="keyword">FROM</span> c <span class="keyword">JOIN</span> t <span class="keyword">on</span> t.area3= c.cname</span><br><span class="line">    <span class="keyword">WHERE</span> t.time&gt;=<span class="string">'20140818'</span> <span class="keyword">and</span> t.time&lt;=<span class="string">'20140824'</span> <span class="keyword">AND</span> platform=<span class="string">'pc'</span></span><br><span class="line">)tmp</span><br><span class="line"><span class="keyword">GROUP</span> <span class="keyword">BY</span> tmp.time;</span><br></pre></td></tr></table></figure>
+<p>此时使用<code>union all</code>，可以再上上面章节的并发优化<code>set hive.exec.parallel=true;</code> </p>
+<p>总结自：<a href="https://cloud.tencent.com/developer/article/1043838" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1043838</a></p>
+<h3 id="堆内存出错-Java-heap-space"><a href="#堆内存出错-Java-heap-space" class="headerlink" title="堆内存出错 Java heap space"></a>堆内存出错 Java heap space</h3><p><code>FAILED: Execution Error, return code -101 from org.apache.hadoop.hive.ql.exec.mr.MapRedTask. Java heap space</code><br>设置 <code>set io.sort.mb=10;</code> 默认值是100<br>需要与<code>mapred.child.java.opts</code>相配 默认：-Xmx200m；不能超过<code>mapred.child.java.opt</code>设置，否则会OOM。<br>一般来说，都是reduce耗费内存比较大，这个选项是用来设置JVM堆的最大可用内存，但不要设置过大，如果超过2G(来自网络)，就应该考虑一下优化程序。<br>Input Split的大小，决定了一个Job拥有多少个map，默认128M每个Split（版本之间不同，低版本是64M），如果输入的数据量巨大，那么默认的128M的block会有特别多Map Task，集群的网络传输会很大，给Job Tracker的调度、队列、内存都会带来很大压力。</p>
+<h3 id="Error-java-io-IOException-invalid-block-type"><a href="#Error-java-io-IOException-invalid-block-type" class="headerlink" title="Error: java.io.IOException: invalid block type"></a>Error: java.io.IOException: invalid block type</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000140_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: invalid block <span class="built_in">type</span></span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br><span class="line"></span><br><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000143_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: incorrect data check</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br><span class="line"></span><br><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000131_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: invalid block <span class="built_in">type</span></span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br><span class="line"></span><br><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000145_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: incorrect data check</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br><span class="line"></span><br><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000128_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: invalid block <span class="built_in">type</span></span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br><span class="line"></span><br><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000124_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: invalid stored block lengths</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br><span class="line"></span><br><span class="line">19/01/16 07:19:43 INFO mapreduce.Job: Task Id : attempt_1546194685436_1728349_m_000142_1, Status : FAILED</span><br><span class="line">Error: java.io.IOException: invalid block <span class="built_in">type</span></span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.inflateBytesDirect(Native Method)</span><br><span class="line">	at org.apache.hadoop.io.compress.zlib.ZlibDecompressor.decompress(ZlibDecompressor.java:227)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:91)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br><span class="line"></span><br><span class="line">Container killed by the ApplicationMaster.</span><br><span class="line">Container killed on request. Exit code is 143</span><br></pre></td></tr></table></figure>
+<p>解决：加参数，<code>-D mapred.skip.map.max.skip.records=1</code> map task最多允许的跳过记录数，默认值0。<br>参考：<a href="https://forums.aws.amazon.com/thread.jspa?threadID=92747" target="_blank" rel="noopener">https://forums.aws.amazon.com/thread.jspa?threadID=92747</a></p>
+<h3 id="Unexpected-end-of-input-stream"><a href="#Unexpected-end-of-input-stream" class="headerlink" title="Unexpected end of input stream"></a>Unexpected end of input stream</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">Error: java.io.EOFException: Unexpected end of input stream</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.decompress(DecompressorStream.java:145)</span><br><span class="line">	at org.apache.hadoop.io.compress.DecompressorStream.read(DecompressorStream.java:85)</span><br><span class="line">	at java.io.InputStream.read(InputStream.java:101)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readDefaultLine(LineReader.java:211)</span><br><span class="line">	at org.apache.hadoop.util.LineReader.readLine(LineReader.java:174)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:206)</span><br><span class="line">	at org.apache.hadoop.mapred.LineRecordReader.next(LineRecordReader.java:45)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.moveToNext(MapTask.java:197)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask<span class="variable">$TrackedRecordReader</span>.next(MapTask.java:183)</span><br><span class="line">	at org.apache.hadoop.mapred.MapRunner.run(MapRunner.java:52)</span><br><span class="line">	at org.apache.hadoop.streaming.PipeMapRunner.run(PipeMapRunner.java:34)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.runOldMapper(MapTask.java:429)</span><br><span class="line">	at org.apache.hadoop.mapred.MapTask.run(MapTask.java:341)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild<span class="variable">$2</span>.run(YarnChild.java:162)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at javax.security.auth.Subject.doAs(Subject.java:422)</span><br><span class="line">	at org.apache.hadoop.security.UserGroupInformation.doAs(UserGroupInformation.java:1491)</span><br><span class="line">	at org.apache.hadoop.mapred.YarnChild.main(YarnChild.java:157)</span><br></pre></td></tr></table></figure>
+<p>这个主要是hdfs文件的问题。文件的压缩有问题，现在解压失败报错。<br>从日志中可以找到出错的文件名，然后get下来后，尝试手动解压失败，确定问题。</p>
+<h3 id="Unsupported-major-minor-version-52-0"><a href="#Unsupported-major-minor-version-52-0" class="headerlink" title="Unsupported major.minor version 52.0"></a>Unsupported major.minor version 52.0</h3><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">java.lang.UnsupportedClassVersionError: com/mr/udf/UDTFTest : Unsupported major.minor version 52.0</span><br><span class="line">	at java.lang.ClassLoader.defineClass1(Native Method)</span><br><span class="line">	at java.lang.ClassLoader.defineClass(ClassLoader.java:800)</span><br><span class="line">	at java.security.SecureClassLoader.defineClass(SecureClassLoader.java:142)</span><br><span class="line">	at java.net.URLClassLoader.defineClass(URLClassLoader.java:449)</span><br><span class="line">	at java.net.URLClassLoader.access<span class="variable">$100</span>(URLClassLoader.java:71)</span><br><span class="line">	at java.net.URLClassLoader<span class="variable">$1</span>.run(URLClassLoader.java:361)</span><br><span class="line">	at java.net.URLClassLoader<span class="variable">$1</span>.run(URLClassLoader.java:355)</span><br><span class="line">	at java.security.AccessController.doPrivileged(Native Method)</span><br><span class="line">	at java.net.URLClassLoader.findClass(URLClassLoader.java:354)</span><br><span class="line">	at java.lang.ClassLoader.loadClass(ClassLoader.java:425)</span><br><span class="line">	at java.lang.ClassLoader.loadClass(ClassLoader.java:358)</span><br><span class="line">	at java.lang.Class.forName0(Native Method)</span><br><span class="line">	at java.lang.Class.forName(Class.java:270)</span><br><span class="line">	at org.apache.hadoop.hive.ql.exec.FunctionTask.getUdfClass(FunctionTask.java:309)</span><br><span class="line">	at org.apache.hadoop.hive.ql.exec.FunctionTask.createTemporaryFunction(FunctionTask.java:165)</span><br><span class="line">	at org.apache.hadoop.hive.ql.exec.FunctionTask.execute(FunctionTask.java:72)</span><br><span class="line">	at org.apache.hadoop.hive.ql.exec.Task.executeTask(Task.java:160)</span><br><span class="line">	at org.apache.hadoop.hive.ql.exec.TaskRunner.runSequential(TaskRunner.java:88)</span><br><span class="line">	at org.apache.hadoop.hive.ql.Driver.launchTask(Driver.java:1676)</span><br><span class="line">	at org.apache.hadoop.hive.ql.Driver.execute(Driver.java:1435)</span><br><span class="line">	at org.apache.hadoop.hive.ql.Driver.runInternal(Driver.java:1218)</span><br><span class="line">	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1082)</span><br><span class="line">	at org.apache.hadoop.hive.ql.Driver.run(Driver.java:1072)</span><br><span class="line">	at org.apache.hadoop.hive.cli.CliDriver.processLocalCmd(CliDriver.java:213)</span><br><span class="line">	at org.apache.hadoop.hive.cli.CliDriver.processCmd(CliDriver.java:165)</span><br><span class="line">	at org.apache.hadoop.hive.cli.CliDriver.processLine(CliDriver.java:376)</span><br><span class="line">	at org.apache.hadoop.hive.cli.CliDriver.executeDriver(CliDriver.java:736)</span><br><span class="line">	at org.apache.hadoop.hive.cli.CliDriver.run(CliDriver.java:681)</span><br><span class="line">	at org.apache.hadoop.hive.cli.CliDriver.main(CliDriver.java:621)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)</span><br><span class="line">	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)</span><br><span class="line">	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)</span><br><span class="line">	at java.lang.reflect.Method.invoke(Method.java:606)</span><br><span class="line">	at org.apache.hadoop.util.RunJar.main(RunJar.java:212)</span><br><span class="line">FAILED: Execution Error, <span class="built_in">return</span> code -101 from org.apache.hadoop.hive.ql.exec.FunctionTask. com/mr/udf/UDTFTest : Unsupported major.minor version 52.0</span><br></pre></td></tr></table></figure>
+<p>原因：hive自定义jar包和hive里的jdk版本不兼容。</p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p><a href="http://www.voidcn.com/article/p-zfiukxcn-hx.html" target="_blank" rel="noopener">http://www.voidcn.com/article/p-zfiukxcn-hx.html</a><br><a href="https://www.cnblogs.com/cfox/p/3849407.html" target="_blank" rel="noopener">https://www.cnblogs.com/cfox/p/3849407.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2018/10/19/hive%E5%87%BA%E9%94%99/" title="hive出错">/2018/10/19/hive%E5%87%BA%E9%94%99/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2018/10/19/hive%E5%87%BA%E9%94%99/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/hadoop/" rel="tag"># hadoop</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/10/19/hive%E5%8E%8B%E7%BC%A9/" rel="next" title="hive压缩">
+                <i class="fa fa-chevron-left"></i> hive压缩
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/10/19/hive-set%E8%AE%BE%E7%BD%AE/" rel="prev" title="hive-set设置总结">
+                hive-set设置总结 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#易错"><span class="nav-number">1.</span> <span class="nav-text">易错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#读orc格式数据"><span class="nav-number">2.</span> <span class="nav-text">读orc格式数据</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用SQL2011保留字出错"><span class="nav-number">3.</span> <span class="nav-text">使用SQL2011保留字出错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#join-on中比较大小报错"><span class="nav-number">4.</span> <span class="nav-text">join on中比较大小报错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用distinct报错"><span class="nav-number">5.</span> <span class="nav-text">使用distinct报错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#memory-limits"><span class="nav-number">6.</span> <span class="nav-text">memory limits</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dynamic-partitions"><span class="nav-number">7.</span> <span class="nav-text">dynamic partitions</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#jobname过长"><span class="nav-number">8.</span> <span class="nav-text">jobname过长</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#hive启动出错-HADOOP-HOME"><span class="nav-number">9.</span> <span class="nav-text">hive启动出错 $HADOOP_HOME</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#配置spark后hive启动出错"><span class="nav-number">10.</span> <span class="nav-text">配置spark后hive启动出错</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缺分号"><span class="nav-number">11.</span> <span class="nav-text">缺分号</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#join只允许等值操作"><span class="nav-number">12.</span> <span class="nav-text">join只允许等值操作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#堆内存出错-Java-heap-space"><span class="nav-number">13.</span> <span class="nav-text">堆内存出错 Java heap space</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Error-java-io-IOException-invalid-block-type"><span class="nav-number">14.</span> <span class="nav-text">Error: java.io.IOException: invalid block type</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unexpected-end-of-input-stream"><span class="nav-number">15.</span> <span class="nav-text">Unexpected end of input stream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unsupported-major-minor-version-52-0"><span class="nav-number">16.</span> <span class="nav-text">Unsupported major.minor version 52.0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">17.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="深度学习,faster rcnn源码理解," />
+
+
+<meta name="description" content="faster用python版本的   https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn train_faster_rcnn_alt_opt.py源码在  https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn&#x2F;blob&#x2F;master&#x2F;tools&#x2F;train_faster_rcnn_alt_opt.py    faster r">
+<meta property="og:type" content="article">
+<meta property="og:title" content="faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py">
+<meta property="og:url" content="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="faster用python版本的   https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn train_faster_rcnn_alt_opt.py源码在  https:&#x2F;&#x2F;github.com&#x2F;rbgirshick&#x2F;py-faster-rcnn&#x2F;blob&#x2F;master&#x2F;tools&#x2F;train_faster_rcnn_alt_opt.py    faster r">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2018-04-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-04-12T16:04:01.481Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="深度学习">
+<meta property="article:tag" content="faster rcnn源码理解">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/04/08/faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/" itemprop="url" rel="index"><span itemprop="name">faster rcnn</span></a></span>
+
+                
+                
+                  >
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/faster-cnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">faster cnn源码理解</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>faster用python版本的  <a href="https://github.com/rbgirshick/py-faster-rcnn" target="_blank" rel="noopener"> https://github.com/rbgirshick/py-faster-rcnn</a></p>
+<p>train_faster_rcnn_alt_opt.py源码在 <a href="https://github.com/rbgirshick/py-faster-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py" target="_blank" rel="noopener"> https://github.com/rbgirshick/py-faster-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py
+</a>  </p>
+<p>faster rcnn训练的开始是：faster_rcnn_alt_opt.sh。下面命令是训练的，还有它的参数说明。</p>
+<h3 id="调用最初脚本的说明"><a href="#调用最初脚本的说明" class="headerlink" title="调用最初脚本的说明"></a>调用最初脚本的说明</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">cd $FRCN_ROOT</span><br><span class="line"></span><br><span class="line"># .&#x2F;experiments&#x2F;scripts&#x2F;faster_rcnn_alt_opt.sh  GPU  NET  DATASET [options args to &#123;train,test&#125;_net.py]</span><br><span class="line"></span><br><span class="line"># GPU_ID is the GPU you want to train on</span><br><span class="line"># NET in &#123;ZF, VGG_CNN_M_1024, VGG16&#125; is the network arch to use</span><br><span class="line"># DATASET is only pascal_voc for now</span><br></pre></td></tr></table></figure>
+<h3 id="源码"><a href="#源码" class="headerlink" title="源码"></a>源码</h3><p>train_faster_rcnn_alt_opt.py的源码：  </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># --------------------------------------------------------</span></span><br><span class="line"><span class="comment"># Faster R-CNN</span></span><br><span class="line"><span class="comment"># Copyright (c) 2015 Microsoft</span></span><br><span class="line"><span class="comment"># Licensed under The MIT License [see LICENSE for details]</span></span><br><span class="line"><span class="comment"># Written by Ross Girshick</span></span><br><span class="line"><span class="comment"># --------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="string">"""Train a Faster R-CNN network using alternating optimization.</span></span><br><span class="line"><span class="string">This tool implements the alternating optimization algorithm described in our</span></span><br><span class="line"><span class="string">NIPS 2015 paper ("Faster R-CNN: Towards Real-time Object Detection with Region</span></span><br><span class="line"><span class="string">Proposal Networks." Shaoqing Ren, Kaiming He, Ross Girshick, Jian Sun.)</span></span><br><span class="line"><span class="string">"""</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> _init_paths</span><br><span class="line"><span class="keyword">from</span> fast_rcnn.train <span class="keyword">import</span> get_training_roidb, train_net</span><br><span class="line"><span class="keyword">from</span> fast_rcnn.config <span class="keyword">import</span> cfg, cfg_from_file, cfg_from_list, get_output_dir</span><br><span class="line"><span class="keyword">from</span> datasets.factory <span class="keyword">import</span> get_imdb</span><br><span class="line"><span class="keyword">from</span> rpn.generate <span class="keyword">import</span> imdb_proposals</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"><span class="keyword">import</span> pprint</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> sys, os</span><br><span class="line"><span class="keyword">import</span> multiprocessing <span class="keyword">as</span> mp</span><br><span class="line"><span class="keyword">import</span> cPickle</span><br><span class="line"><span class="keyword">import</span> shutil</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parse_args</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="string">"""</span></span><br><span class="line"><span class="string">    Parse input arguments</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line">    parser = argparse.ArgumentParser(description=<span class="string">'Train a Faster R-CNN network'</span>)</span><br><span class="line">    parser.add_argument(<span class="string">'--gpu'</span>, dest=<span class="string">'gpu_id'</span>,</span><br><span class="line">                        help=<span class="string">'GPU device id to use [0]'</span>,</span><br><span class="line">                        default=<span class="number">0</span>, type=int)</span><br><span class="line">    parser.add_argument(<span class="string">'--net_name'</span>, dest=<span class="string">'net_name'</span>,</span><br><span class="line">                        help=<span class="string">'network name (e.g., "ZF")'</span>,</span><br><span class="line">                        default=<span class="literal">None</span>, type=str)</span><br><span class="line">    parser.add_argument(<span class="string">'--weights'</span>, dest=<span class="string">'pretrained_model'</span>,</span><br><span class="line">                        help=<span class="string">'initialize with pretrained model weights'</span>,</span><br><span class="line">                        default=<span class="literal">None</span>, type=str)</span><br><span class="line">    parser.add_argument(<span class="string">'--cfg'</span>, dest=<span class="string">'cfg_file'</span>,</span><br><span class="line">                        help=<span class="string">'optional config file'</span>,</span><br><span class="line">                        default=<span class="literal">None</span>, type=str)</span><br><span class="line">    parser.add_argument(<span class="string">'--imdb'</span>, dest=<span class="string">'imdb_name'</span>,</span><br><span class="line">                        help=<span class="string">'dataset to train on'</span>,</span><br><span class="line">                        default=<span class="string">'voc_2007_trainval'</span>, type=str)</span><br><span class="line">    parser.add_argument(<span class="string">'--set'</span>, dest=<span class="string">'set_cfgs'</span>,</span><br><span class="line">                        help=<span class="string">'set config keys'</span>, default=<span class="literal">None</span>,</span><br><span class="line">                        nargs=argparse.REMAINDER)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> len(sys.argv) == <span class="number">1</span>:</span><br><span class="line">        parser.print_help()</span><br><span class="line">        sys.exit(<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">    args = parser.parse_args()</span><br><span class="line">    <span class="keyword">return</span> args</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_roidb</span><span class="params">(imdb_name, rpn_file=None)</span>:</span></span><br><span class="line">    imdb = get_imdb(imdb_name)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Loaded dataset `&#123;:s&#125;` for training'</span>.format(imdb.name)</span><br><span class="line">    imdb.set_proposal_method(cfg.TRAIN.PROPOSAL_METHOD)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Set proposal method: &#123;:s&#125;'</span>.format(cfg.TRAIN.PROPOSAL_METHOD)</span><br><span class="line">    <span class="keyword">if</span> rpn_file <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        imdb.config[<span class="string">'rpn_file'</span>] = rpn_file</span><br><span class="line">    roidb = get_training_roidb(imdb)</span><br><span class="line">    <span class="keyword">return</span> roidb, imdb</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_solvers</span><span class="params">(net_name)</span>:</span></span><br><span class="line">    <span class="comment"># Faster R-CNN Alternating Optimization</span></span><br><span class="line">    n = <span class="string">'faster_rcnn_alt_opt'</span></span><br><span class="line">    <span class="comment"># Solver for each training stage</span></span><br><span class="line">    solvers = [[net_name, n, <span class="string">'stage1_rpn_solver60k80k.pt'</span>],</span><br><span class="line">               [net_name, n, <span class="string">'stage1_fast_rcnn_solver30k40k.pt'</span>],</span><br><span class="line">               [net_name, n, <span class="string">'stage2_rpn_solver60k80k.pt'</span>],</span><br><span class="line">               [net_name, n, <span class="string">'stage2_fast_rcnn_solver30k40k.pt'</span>]]</span><br><span class="line">    solvers = [os.path.join(cfg.MODELS_DIR, *s) <span class="keyword">for</span> s <span class="keyword">in</span> solvers]</span><br><span class="line">    <span class="comment"># Iterations for each training stage</span></span><br><span class="line">    max_iters = [<span class="number">80000</span>, <span class="number">40000</span>, <span class="number">80000</span>, <span class="number">40000</span>]</span><br><span class="line">    <span class="comment"># max_iters = [100, 100, 100, 100]</span></span><br><span class="line">    <span class="comment"># Test prototxt for the RPN</span></span><br><span class="line">    rpn_test_prototxt = os.path.join(</span><br><span class="line">        cfg.MODELS_DIR, net_name, n, <span class="string">'rpn_test.pt'</span>)</span><br><span class="line">    <span class="keyword">return</span> solvers, max_iters, rpn_test_prototxt</span><br><span class="line"></span><br><span class="line"><span class="comment"># ------------------------------------------------------------------------------</span></span><br><span class="line"><span class="comment"># Pycaffe doesn't reliably free GPU memory when instantiated nets are discarded</span></span><br><span class="line"><span class="comment"># (e.g. "del net" in Python code). To work around this issue, each training</span></span><br><span class="line"><span class="comment"># stage is executed in a separate process using multiprocessing.Process.</span></span><br><span class="line"><span class="comment"># ------------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">_init_caffe</span><span class="params">(cfg)</span>:</span></span><br><span class="line">    <span class="string">"""Initialize pycaffe in a training process.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">import</span> caffe</span><br><span class="line">    <span class="comment"># fix the random seeds (numpy and caffe) for reproducibility</span></span><br><span class="line">    np.random.seed(cfg.RNG_SEED)</span><br><span class="line">    caffe.set_random_seed(cfg.RNG_SEED)</span><br><span class="line">    <span class="comment"># set up caffe</span></span><br><span class="line">    caffe.set_mode_gpu()</span><br><span class="line">    caffe.set_device(cfg.GPU_ID)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_rpn</span><span class="params">(queue=None, imdb_name=None, init_model=None, solver=None,</span></span></span><br><span class="line"><span class="function"><span class="params">              max_iters=None, cfg=None)</span>:</span></span><br><span class="line">    <span class="string">"""Train a Region Proposal Network in a separate training process.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># Not using any proposals, just ground-truth boxes</span></span><br><span class="line">    cfg.TRAIN.HAS_RPN = <span class="literal">True</span></span><br><span class="line">    cfg.TRAIN.BBOX_REG = <span class="literal">False</span>  <span class="comment"># applies only to Fast R-CNN bbox regression</span></span><br><span class="line">    cfg.TRAIN.PROPOSAL_METHOD = <span class="string">'gt'</span></span><br><span class="line">    cfg.TRAIN.IMS_PER_BATCH = <span class="number">1</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Init model: &#123;&#125;'</span>.format(init_model)</span><br><span class="line">    print(<span class="string">'Using config:'</span>)</span><br><span class="line">    pprint.pprint(cfg)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">import</span> caffe</span><br><span class="line">    _init_caffe(cfg)</span><br><span class="line"></span><br><span class="line">    roidb, imdb = get_roidb(imdb_name)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'roidb len: &#123;&#125;'</span>.format(len(roidb))</span><br><span class="line">    output_dir = get_output_dir(imdb)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Output will be saved to `&#123;:s&#125;`'</span>.format(output_dir)</span><br><span class="line"></span><br><span class="line">    model_paths = train_net(solver, roidb, output_dir,</span><br><span class="line">                            pretrained_model=init_model,</span><br><span class="line">                            max_iters=max_iters)</span><br><span class="line">    <span class="comment"># Cleanup all but the final model</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> model_paths[:<span class="number">-1</span>]:</span><br><span class="line">        os.remove(i)</span><br><span class="line">    rpn_model_path = model_paths[<span class="number">-1</span>]</span><br><span class="line">    <span class="comment"># Send final model path through the multiprocessing queue</span></span><br><span class="line">    queue.put(&#123;<span class="string">'model_path'</span>: rpn_model_path&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">rpn_generate</span><span class="params">(queue=None, imdb_name=None, rpn_model_path=None, cfg=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                 rpn_test_prototxt=None)</span>:</span></span><br><span class="line">    <span class="string">"""Use a trained RPN to generate proposals.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    cfg.TEST.RPN_PRE_NMS_TOP_N = <span class="number">-1</span>     <span class="comment"># no pre NMS filtering</span></span><br><span class="line">    cfg.TEST.RPN_POST_NMS_TOP_N = <span class="number">2000</span>  <span class="comment"># limit top boxes after NMS</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'RPN model: &#123;&#125;'</span>.format(rpn_model_path)</span><br><span class="line">    print(<span class="string">'Using config:'</span>)</span><br><span class="line">    pprint.pprint(cfg)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">import</span> caffe</span><br><span class="line">    _init_caffe(cfg)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># <span class="doctag">NOTE:</span> the matlab implementation computes proposals on flipped images, too.</span></span><br><span class="line">    <span class="comment"># We compute them on the image once and then flip the already computed</span></span><br><span class="line">    <span class="comment"># proposals. This might cause a minor loss in mAP (less proposal jittering).</span></span><br><span class="line">    imdb = get_imdb(imdb_name)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Loaded dataset `&#123;:s&#125;` for proposal generation'</span>.format(imdb.name)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Load RPN and configure output directory</span></span><br><span class="line">    rpn_net = caffe.Net(rpn_test_prototxt, rpn_model_path, caffe.TEST)</span><br><span class="line">    output_dir = get_output_dir(imdb)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Output will be saved to `&#123;:s&#125;`'</span>.format(output_dir)</span><br><span class="line">    <span class="comment"># Generate proposals on the imdb</span></span><br><span class="line">    rpn_proposals = imdb_proposals(rpn_net, imdb)</span><br><span class="line">    <span class="comment"># Write proposals to disk and send the proposal file path through the</span></span><br><span class="line">    <span class="comment"># multiprocessing queue</span></span><br><span class="line">    rpn_net_name = os.path.splitext(os.path.basename(rpn_model_path))[<span class="number">0</span>]</span><br><span class="line">    rpn_proposals_path = os.path.join(</span><br><span class="line">        output_dir, rpn_net_name + <span class="string">'_proposals.pkl'</span>)</span><br><span class="line">    <span class="keyword">with</span> open(rpn_proposals_path, <span class="string">'wb'</span>) <span class="keyword">as</span> f:</span><br><span class="line">        cPickle.dump(rpn_proposals, f, cPickle.HIGHEST_PROTOCOL)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Wrote RPN proposals to &#123;&#125;'</span>.format(rpn_proposals_path)</span><br><span class="line">    queue.put(&#123;<span class="string">'proposal_path'</span>: rpn_proposals_path&#125;)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_fast_rcnn</span><span class="params">(queue=None, imdb_name=None, init_model=None, solver=None,</span></span></span><br><span class="line"><span class="function"><span class="params">                    max_iters=None, cfg=None, rpn_file=None)</span>:</span></span><br><span class="line">    <span class="string">"""Train a Fast R-CNN using proposals generated by an RPN.</span></span><br><span class="line"><span class="string">    """</span></span><br><span class="line"></span><br><span class="line">    cfg.TRAIN.HAS_RPN = <span class="literal">False</span>           <span class="comment"># not generating prosals on-the-fly</span></span><br><span class="line">    cfg.TRAIN.PROPOSAL_METHOD = <span class="string">'rpn'</span>   <span class="comment"># use pre-computed RPN proposals instead</span></span><br><span class="line">    cfg.TRAIN.IMS_PER_BATCH = <span class="number">2</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Init model: &#123;&#125;'</span>.format(init_model)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'RPN proposals: &#123;&#125;'</span>.format(rpn_file)</span><br><span class="line">    print(<span class="string">'Using config:'</span>)</span><br><span class="line">    pprint.pprint(cfg)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">import</span> caffe</span><br><span class="line">    _init_caffe(cfg)</span><br><span class="line"></span><br><span class="line">    roidb, imdb = get_roidb(imdb_name, rpn_file=rpn_file)</span><br><span class="line">    output_dir = get_output_dir(imdb)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Output will be saved to `&#123;:s&#125;`'</span>.format(output_dir)</span><br><span class="line">    <span class="comment"># Train Fast R-CNN</span></span><br><span class="line">    model_paths = train_net(solver, roidb, output_dir,</span><br><span class="line">                            pretrained_model=init_model,</span><br><span class="line">                            max_iters=max_iters)</span><br><span class="line">    <span class="comment"># Cleanup all but the final model</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> model_paths[:<span class="number">-1</span>]:</span><br><span class="line">        os.remove(i)</span><br><span class="line">    fast_rcnn_model_path = model_paths[<span class="number">-1</span>]</span><br><span class="line">    <span class="comment"># Send Fast R-CNN model path over the multiprocessing queue</span></span><br><span class="line">    queue.put(&#123;<span class="string">'model_path'</span>: fast_rcnn_model_path&#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">'__main__'</span>:</span><br><span class="line">    args = parse_args()</span><br><span class="line"></span><br><span class="line">    print(<span class="string">'Called with args:'</span>)</span><br><span class="line">    print(args)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> args.cfg_file <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        cfg_from_file(args.cfg_file)</span><br><span class="line">    <span class="keyword">if</span> args.set_cfgs <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">        cfg_from_list(args.set_cfgs)</span><br><span class="line">    cfg.GPU_ID = args.gpu_id</span><br><span class="line"></span><br><span class="line">    <span class="comment"># --------------------------------------------------------------------------</span></span><br><span class="line">    <span class="comment"># Pycaffe doesn't reliably free GPU memory when instantiated nets are</span></span><br><span class="line">    <span class="comment"># discarded (e.g. "del net" in Python code). To work around this issue, each</span></span><br><span class="line">    <span class="comment"># training stage is executed in a separate process using</span></span><br><span class="line">    <span class="comment"># multiprocessing.Process.</span></span><br><span class="line">    <span class="comment"># --------------------------------------------------------------------------</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># queue for communicated results between processes</span></span><br><span class="line">    mp_queue = mp.Queue()</span><br><span class="line">    <span class="comment"># solves, iters, etc. for each training stage</span></span><br><span class="line">    solvers, max_iters, rpn_test_prototxt = get_solvers(args.net_name)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Stage 1 RPN, init from ImageNet model'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line"></span><br><span class="line">    cfg.TRAIN.SNAPSHOT_INFIX = <span class="string">'stage1'</span></span><br><span class="line">    mp_kwargs = dict(</span><br><span class="line">            queue=mp_queue,</span><br><span class="line">            imdb_name=args.imdb_name,</span><br><span class="line">            init_model=args.pretrained_model,</span><br><span class="line">            solver=solvers[<span class="number">0</span>],</span><br><span class="line">            max_iters=max_iters[<span class="number">0</span>],</span><br><span class="line">            cfg=cfg)</span><br><span class="line">    p = mp.Process(target=train_rpn, kwargs=mp_kwargs)</span><br><span class="line">    p.start()</span><br><span class="line">    rpn_stage1_out = mp_queue.get()</span><br><span class="line">    p.join()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Stage 1 RPN, generate proposals'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line"></span><br><span class="line">    mp_kwargs = dict(</span><br><span class="line">            queue=mp_queue,</span><br><span class="line">            imdb_name=args.imdb_name,</span><br><span class="line">            rpn_model_path=str(rpn_stage1_out[<span class="string">'model_path'</span>]),</span><br><span class="line">            cfg=cfg,</span><br><span class="line">            rpn_test_prototxt=rpn_test_prototxt)</span><br><span class="line">    p = mp.Process(target=rpn_generate, kwargs=mp_kwargs)</span><br><span class="line">    p.start()</span><br><span class="line">    rpn_stage1_out[<span class="string">'proposal_path'</span>] = mp_queue.get()[<span class="string">'proposal_path'</span>]</span><br><span class="line">    p.join()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Stage 1 Fast R-CNN using RPN proposals, init from ImageNet model'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line"></span><br><span class="line">    cfg.TRAIN.SNAPSHOT_INFIX = <span class="string">'stage1'</span></span><br><span class="line">    mp_kwargs = dict(</span><br><span class="line">            queue=mp_queue,</span><br><span class="line">            imdb_name=args.imdb_name,</span><br><span class="line">            init_model=args.pretrained_model,</span><br><span class="line">            solver=solvers[<span class="number">1</span>],</span><br><span class="line">            max_iters=max_iters[<span class="number">1</span>],</span><br><span class="line">            cfg=cfg,</span><br><span class="line">            rpn_file=rpn_stage1_out[<span class="string">'proposal_path'</span>])</span><br><span class="line">    p = mp.Process(target=train_fast_rcnn, kwargs=mp_kwargs)</span><br><span class="line">    p.start()</span><br><span class="line">    fast_rcnn_stage1_out = mp_queue.get()</span><br><span class="line">    p.join()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Stage 2 RPN, init from stage 1 Fast R-CNN model'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line"></span><br><span class="line">    cfg.TRAIN.SNAPSHOT_INFIX = <span class="string">'stage2'</span></span><br><span class="line">    mp_kwargs = dict(</span><br><span class="line">            queue=mp_queue,</span><br><span class="line">            imdb_name=args.imdb_name,</span><br><span class="line">            init_model=str(fast_rcnn_stage1_out[<span class="string">'model_path'</span>]),</span><br><span class="line">            solver=solvers[<span class="number">2</span>],</span><br><span class="line">            max_iters=max_iters[<span class="number">2</span>],</span><br><span class="line">            cfg=cfg)</span><br><span class="line">    p = mp.Process(target=train_rpn, kwargs=mp_kwargs)</span><br><span class="line">    p.start()</span><br><span class="line">    rpn_stage2_out = mp_queue.get()</span><br><span class="line">    p.join()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Stage 2 RPN, generate proposals'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line"></span><br><span class="line">    mp_kwargs = dict(</span><br><span class="line">            queue=mp_queue,</span><br><span class="line">            imdb_name=args.imdb_name,</span><br><span class="line">            rpn_model_path=str(rpn_stage2_out[<span class="string">'model_path'</span>]),</span><br><span class="line">            cfg=cfg,</span><br><span class="line">            rpn_test_prototxt=rpn_test_prototxt)</span><br><span class="line">    p = mp.Process(target=rpn_generate, kwargs=mp_kwargs)</span><br><span class="line">    p.start()</span><br><span class="line">    rpn_stage2_out[<span class="string">'proposal_path'</span>] = mp_queue.get()[<span class="string">'proposal_path'</span>]</span><br><span class="line">    p.join()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Stage 2 Fast R-CNN, init from stage 2 RPN R-CNN model'</span></span><br><span class="line">    <span class="keyword">print</span> <span class="string">'~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'</span></span><br><span class="line"></span><br><span class="line">    cfg.TRAIN.SNAPSHOT_INFIX = <span class="string">'stage2'</span></span><br><span class="line">    mp_kwargs = dict(</span><br><span class="line">            queue=mp_queue,</span><br><span class="line">            imdb_name=args.imdb_name,</span><br><span class="line">            init_model=str(rpn_stage2_out[<span class="string">'model_path'</span>]),</span><br><span class="line">            solver=solvers[<span class="number">3</span>],</span><br><span class="line">            max_iters=max_iters[<span class="number">3</span>],</span><br><span class="line">            cfg=cfg,</span><br><span class="line">            rpn_file=rpn_stage2_out[<span class="string">'proposal_path'</span>])</span><br><span class="line">    p = mp.Process(target=train_fast_rcnn, kwargs=mp_kwargs)</span><br><span class="line">    p.start()</span><br><span class="line">    fast_rcnn_stage2_out = mp_queue.get()</span><br><span class="line">    p.join()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># Create final model (just a copy of the last stage)</span></span><br><span class="line">    final_path = os.path.join(</span><br><span class="line">            os.path.dirname(fast_rcnn_stage2_out[<span class="string">'model_path'</span>]),</span><br><span class="line">            args.net_name + <span class="string">'_faster_rcnn_final.caffemodel'</span>)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'cp &#123;&#125; -&gt; &#123;&#125;'</span>.format(</span><br><span class="line">            fast_rcnn_stage2_out[<span class="string">'model_path'</span>], final_path)</span><br><span class="line">    shutil.copy(fast_rcnn_stage2_out[<span class="string">'model_path'</span>], final_path)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">'Final model: &#123;&#125;'</span>.format(final_path)</span><br></pre></td></tr></table></figure>
+<h3 id="部分参数说明"><a href="#部分参数说明" class="headerlink" title="部分参数说明"></a>部分参数说明</h3><p>train_faster_rcnn_alt_opt.py  的部分参数说明:</p>
+<ul>
+<li>net_name:      {ZF, VGG_CNN_M_1024, VGG16}</li>
+<li>pretrained_model:      data/imagenet_models/${net_name}.v2.caffemodel</li>
+<li>cfg_file:     experiments/cfgs/faster_rcnn_alt_opt.yml</li>
+<li>imdb_name:     “voc_2007_trainval” or “voc_2007_test”</li>
+<li>cfg.TRAIN.HAS_RPN = True  表示用  xml  提供的  propoal</li>
+<li>cfg是配置文件，它的默认值放在上面的cfg_file里，其他还可以自己写配置文件之后与默认配置文件融合。</li>
+</ul>
+<h4 id="net-name"><a href="#net-name" class="headerlink" title="net_name"></a>net_name</h4><p>net_name是用get_solvers()找到网络。还要用到cfg的参数  MODELS_DIR  ，<br>例子是join(MODELS_DIR， net_name， ‘faster_rcnn_alt_opt’,’stage1_rpn_solver60k80k.pt’)</p>
+<h4 id="imdb-name"><a href="#imdb-name" class="headerlink" title="imdb_name"></a>imdb_name</h4><p>imdb_name在factory中被拆成‘2007’（year）和‘trainval’/‘test’（split）到类pascal_voc中产生相应的imdb</p>
+<h4 id="整个step的大致流程"><a href="#整个step的大致流程" class="headerlink" title="整个step的大致流程"></a>整个step的大致流程</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(ImageNet model)-&gt;stage1_rpn_train-&gt;rpn_test</span><br><span class="line">                                      |(proposal_path)</span><br><span class="line">                      (ImageNetmodel)-&gt;stage1_fast_rcnn_train-&gt; stage2_rpn_train-&gt; rpn_test-&gt;stage2_fast_rcnn_train</span><br></pre></td></tr></table></figure>
+<h4 id="数据imdb和roidb"><a href="#数据imdb和roidb" class="headerlink" title="数据imdb和roidb"></a>数据imdb和roidb</h4><p>roidb原本是imdb的一个属性，但imdb其实是为了计算roidb存在的，他所有的其他属性和方法都是为了计算roidb</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/" title="faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py">/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0/" rel="tag"># 深度学习</a>
+          
+            <a href="/tags/faster-rcnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" rel="tag"># faster rcnn源码理解</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/" rel="next" title="faster rcnn源码解读（五）之layer（网络里的input-data）">
+                <i class="fa fa-chevron-left"></i> faster rcnn源码解读（五）之layer（网络里的input-data）
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3%EF%BC%88%E4%BA%8C%EF%BC%89%E4%B9%8BAnchorTargetLayer%EF%BC%88%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84rpn_data%EF%BC%89/" rel="prev" title="faster rcnn源码理解（二）之AnchorTargetLayer（网络中的rpn_data）">
+                faster rcnn源码理解（二）之AnchorTargetLayer（网络中的rpn_data） <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">74</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#调用最初脚本的说明"><span class="nav-number">1.</span> <span class="nav-text">调用最初脚本的说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码"><span class="nav-number">2.</span> <span class="nav-text">源码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部分参数说明"><span class="nav-number">3.</span> <span class="nav-text">部分参数说明</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#net-name"><span class="nav-number">3.1.</span> <span class="nav-text">net_name</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#imdb-name"><span class="nav-number">3.2.</span> <span class="nav-text">imdb_name</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#整个step的大致流程"><span class="nav-number">3.3.</span> <span class="nav-text">整个step的大致流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#数据imdb和roidb"><span class="nav-number">3.4.</span> <span class="nav-text">数据imdb和roidb</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>
