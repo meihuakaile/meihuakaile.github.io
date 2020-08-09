@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="flink," />
+
+
+<meta name="description" content="执行计划env.getExecutionPlan 返回任务的执行计划，结构是json，粘贴到https:&#x2F;&#x2F;flink.apache.org&#x2F;visualizer&#x2F;flink的可视化官网可以看到流程图StreamGraph -&gt; JobGraph -&gt; ExecutionGraph -&gt; 物理执行图StreamGraph, JobGraph 这两个执行图在 client 端生成。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="flink">
+<meta property="og:url" content="http://yoursite.com/2020/05/11/flink/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="执行计划env.getExecutionPlan 返回任务的执行计划，结构是json，粘贴到https:&#x2F;&#x2F;flink.apache.org&#x2F;visualizer&#x2F;flink的可视化官网可以看到流程图StreamGraph -&gt; JobGraph -&gt; ExecutionGraph -&gt; 物理执行图StreamGraph, JobGraph 这两个执行图在 client 端生成。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-05-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-08-09T13:43:19.864Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="flink">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/05/11/flink/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>flink | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/05/11/flink/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">flink</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-05-11T00:00:00+08:00">2020-05-11</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="执行计划"><a href="#执行计划" class="headerlink" title="执行计划"></a>执行计划</h3><p><code>env.getExecutionPlan</code> 返回任务的执行计划，结构是json，粘贴到<code>https://flink.apache.org/visualizer/</code>flink的可视化官网可以看到流程图<br>StreamGraph -&gt; JobGraph -&gt; ExecutionGraph -&gt; 物理执行图<br>StreamGraph, JobGraph 这两个执行图在 client 端生成。ExecutionGraph 在 JobManager 中生成。Client 向 JobManager 提交 JobGraph 后， JobManager 就会根据 JobGraph 来创建对应的 ExecutionGraph,并以此来调度任务。<br>StreamingJobGraphGenerator就是讲StreamGraph转换为JobGraph<br>StreamGraph</p>
+<p>StreamGraph：是根据用户通过 Stream API 编写的代码生成的最初的图。用来表示程序的拓扑结构。<br>JobGraph：StreamGraph经过优化后生成了 JobGraph，提交给 JobManager 的数据结构。主要的优化为，将多个符合条件的节点 chain 在一起作为一个节点，这样可以减少数据在节点之间流动所需要的序列化/反序列化/传输消耗。<br>ExecutionGraph：JobManager 根据 JobGraph 生成ExecutionGraph。ExecutionGraph是JobGraph的并行化版本，是调度层最核心的数据结构。<br>物理执行图：JobManager 根据 ExecutionGraph 对 Job 进行调度后，在各个TaskManager 上部署 Task 后形成的“图”，并不是一个具体的数据结构。</p>
+<p><a href="https://blog.jrwang.me/2019/flink-source-code-executiongraph/" target="_blank" rel="noopener">https://blog.jrwang.me/2019/flink-source-code-executiongraph/</a></p>
+<h3 id="key的指定方法"><a href="#key的指定方法" class="headerlink" title="key的指定方法"></a>key的指定方法</h3><p>1、根据字段位置。主要对tuple类型，pojo类会出错；不能指定嵌套里面的位置<br>2、根据字段名称，主要是pojo类。但是对sum这种聚合函数都可以指定字段位置和名称，如果是位置则是从0开始<br>3、自定义keyselector<br>不能作为key的：<br>1、POJO类型但不覆盖hashCode（）方法并依赖于Object.hashCode（）实现<br>2、任何类型的数组<br>用户代码的process function中改变了keyby的key的值会导致窗口状态无法清理<br>最后总结就是在keyby的时候key一定要是不变量，不然有可能导致状态无法清理。还有就是在分布式系统中，大量使用不变量是规避风险的最佳途径之一。</p>
+<p><a href="https://blog.csdn.net/weixin_42412645/article/details/92196433?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase" target="_blank" rel="noopener">https://blog.csdn.net/weixin_42412645/article/details/92196433?utm_medium=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase</a></p>
+<h3 id="operates"><a href="#operates" class="headerlink" title="operates"></a>operates</h3><h4 id="KeyedStream"><a href="#KeyedStream" class="headerlink" title="KeyedStream"></a>KeyedStream</h4><p>KeyedStream用来表示根据指定的key进行分组的数据流。一个KeyedStream可以通过调用DataStream.keyBy()来获得。<br>而在KeyedStream上进行任何transformation都将转变回DataStream。<br>在实现中，KeyedStream是把key的信息写入到了transformation中。每条记录只能访问所属key的状态，其上的聚合函数可以方便地操作和保存对应key的状态。</p>
+<h4 id="Window"><a href="#Window" class="headerlink" title="Window"></a>Window</h4><p>用来对一个无限的流设置一个有限的集合，在有界的数据集上进行操作的一种机制。<br>window 又可以分为基于时间（Time-based）的 window 以及基于数量（Count-based）的 window。</p>
+<h5 id="WindowedStream"><a href="#WindowedStream" class="headerlink" title="WindowedStream"></a>WindowedStream</h5><p>WindowedStream代表了根据key分组，并且基于WindowAssigner切分窗口的数据流。所以WindowedStream都是从KeyedStream衍生而来的。而在WindowedStream上进行任何transformation也都将转变回DataStream。<br>=======》即，一般窗口必须在keyby之后；</p>
+<h5 id="AllWindowedStream"><a href="#AllWindowedStream" class="headerlink" title="AllWindowedStream"></a>AllWindowedStream</h5><p>但是还有AllWindowedStream，不需要是keyBy之后，可在普通流上操作<br>警告：在许多情况下，这是<code>非并行转换</code>。所有记录将收集在windowAll 算子的一个任务中。<br>对所有流事件进行分组。</p>
+<h5 id="timeWindow"><a href="#timeWindow" class="headerlink" title="timeWindow"></a>timeWindow</h5><p>flink中keyedStream中还有一个timeWindow方法，这个方法是在第一种window的基础上做的封装<br>看源码，timeWindow一个参数是滚动，两个参数是滑动</p>
+<h5 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h5><p>Tumbling Window的窗口划分是和窗口大小对齐的</p>
+<p><a href="http://wuchong.me/blog/2016/05/20/flink-internals-streams-and-operations-on-streams/（讲的很好！！！！）" target="_blank" rel="noopener">http://wuchong.me/blog/2016/05/20/flink-internals-streams-and-operations-on-streams/（讲的很好！！！！）</a><br><a href="https://www.jianshu.com/p/68463ff911d9" target="_blank" rel="noopener">https://www.jianshu.com/p/68463ff911d9</a></p>
+<h4 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h4><p>reduce需要针对分组或者一个window(窗口)来执行，也就是分别对应于keyBy、window/timeWindow 处理后的数据，<br>根据ReduceFunction将元素与上一个reduce后的结果合并，产出合并之后的结果。<br>跟在窗口后面，输出为窗口计算的总值；跟在keyBy之后则是每条数据都输出。</p>
+<p>链接：<a href="https://www.jianshu.com/p/0cdf1112d995" target="_blank" rel="noopener">https://www.jianshu.com/p/0cdf1112d995</a></p>
+<h4 id="fold"><a href="#fold" class="headerlink" title="fold"></a>fold</h4><p>跟reduce一样，针对分组或者一个window(窗口)来执行，也就是分别对应于keyBy、window/timeWindow 处理后的数据，单其实1.8的sdk已经指出在以后为去掉这个方法<br>有一个初始值，计算初始值+new_value,看下面官网例子：<br>A fold function that, when applied on the sequence (1,2,3,4,5), emits the sequence “start-1”, “start-1-2”, “start-1-2-3”, …</p>
+<p><code>val result: DataStream[String] = keyedStream.fold(&quot;start&quot;)((str, i) =&gt; { str + &quot;-&quot; + i })</code></p>
+<h4 id="union-amp-connect-amp-split"><a href="#union-amp-connect-amp-split" class="headerlink" title="union &amp; connect &amp; split"></a>union &amp; connect &amp; split</h4><p>union可以将多个流合并到一个流中，以便对合并的流进行统一处理。是对多个流的水平拼接。需要数据类型一样。<br>经验例子：多个source，且kafka的分区不同要分别setParallelism，可以在设置分区后使用union到一起处理</p>
+<p>connect将两个流纵向地连接起来，不需要数据类型一样。</p>
+<p>split把一个流拆成多个流<br>例子参考：<a href="https://blog.csdn.net/chybin500/article/details/87260869" target="_blank" rel="noopener">https://blog.csdn.net/chybin500/article/details/87260869</a> （java）<br>官网：<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.9/dev/stream/operators/" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.9/dev/stream/operators/</a> （scala）</p>
+<h4 id="SideOutput"><a href="#SideOutput" class="headerlink" title="SideOutput"></a>SideOutput</h4><p>一个流变多个流</p>
+<h3 id="三种time类型"><a href="#三种time类型" class="headerlink" title="三种time类型"></a>三种time类型</h3><p>Processing Time、Event Time、Ingestion Time<br><code>Event Time</code> 时间发生时时间，自定义.必须指定如何生成 Event Time 水印，这是表示 Event Time 进度的机制；需要等待一些时间，确保一些无序事件都被处理掉，也就导致了会出现延迟。<br><code>Processing Time</code> 代码执行时机器的时间；最好的性能和最低的延迟，分布式和异步的环境下不能提供确定性<br><code>Ingestion Time</code> 是事件进入 Flink 的时间。 在源操作处，每个事件将源的当前时间作为时间戳，并且基于时间的操作（如时间窗口）会利用这个时间戳。具有自动分配时间戳和自动生成水印功能。</p>
+<h3 id="kafka默认分区FlinkFixedPartitioner"><a href="#kafka默认分区FlinkFixedPartitioner" class="headerlink" title="kafka默认分区FlinkFixedPartitioner"></a>kafka默认分区FlinkFixedPartitioner</h3><p>没有自定义分区时，使用的默认分区方式 <code>FlinkFixedPartitioner</code><br>这个里面最重要的实现<code>parallelInstanceId % partitions.length</code><br>parallelInstanceId表示当前task的index，partitions表示kafka的topic的分区; 该逻辑求得的分区就是根据当前task index 对partition取余得到的.<br>eg:<br>flink并行度为3（F0，F1，F2），partition数量为2（P0，P1），则F0-&gt;P0,F1-&gt;P1,F2-&gt;P0<br>flink并行度为2（F0，F1），partition数量为3（P0，P1，P2），则F0-&gt;P0,F1-&gt;P1<br>！！！重要问题：<br>1、当 topic 的 partition 扩容时，则需要重启作业，以便发现新的 partition。<br>2、当<code>parallelInstanceId &lt; partitions.length</code> 会导致部分分区完全没有数据;如假设sinkParallelism是4，topic的分区数是6，取余永远不会得到4、5，所以就导致分区4、5一直没有数据写入。</p>
+<p>参考：<a href="https://www.jianshu.com/p/222afef21c52" target="_blank" rel="noopener">https://www.jianshu.com/p/222afef21c52</a><br><a href="https://blog.csdn.net/weidaoyouwen/article/details/85233032" target="_blank" rel="noopener">https://blog.csdn.net/weidaoyouwen/article/details/85233032</a></p>
+<h3 id="Flink消费Kafka数据时指定offset的五种方式"><a href="#Flink消费Kafka数据时指定offset的五种方式" class="headerlink" title="Flink消费Kafka数据时指定offset的五种方式"></a>Flink消费Kafka数据时指定offset的五种方式</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">consumer010.setStartFromEarliest();   &#x2F;&#x2F; 设置 offset 为最旧</span><br><span class="line">consumer010.setStartFromGroupOffsets();  &#x2F;&#x2F; 设置 offset 为 group offset</span><br><span class="line">consumer010.setStartFromLatest();  &#x2F;&#x2F; 设置 offset 为最新</span><br><span class="line">consumer010.setStartFromSpecificOffsets(specificStartupOffsets);  &#x2F;&#x2F; 指定 offset</span><br></pre></td></tr></table></figure>
+<p>1、setStartFromGroupOffsets，如果 group offset 不存在，或者 group offset 无效的话，将依据 “auto.offset.reset” 该属性来决定初始 offset。auto.offset.reset 默认为 largest。<br>2、setStartFromSpecificOffsets，如果指定 offset 无效时，则将该 topic partition 的 offset 将设置为 group offset。<br>3、`如果该作业是从 checkpoint 或 savepoint 中恢复，则所有设置初始 offset 的函数均将失效，初始 offset 将从 checkpoint 中恢复。``</p>
+<p>链接：<a href="https://www.jianshu.com/p/f9d447a3c48f" target="_blank" rel="noopener">https://www.jianshu.com/p/f9d447a3c48f</a><br><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/connectors/kafka.html" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.10/dev/connectors/kafka.html</a></p>
+<h3 id="Kafka-Consumer-提交-Offset-的行为配置"><a href="#Kafka-Consumer-提交-Offset-的行为配置" class="headerlink" title="Kafka Consumer 提交 Offset 的行为配置"></a>Kafka Consumer 提交 Offset 的行为配置</h3><p>Flink Kafka Consumer 允许配置将 offset 提交回 Kafka broker（或 0.8 版本的 Zookeeper）的行为,但是请注意：<code>Flink Kafka Consumer 不依赖于提交的 offset
+来实现容错保证。提交的 offset 只是一种方法，只是Flink将消费的状态暴露在外以便于监控</code>。</p>
+<p>配置 offset 提交行为的方法是否相同，取决于是否为 job 启用了 checkpointing。</p>
+<p>禁用 Checkpointing： 如果禁用了 checkpointing，则 Flink Kafka Consumer 依赖于内部使用的 Kafka client 自动定期 offset 提交功能。<br>因此，要禁用或启用 offset 的提交，只需将 enable.auto.commit（或 Kafka 0.8 的 auto.commit.enable）或者 auto.commit.interval.ms 的Key 值设置为提供的 Properties 配置中的适当值。</p>
+<p>启用 Checkpointing： 如果启用了 checkpointing，那么当 checkpointing 完成时，Flink Kafka Consumer 将提交的 offset 存储在 checkpoint 状态中。<br>这确保 Kafka broker 中提交的 offset 与 checkpoint 状态中的 offset 一致。 用户可以通过调用 consumer 上的 setCommitOffsetsOnCheckpoints(boolean) 方法来禁用或启用 offset 的提交(默认情况下，这个值是 true )。 注意，在这个场景中，Properties 中的自动定期 offset 提交设置会被完全忽略。</p>
+<h3 id="Kafka-Consumer-lifeCycle"><a href="#Kafka-Consumer-lifeCycle" class="headerlink" title="Kafka Consumer lifeCycle"></a>Kafka Consumer lifeCycle</h3><p>修改cousemerGroup，checkpoint/savepoint中的offset仍有效<br>修改topic则会无效<br><code>FlinkKafkaConsumerBase.initializeState</code>从最后一个成功的checkpoint中获取各个partition的offset到restoredState中。</p>
+<h3 id="savepoint-amp-uid"><a href="#savepoint-amp-uid" class="headerlink" title="savepoint &amp; uid"></a>savepoint &amp; uid</h3><p>operator IDs 存在savepoint中。每个operate有默认的ID，通过operate在整个应用的operator topology的位置获得。因此一定要在代码中指定uid，否则代码升级中可能会丢失状态。<br>如果要使用savepoint功能，一定要给有状态的operate使用uid。但是一般我们不清楚哪些operate会有状态，因为最好是给所有operate都使用uid。<br>savepoint的功能就是给代码升级使用，uid给特定的operate起唯一名，保证在这个operate修改移动等情况下状态都不会丢！！！<br>flink对代码优化生成执行图，对于合并到一个节点上的多个operate，如果有改动且没有指定uid，savepoint会把状态清零。<br>可以开启<code>ExecutionConfig#disableAutoGeneratedUIDs</code> 当任务中没有指定uid时，提交失败。<br><code>任务重启成功，并不代表复用的状态是正确的（平台开启了--allowNonRestoredState参数）</code><br><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/zh/ops/state/savepoints.html#%E5%A6%82%E6%9E%9C%E6%88%91%E5%9C%A8%E4%BD%9C%E4%B8%9A%E4%B8%AD%E9%87%8D%E6%96%B0%E6%8E%92%E5%BA%8F%E6%9C%89%E7%8A%B6%E6%80%81%E7%AE%97%E5%AD%90%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.10/zh/ops/state/savepoints.html#%E5%A6%82%E6%9E%9C%E6%88%91%E5%9C%A8%E4%BD%9C%E4%B8%9A%E4%B8%AD%E9%87%8D%E6%96%B0%E6%8E%92%E5%BA%8F%E6%9C%89%E7%8A%B6%E6%80%81%E7%AE%97%E5%AD%90%E4%BC%9A%E5%8F%91%E7%94%9F%E4%BB%80%E4%B9%88</a><br><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/ops/upgrading.html" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.10/ops/upgrading.html</a> （代码升级时的注意事项）</p>
+<h3 id="setMaxParallelism"><a href="#setMaxParallelism" class="headerlink" title="setMaxParallelism"></a>setMaxParallelism</h3><p>最大并行度默认值粗略地使用 operatorParallelism * 1.5 ，下限 128，上限 32768 。<br>一旦设置了最大并发度（无论是手动设置，还是默认设置），之后就无法再对该值做更新。想要改变一个作业的最大并发度，就只能将作业从全新的状态重新开始执行。目前还无法在更改最大并发度后，从上一个 checkpoint 或 savepoint 恢复。<br>最大并发度不能设置过大，一个很高的最大并发度会导致 Flink 需要维护大量的元数据（用于扩缩容），这可能会增加 Flink 应用程序的整体状态大小。<br>key-groups (which are the internal implementation mechanism for rescalable state)是可伸缩状态的内部实现机制，通过MaxParallelism计算.<br>最大并行度可以设置在整个作业上，也可以设置在单个operate上。<br>设置整个作业最大并行度：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StreamExecutionEnvironment env &#x3D; StreamExecutionEnvironment.getExecutionEnvironment();</span><br><span class="line">env.getConfig().setMaxParallelism(4);</span><br></pre></td></tr></table></figure>
+<p><a href="http://wuchong.me/blog/2018/12/03/flink-tips-4-steps-flink-application-production-ready/" target="_blank" rel="noopener">http://wuchong.me/blog/2018/12/03/flink-tips-4-steps-flink-application-production-ready/</a><br><a href="https://ci.apache.org/projects/flink/flink-docs-stable/dev/parallel.html#setting-the-maximum-parallelism" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-stable/dev/parallel.html#setting-the-maximum-parallelism</a> （Parallelism）</p>
+<h3 id="重启策略机制"><a href="#重启策略机制" class="headerlink" title="重启策略机制"></a>重启策略机制</h3><p>常用的重启策略：固定间隔 (Fixed delay)、失败率 (Failure rate)、无重启 (No restart)<br>如果没有启用 checkpointing，则使用无重启 (no restart) 策略。<br>如果启用了 checkpointing，但没有配置重启策略，则使用固定间隔 (fixed-delay) 策略</p>
+<p>配置方法：<br>1、在flink平台flink-conf.yaml中配置<br>2、在单个任务flink任务代码中配置，会覆盖flink平台配置<br>具体代码使用看下面链接</p>
+<p><a href="https://juejin.im/post/6844903721671852046" target="_blank" rel="noopener">https://juejin.im/post/6844903721671852046</a></p>
+<h3 id="State"><a href="#State" class="headerlink" title="State"></a>State</h3><p>State状态是指一个Flink Job中的task中的每一个operator的状态，state可以存在本地系统（flink的堆内存或者堆外内存；堆内存指jvm掌管的内存，堆外内存指直接的内存）或者rocksdb中，存储计算的中间结果，提供给后续的算子使用;</p>
+<p>state管理器有三种：1、基于内存  2、基于hdfs   3、基于rocksdb<br>第三种任务的状态数据首先写入rocksdb，然后周期性异步写入文件系统；是数据的冷热分离，正在计算的数据在rocksdb，其他数据存入hdfs.</p>
+<p>State状态的作用是合操作，机器学习迭代训练模型。</p>
+<p>State种类：主要分为Operator State以及KeyedState，在Flink 1.5之后，又推出了BroadCast State<br>KeyedState（类似于定义一个全局map）可以设置ttl，Operator State（map、filter等）貌似不行。<br>TTLs目前仅支持processing time；任意类型的keyed state都可以制定有效期。如果配置了TTL，并且状态值已经过期，那么将尽最大努力清理存储值；具体的ttl可以看本文ttl章节。</p>
+<p>Operator State是指在一个job中的一个task中的每一个operator对应着一个state，比如在一个job中，涉及到map，filter，sink等操作，那么在这些operator中，每一个可以对应着一个state（一个并行度），如果是多个并行度，那么每一个并行度都对应着一个state。对于Operator State主要有ListState可以进行使用。</p>
+<p>keystate 只能用在keystream流中；liststate 是所有并行度（subtask）平均分，所以每个子任务拿到的都只是一部分<br>List State中 ，每一个并行度对应着一个state，KeyState是指一个key对应着一个state<br><a href="https://blog.csdn.net/qq_37142346/article/details/90667283" target="_blank" rel="noopener">https://blog.csdn.net/qq_37142346/article/details/90667283</a></p>
+<h3 id="state-ttl"><a href="#state-ttl" class="headerlink" title="state ttl"></a>state ttl</h3><p>state过期的实现方式是带了时间戳。时间戳可以指定是在读/写/更新时reset。<br>ttl是懒策略模式，因此可能读到未过期数据；可以通过设置指定是否返回已经过期的数据。<br>目前，过期值只有在显式读取时才会被删除。这意味着默认情况下，如果未读取过期状态就不会删除它，这可能导致状态不断增长。</p>
+<p>1、checkpoint可以指定是否增量；如果是全量，通过设置会在快照时ttl<code>StateTtlConfig.newBuilder(Time.seconds(1)).cleanupFullSnapshot.build</code><br>2、Incremental cleanup in Heap state backends（JobManager内存，适用于FSStateBackend and MemoryStateBackend，看下面链接）<br>3、1.8开始增量rocksdb checkpoint提供后台background清理，此策略是一个压缩过滤；rocksdb本身会阶段性的异步执行状态合并和压缩，在这个过程中检验时间戳过滤；设置<code>state.backend.rocksdb.ttl.compaction.filter.enabled</code> 或者<code>RocksDBStateBackend::enableTtlCompactionFilter</code>(看源码注释，默认是开启状态) &amp;&amp; <code>StateTtlConfig .newBuilder(Time.days(7)).cleanupInRocksdbCompactFilter(10000).build();</code>  在每处理10000条状态记录之后，更新检测过期的时间戳。这个参数要小心设定，更新太频繁会降低compaction的性能，更新过慢会使得compaction不及时，状态空间膨胀。<br><code>需要重点注意的是，这个方法会减慢rocksdb的压缩</code><br><a href="https://flink.apache.org/2019/05/19/state-ttl.html" target="_blank" rel="noopener">https://flink.apache.org/2019/05/19/state-ttl.html</a></p>
+<h3 id="去重方案"><a href="#去重方案" class="headerlink" title="去重方案"></a>去重方案</h3><p>1、布隆过滤器<br>2、rocksdb状态，注意使用cleanupInRocksdbCompactFilter，否则状态会越来越大（原因看上节ttl，未读取时不会主动过期）<br>3、外部kv存储<br><a href="https://www.jianshu.com/p/f6042288a6e3" target="_blank" rel="noopener">https://www.jianshu.com/p/f6042288a6e3</a></p>
+<h3 id="Checkpoint"><a href="#Checkpoint" class="headerlink" title="Checkpoint"></a>Checkpoint</h3><p>Checkpoint是指在某个特定的时刻下，对整个job一个全局的快照，当我们遇到故障或者重启的时候可以从备份中进行恢复。<br>Checkpoint参数介绍：<a href="https://www.jianshu.com/p/7ec404b020c4" target="_blank" rel="noopener">https://www.jianshu.com/p/7ec404b020c4</a><br>SHARED 目录保存了可能被多个 checkpoint 引用的文件，<br>TASKOWNED 保存了不会被 JobManager 删除的文件，<br>EXCLUSIVE 则保存那些仅被单个 checkpoint 引用的文件。</p>
+<p>Checkpoint是Flink实现容错机制最核心的功能，它能够根据配置周期性地基于Stream中各个Operator的状态来生成Snapshot，从而将这些状态数据定期持久化存储下来.<br>Checkpoint指定触发生成时间间隔后，每当需要触发Checkpoint时，会向Flink程序运行时的多个分布式的Stream Source中插入一个Barrier标记，<br>这些Barrier会根据Stream中的数据记录一起流向下游的各个Operator。当一个Operator接收到一个Barrier时，它会<code>暂停</code>处理Steam中新接收到的数据记录。因为一个Operator可能存在多个输入的Stream，而每个Stream中都会存在对应的Barrier，该Operator要等到所有的输入Stream中的Barrier都到达。当所有Stream中的Barrier都已经到达该Operator，这时所有的Barrier在时间上看来是同一个时刻点（表示已经对齐），在等待所有Barrier到达的过程中，Operator的Buffer中可能已经缓存了一些比Barrier早到达Operator的数据记录（Outgoing Records），这时该Operator会将数据记录（Outgoing Records）发射（Emit）出去，作为下游Operator的输入，最后将Barrier对应Snapshot发射（Emit）出去作为此次Checkpoint的结果数据。</p>
+<p><code>对齐阶段</code>，当还有其他输入流的barrier还没有到达时，会把已到达的barrier之后的数据搁置在缓冲区，等待其他流的barrier到达后才能处理(Exactly Once)<br><code>barrier不对齐</code>就是指当还有其他流的barrier还没到达时，为了不影响性能，也不用理会，直接处理barrier之后的数据。等到所有流的barrier的都到达后，就可以对该Operator做CheckPoint了.<code>AT_LEAST_ONCE类型不需要alignment（对齐）</code><br>Exactly Once时必须barrier对齐，如果barrier不对齐就变成了At Least Once；<br>例子详解：CheckPoint的目的就是为了保存快照，如果不对齐，那么在chk-100快照之前，已经处理了一些chk-100 对应的offset之后的数据，当程序从chk-100恢复任务时，chk-100对应的offset之后的数据还会被处理一次，所以就出现了重复消费。<br>如果上下游是rescale或者forward的形式，下游只需要等待1个并发的barrier，因为是point-to-point的形式，如果是hash或者rebalance，下游的每一个task开始checkpoint的前提就是要收集齐上游所有并发的barrier。</p>
+<p>一旦最后所有输入流都接收到barrier n，Operator就会把缓冲区中pending 的输出数据发出去，然后把CheckPoint barrier n接着往下游发送<br>为了下游尽快做CheckPoint，所以会先发送barrier到下游，自身再同步进行快照；所以可能会出现下游比上游快照还早的情况<br>之后，Operator将继续处理来自所有输入流的记录，在处理来自流的记录之前先处理来自输入缓冲区的记录。</p>
+<p>如果只有一个partition，对应flink任务的Source Task并行度只能是1，是否对齐确实没有区别，不会有至少一次的存在了，肯定是精确一次。因为只有barrier不对齐才会有可能重复处理，这里并行度都已经为1，默认就是对齐的，只有当上游有多个并行度的时候，多个并行度发到下游的barrier才需要对齐，单并行度不会出现barrier不对齐，所以必然精确一次。<br>其实还是要理解barrier对齐就是Exactly Once不会重复消费，barrier不对齐就是 At Least Once可能重复消费，这里只有单个并行度根本不会存在barrier不对齐，所以不会存在至少一次语义；</p>
+<p>链接：<a href="https://www.jianshu.com/p/4d31d6cddc99" target="_blank" rel="noopener">https://www.jianshu.com/p/4d31d6cddc99</a> (讲的很好)<br>链接：<a href="https://www.jianshu.com/p/dff71581b63b" target="_blank" rel="noopener">https://www.jianshu.com/p/dff71581b63b</a></p>
+<p>Acknowledgement：JobManager收到ack<br><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/monitoring/checkpoint_monitoring.html" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.10/monitoring/checkpoint_monitoring.html</a></p>
+<p>JM trigger checkpoint<br>Source 收到 trigger checkpoint 的 PRC，自己开始做 snapshot，并往下游发送 barrier<br>下游接收 barrier（需要 barrier 都到齐才会开始做 checkpoint）<br>Task 开始同步阶段 snapshot<br>Task 开始异步阶段 snapshot（异步阶段在做 rocksdb持久化）<br>Task snapshot 完成，汇报给 JM<br>如果触发checkpoint的延迟时间总是非常高时，表明<strong>checkpoint barriers</strong>需要很长时间才能从Source到达操作符。这通常表明系统在一个恒定的反压力下运行。<br>Buffered During Alignment 表示在 barrier 对齐阶段积攒了多少数据，如果这个数据过大也间接表示对齐比较慢）；<br>flink web ui上的对齐不包括收到第一个barrier的时间间隔<br><a href="https://zhuanlan.zhihu.com/p/87131964" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/87131964</a></p>
+<h3 id="严格一次（Exactly-once）"><a href="#严格一次（Exactly-once）" class="headerlink" title="严格一次（Exactly-once）"></a>严格一次（Exactly-once）</h3><p>默认启用。<br>Flink Kafka Consumer和Flink的Checkpint机制进行了整合，以此提供了exactly-once处理语义。为了实现这个语义，<br>定期地将Kafka offsets信息、状态信息以及其他的操作信息进行Checkpint。所以，如果Flink作业出故障了，Flink将会从最新的Checkpint中恢复，并且从上一次偏移量开始读取Kafka中消费消息。<br>Flink仅仅支持在拥有足够的处理slots情况下才能够从Checkpint恢复。Flink on YARN模式下支持动态地重启丢失的YARN containers。</p>
+<p>如果我们没有启用Checkpint，那么Flink Kafka consumer将会定期地向Zookeeper commit偏移量。</p>
+<h3 id="流分区器"><a href="#流分区器" class="headerlink" title="流分区器"></a>流分区器</h3><p>Spark的RDD有分区的概念，Flink的DataStream同样也有，只不过没有RDD那么显式而已。Flink通过流分区器StreamPartitioner来控制DataStream中的元素往下游的流向。<br>Flink通过分区器来精确得控制数据流向。（下面讲解为1.10版本）<br><code>StreamPartitioner</code> 流分区器的基类；<br>不同分区器的核心在<code>selectChannel</code>方法上，该方法针对当前的record以及所有的channel数目，返回一个针对当前这条记录采用的output channel的索引。<br><code>GlobalPartitioner</code> 全局分区器， 输出channel为0。全部发给下游第一个task<br><code>ForwardPartitioner</code> 输出channel为0。如果用户没有指定分区的前提下（record转发给本地下游，即在ui上多个operate被优化后显示在一个框里的情况，point-to-point转发数据），上下游算子并行度一致，那么采用的就是ForwardPartitioner， <code>如果上下游算子不一致，采用的是RebalancePartitioner</code>。在源码StreamGraph类中有体现。<br><code>ShufflePartitioner</code> 混洗分区器 输出channel为随机数<br><code>KeyGroupStreamPartitioner</code>（HashPartitioner，低版本）两次hash后与最大并行度取模！！！！<br><code>BroadcastPartitioner</code> 没有分区器，没有selectChannel，record分发给下游所有substask。由于广播流发挥作用必须靠DataStream.connect()方法与正常的数据流连接起来，所以实际上不需要BroadcastPartitioner来选择分区，没有实现selectChannel。<br><code>RebalancePartitioner</code> 重平衡分区器。先随机选择一个下游算子的实例，然后从这个实例开始 用轮转模式输出，保证负载均衡<br><code>RescalePartitioner</code> 在不同并行度不是彼此的倍数的情况下，一个或多个下游操作将具有来自上游操作的不同数量的输入。执行计划分为StreamGraph -》 JobGraph -》ExecutionGraph。 而StreamingJobGraphGenerator就是讲StreamGraph转换为JobGraph在这个类中，他把ForwardPartitioner和RescalePartitioner列为POINTWISE(点对点)分配模式，其他的为ALL_TO_ALL(多对多)分配模式。而在jobGraph -》 ExecutionGraph中，连接上下游时，会根据这两种模式，去分配上游某个分区，所对应的下游分区范围。<br>  好处是可以增加taskmanager的数据本地性，减少了网络IO，taskmanager数据可以直接从本地的上游算子获取所需数据。RescalePartitioner和RebalancePartitioner相比，数据本地性比较好，减少了网络IO，但是不如 RebalancePartitioner数据均衡，因为RebalancePartitioner是ALL_TO_ALL模式的，对应下游所有分区，是真正的轮询。如果上游数据比较大，采用RebalancePartitioner，会带来不少的网络开销。（详细代码展示看下面第二、三个链接）.<br>CustomPartitionerWrapper 自定义分区器。举个栗子,根据第一个字段的长度分区：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">dataStreamSource.partitionCustom(new Partitioner&lt;String&gt;() &#123;</span><br><span class="line">    @Override</span><br><span class="line">    public int partition(String key, int numPartitions) &#123;</span><br><span class="line">        return key.length() % numPartitions;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;, 0);</span><br></pre></td></tr></table></figure>
+
+<p>1、keyBy() （基于hash码重分区），是KeyGroupStreamPartitioner 两次hash后与最大并行度取模！！！！这也是为什么上面讲maxParallelism时建议要求设置，因为checkpoint、savepoint恢复的计量单位就是keyGroup，这个计算好以后修改maxParallelism 无法再重新计算。用murmurHash计算Hash值，以保证尽量的散列。<br>MathUtils.murmurHash(key.hashCode) % maxParallelism  * parallelism / maxParallelism （???? 为什么要 * parallelism / maxParallelism）<br>2、看<code>StreamingJobGraphGenerator</code>源码，可知只有ForwardPartitioner和RescalePartitioner是点对点本地模式。这种方式可节省网络传输。<br>3、上下游的算子没有指定分区器的情况下，如果上下游的算子并行度一致，则使用ForwardPartitioner，否则使用RebalancePartitioner。<br>4、对于ForwardPartitioner，必须保证上下游算子并行度一致，否则会抛出异常<br>5、看源码时的<code>Channel</code>可直接认为是下游算子的并发实例（即物理分区）。<br><a href="https://blog.csdn.net/yanghua_kobe/article/details/51736308（老版本，可看性不高）" target="_blank" rel="noopener">https://blog.csdn.net/yanghua_kobe/article/details/51736308（老版本，可看性不高）</a><br><a href="https://blog.csdn.net/lvwenyuan_1/article/details/103722226?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase（讲的更细）" target="_blank" rel="noopener">https://blog.csdn.net/lvwenyuan_1/article/details/103722226?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase&amp;depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.nonecase（讲的更细）</a><br><a href="https://jiamaoxiang.top/2020/03/30/Flink%E7%9A%84%E5%85%AB%E7%A7%8D%E5%88%86%E5%8C%BA%E7%AD%96%E7%95%A5%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/" target="_blank" rel="noopener">https://jiamaoxiang.top/2020/03/30/Flink%E7%9A%84%E5%85%AB%E7%A7%8D%E5%88%86%E5%8C%BA%E7%AD%96%E7%95%A5%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB/</a><br><a href="https://cloud.tencent.com/developer/article/1559885" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1559885</a></p>
+<h3 id="内存调参"><a href="#内存调参" class="headerlink" title="内存调参"></a>内存调参</h3><p><code>taskmanager.network.memory.max</code> 网络缓冲区最大内存大小。<br><code>taskmanager.network.memory.min</code> 网络缓冲区最小内存大小。<br><code>taskmanager.network.memory.fraction</code> 网络缓冲区使用的内存占据总JVM内存的比例。如果配置了taskmanager.network.memory.max和taskmanager.network.memory.min，本配置项会被覆盖。</p>
+<p>链接：<a href="https://ci.apache.org/projects/flink/flink-docs-stable/ops/config.html#memory-configuration" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-stable/ops/config.html#memory-configuration</a> (官网)<br><a href="https://www.jianshu.com/p/28c7722ae22f" target="_blank" rel="noopener">https://www.jianshu.com/p/28c7722ae22f</a><br><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/ops/config.html#taskmanager-memory-jvm-metaspace-size" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.10/ops/config.html#taskmanager-memory-jvm-metaspace-size</a></p>
+<h3 id="表转流-三种输出方式"><a href="#表转流-三种输出方式" class="headerlink" title="表转流 三种输出方式"></a>表转流 三种输出方式</h3><p>追加模式（toAppendStream）：只有在动态Table仅通过INSERT更改修改时才能使用此模式，即它仅附加并且以前发出的结果永远不会更新。<br>缩进模式（toRetractStream）：始终可以使用此模式。它用标志编码INSERT和DELETE改变boolean。<br>区别：<a href="https://zhuanlan.zhihu.com/p/65436188" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/65436188</a><br>当我们使用的sql语句包含：count() group by时，必须使用缩进模式。<br>另外一种方式Upsert stream效率更高；<a href="https://juejin.im/post/5dd7423851882573412f78d9" target="_blank" rel="noopener">https://juejin.im/post/5dd7423851882573412f78d9</a> （有例子！！讲的好）</p>
+<p>Flink里面把流注册为表: tableEnv.registerDataStream(“mytable”, mystream ….) 这里的流 mystream 必须是append-only流，不能是retraction流。<br>retraction流不支持 append-only 模式的<br><a href="https://developer.aliyun.com/ask/128464?spm=a2c6h.13159736" target="_blank" rel="noopener">https://developer.aliyun.com/ask/128464?spm=a2c6h.13159736</a></p>
+<p>！！！ flink-sql有一个比较坑的问题，比如group by嵌套一个group by，使用的是追加模式，里面的groupby会把DELETE也发给外层groupby,这时候如果开启了local聚合，数据就会出错，因为把delete消息也聚起来了；如果没有开启local也要保证，最终的结果是主键key可以单一覆盖，否则数据也会出错。</p>
+<h3 id="背压（backpressure）监控"><a href="#背压（backpressure）监控" class="headerlink" title="背压（backpressure）监控"></a>背压（backpressure）监控</h3><p>1、如果你看到了一个任务的back pressure警告（如过高），则意味着<code>该任务产生数据的速度要高于下游Operator消化的速度。</code><br>数据沿着job的数据流图向下游流动（如从source到sink），而背压则是沿着相反的方向传播，逆流而上。<br>2、默认地，对于每一个任务，JobManager会每隔50ms触发100次堆栈轨迹。我们在web接口中看到的比例说明了这些堆栈轨迹中有多少卡在了内部方法调用中，如0.01就表示100个堆栈轨迹中有一个卡在了方法调用中。<br>3、Sampling in progress；该状态意味着JobManager出发了一个运行中的任务的堆栈轨迹取样，默认配置下，该操作需要约5秒。<br><a href="https://www.cnblogs.com/lanyun0520/p/5676617.html" target="_blank" rel="noopener">https://www.cnblogs.com/lanyun0520/p/5676617.html</a></p>
+<h3 id="AsyncFunction"><a href="#AsyncFunction" class="headerlink" title="AsyncFunction"></a>AsyncFunction</h3><p>外部查询时，异步<br><a href="https://www.jianshu.com/p/d8f99d94b761" target="_blank" rel="noopener">https://www.jianshu.com/p/d8f99d94b761</a><br><a href="https://www.cnblogs.com/dajiangtai/p/10683664.html" target="_blank" rel="noopener">https://www.cnblogs.com/dajiangtai/p/10683664.html</a></p>
+<h3 id="rmq"><a href="#rmq" class="headerlink" title="rmq"></a>rmq</h3><p><a href="https://github.com/apache/rocketmq-externals/tree/master/rocketmq-flink" target="_blank" rel="noopener">https://github.com/apache/rocketmq-externals/tree/master/rocketmq-flink</a></p>
+<h3 id="flink-web-ui展示有问题"><a href="#flink-web-ui展示有问题" class="headerlink" title="flink web ui展示有问题"></a>flink web ui展示有问题</h3><p>一般显示有问题都是jar包的冲突问题<br>1、version显示不出来，把下面内容加上</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">            &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">            &lt;artifactId&gt;flink-runtime_2.11&lt;&#x2F;artifactId&gt;</span><br><span class="line">            &lt;version&gt;$&#123;flink.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">            &lt;scope&gt;$&#123;depend-scope&#125;&lt;&#x2F;scope&gt;</span><br><span class="line">            &lt;exclusions&gt;</span><br><span class="line">                &lt;exclusion&gt;</span><br><span class="line">                    &lt;artifactId&gt;scala-library&lt;&#x2F;artifactId&gt;</span><br><span class="line">                    &lt;groupId&gt;org.scala-lang&lt;&#x2F;groupId&gt;</span><br><span class="line">                &lt;&#x2F;exclusion&gt;</span><br><span class="line">            &lt;&#x2F;exclusions&gt;</span><br><span class="line">        &lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+<p>2、taskManager等recived bytes等详细信息一直转圈出不来;下面包在集群上使用provided</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;dependency&gt;</span><br><span class="line">    &lt;groupId&gt;org.apache.flink&lt;&#x2F;groupId&gt;</span><br><span class="line">    &lt;artifactId&gt;flink-table-planner-blink_$&#123;scala.tools.version&#125;&lt;&#x2F;artifactId&gt;</span><br><span class="line">    &lt;version&gt;$&#123;flink.version&#125;&lt;&#x2F;version&gt;</span><br><span class="line">    &lt;scope&gt;$&#123;depend-scope&#125;&lt;&#x2F;scope&gt;</span><br><span class="line">&lt;&#x2F;dependency&gt;</span><br></pre></td></tr></table></figure>
+<h3 id="flink异常"><a href="#flink异常" class="headerlink" title="flink异常"></a>flink异常</h3><p>org.apache.flink.util.StateMigrationException: The new state serializer cannot be incompatible<br>我们知道Flink的状态是按key组织并保存的，如果程序逻辑内改了keyBy()逻辑或者key的序列化逻辑，就会导致检查点/保存点的数据无法正确恢复。所以如果必须要改key相关的东西，就弃用之前的状态数据吧。<br>我遇到的原因是：改变了类名；state中包含了类名来反序列化</p>
+<p>链接：<a href="https://www.jianshu.com/p/a2302724e6d6" target="_blank" rel="noopener">https://www.jianshu.com/p/a2302724e6d6</a></p>
+<h3 id="java-lang-OutOfMemoryError-Metaspace"><a href="#java-lang-OutOfMemoryError-Metaspace" class="headerlink" title="java.lang.OutOfMemoryError: Metaspace"></a>java.lang.OutOfMemoryError: Metaspace</h3><p>提升参数<code>-yDtaskmanager.memory.jvm-metaspace.size=300M</code> 默认是256M<br><a href="https://ci.apache.org/projects/flink/flink-docs-release-1.10/ops/config.html#taskmanager-memory-jvm-metaspace-size" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.10/ops/config.html#taskmanager-memory-jvm-metaspace-size</a></p>
+<h3 id="flink-wordcount-error-No-implicits-found-for-parameter-evidence-11-TypeInformation-String"><a href="#flink-wordcount-error-No-implicits-found-for-parameter-evidence-11-TypeInformation-String" class="headerlink" title="flink wordcount error: No implicits found for parameter evidence$11: TypeInformation[String]"></a>flink wordcount error: No implicits found for parameter evidence$11: TypeInformation[String]</h3><p>引包改为：<br>import org.apache.flink.streaming.api.scala._</p>
+<h3 id="Caused-by-java-lang-IllegalStateException-Unable-to-instantiate-java-compiler"><a href="#Caused-by-java-lang-IllegalStateException-Unable-to-instantiate-java-compiler" class="headerlink" title="Caused by: java.lang.IllegalStateException: Unable to instantiate java compiler"></a>Caused by: java.lang.IllegalStateException: Unable to instantiate java compiler</h3><p>org.apache.flink.client.program.ProgramInvocationException: The main method caused an error: Unable to instantiate java compiler<br>解决办法：flink-table-planner-blink这个包provided不要编译到项目中去<br>原因：Flink 1.10把客户端的ClassLoader解析顺序调整为了Child优先，这就导致用户的Jar包不能包含Flink框架的classes，比如常见的Calcite、Flink-Planner依赖、Hive依赖等等。用户需要把有冲突classes的jar放到flink-home/lib下，或者调整策略为Parent优先。</p>
+<p>原文链接：<a href="https://blog.csdn.net/woloqun/article/details/105657539" target="_blank" rel="noopener">https://blog.csdn.net/woloqun/article/details/105657539</a></p>
+<h3 id="kafka序列化"><a href="#kafka序列化" class="headerlink" title="kafka序列化"></a>kafka序列化</h3><p>依靠用户指定的解序列化器来将二进制的数据转换成Java对象。DeserializationSchema接口就是做这件事情的.<br>SimpleStringSchema来反系列化message，这个类是实现了DeserializationSchema接口，并重写了T deserialize(byte[] message)函数，DeserializationSchema接口仅提供了反系列化data的接口，<br>所以如果我们需要反系列化key，我们需要使用KeyedDeserializationSchema的子类。KeyedDeserializationSchema接口提供了T deserialize(byte[] messageKey, byte[] message, String topic, int partition, long offset)方法，可以饭系列化kafka消息的data和key。</p>
+<h3 id="sql-提示org-apache-flink-table-api-TableException-An-input-of-GenericTypeInfo-cannot-be-converted-to-Table-Please-specify-the-type-of-the-input-with-a-RowTypeInfo"><a href="#sql-提示org-apache-flink-table-api-TableException-An-input-of-GenericTypeInfo-cannot-be-converted-to-Table-Please-specify-the-type-of-the-input-with-a-RowTypeInfo" class="headerlink" title="sql 提示org.apache.flink.table.api.TableException: An input of GenericTypeInfo cannot be converted to Table. Please specify the type of the input with a RowTypeInfo."></a>sql 提示org.apache.flink.table.api.TableException: An input of GenericTypeInfo<Row> cannot be converted to Table. Please specify the type of the input with a RowTypeInfo.</h3><p>使用dataStream时使用Row</p>
+<p>java:<br>.returns(new RowTypeInfo(Types.STRING, Types.STRING, …));<br><a href="https://cloud.tencent.com/developer/article/1406235" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1406235</a><br>scala:<br>implicit val tpe: TypeInformation[Row] = new RowTypeInfo(fieldsSchema, fields)<br><a href="https://issues.apache.org/jira/browse/FLINK-6500" target="_blank" rel="noopener">https://issues.apache.org/jira/browse/FLINK-6500</a></p>
+<h3 id="table-amp-amp-sql"><a href="#table-amp-amp-sql" class="headerlink" title="table &amp;&amp; sql"></a>table &amp;&amp; sql</h3><p><a href="https://mp.weixin.qq.com/s/oIgVt9qTETfS6_9Srws_sw（Flink" target="_blank" rel="noopener">https://mp.weixin.qq.com/s/oIgVt9qTETfS6_9Srws_sw（Flink</a> SQL 工作机制）<br>符号字面量 <a href="https://juejin.im/post/5d859395f265da03e168b330" target="_blank" rel="noopener">https://juejin.im/post/5d859395f265da03e168b330</a><br><a href="https://www.cnblogs.com/leesf456/p/8027772.html" target="_blank" rel="noopener">https://www.cnblogs.com/leesf456/p/8027772.html</a><br><a href="https://www.jianshu.com/p/cf1cb33bffd9" target="_blank" rel="noopener">https://www.jianshu.com/p/cf1cb33bffd9</a><br><a href="https://juejin.im/post/58d6751cac502e0058ccf01c" target="_blank" rel="noopener">https://juejin.im/post/58d6751cac502e0058ccf01c</a><br><a href="https://blog.csdn.net/baifanwudi/article/details/87883278" target="_blank" rel="noopener">https://blog.csdn.net/baifanwudi/article/details/87883278</a></p>
+<h3 id="特殊引入"><a href="#特殊引入" class="headerlink" title="特殊引入"></a>特殊引入</h3><p>1、因为pojo类貌似必须携带 public pojo(){ }无参构造器。<br>2、tuple要使用java包里面的（scala <code>import org.apache.flink.api.java.tuple._</code>）,而不是scala自带的tuple，不然也会认为是geneic类型，导致报错<br>3、Scala Table API使用Scala符号，它以单个tick（’）开始引用表的属性。 Table API使用Scala隐含。 确保导入<code>org.apache.flink.api.scala._</code>和<code>org.apache.flink.table.api.scala._</code>以便使用Scala隐式转换。</p>
+<h3 id="registerTypeWithKryoSerializer"><a href="#registerTypeWithKryoSerializer" class="headerlink" title="registerTypeWithKryoSerializer"></a>registerTypeWithKryoSerializer</h3><p><code>registerTypeWithKryoSerializer</code> 手动指定自定义数据结构的序列化函数</p>
+<h3 id="Row"><a href="#Row" class="headerlink" title="Row"></a>Row</h3><p>1、<code>Row</code> is the actual record that holds the data<br>2、<code>RowTypeInfo</code> is a schema description for Rows. It contains names and TypeInformation for each field of a Row.<br>3、<code>DataStream</code> is a logical stream of records. A DataStream[Row] is a stream of rows. Note that this is not the actual stream but just an API concept to represent a stream in the API.</p>
+<h3 id="flink-数据类型"><a href="#flink-数据类型" class="headerlink" title="flink 数据类型"></a>flink 数据类型</h3><p><a href="https://segmentfault.com/a/1190000016350098" target="_blank" rel="noopener">https://segmentfault.com/a/1190000016350098</a>  <a href="https://www.jianshu.com/p/7ec404b020c4" target="_blank" rel="noopener">https://www.jianshu.com/p/7ec404b020c4</a><br>TypeInformation 类是描述一切类型的公共基类，它和它的所有子类必须可序列化（Serializable），因为类型信息将会伴随 Flink 的作业提交，被传递给每个执行节点。<br>由于 Flink 自己管理内存，采用了一种非常紧凑的存储格式（见官方博文），因而类型信息在整个数据处理流程中属于至关重要的元数据。<br>Flink 内部实现了名为 TypeExtractror 的类，可以利用方法签名、子类信息等蛛丝马迹，自动提取和恢复类型信息。<br>然而由于 Java 的类型擦除，自动提取并不是总是有效。因而一些情况下（例如通过 URLClassLoader 动态加载的类），仍需手动处理；例如上面<code>TableException</code>的错误章节中介绍的办法。</p>
+<h3 id="Error-28-10-ambiguous-reference-to-overloaded-definition-both-method-toJSONString-in-object-JSON"><a href="#Error-28-10-ambiguous-reference-to-overloaded-definition-both-method-toJSONString-in-object-JSON" class="headerlink" title="Error:(28, 10) ambiguous reference to overloaded definition, both method toJSONString in object JSON"></a>Error:(28, 10) ambiguous reference to overloaded definition, both method toJSONString in object JSON</h3><p>带有变长参数的方法重载使得scala在调用方法时感到“模糊”，就无法匹配参数的类型。<br>解决：JSON.toJSONString(result, SerializerFeature.PrettyFormat)<br><a href="https://blog.csdn.net/k_wzzc/article/details/90032138" target="_blank" rel="noopener">https://blog.csdn.net/k_wzzc/article/details/90032138</a></p>
+<h3 id="transient"><a href="#transient" class="headerlink" title="transient"></a>transient</h3><p>这个注解一般用于序列化的时候，标识某个字段不用被序列化。<br><a href="https://stackoverflow.com/questions/55222822/when-to-use-transient-when-not-to-in-flink" target="_blank" rel="noopener">https://stackoverflow.com/questions/55222822/when-to-use-transient-when-not-to-in-flink</a></p>
+<h3 id="date"><a href="#date" class="headerlink" title="date"></a>date</h3><p><code>TIMESTAMPDIFF(DAY, TIMESTAMP time1,TIMESTAMP time2)</code> SQL validate报错！<br><code>TIMESTAMPDIFF(DAY, cast(time1 as timestamp), cast(time2 as timestamp))</code>通过了<br>文档中的 TIMESTAMP ‘2003-01-02 10:00:00’ 代表标准SQL的时间常量(timestamp literal)<br>在1.9中， 申明为TIMESTAMP类型的属性，需要是 格式化为YYYY-MM-DD’T’HH:mm:ss.SSS’Z’<br>不过你可以从外部传入13位时间戳，也可以转换成TIMESTAMP，    比如DDL中定义</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE &#96;t&#96; (</span><br><span class="line">   ctm TIMESTAMP,</span><br><span class="line">) WITH (</span><br><span class="line">  &#39;format.schema&#39; &#x3D; &#39;ROW&lt;ctm LONG&gt;&#39;</span><br><span class="line">)&quot;</span><br></pre></td></tr></table></figure>
+<p>。如果数据源也要定义为TIMESTAMP类型，则通过下面方式去定义外部数据源格式：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">DateTimeFormatter t &#x3D; new DateTimeFormatterBuilder()</span><br><span class="line">        .append(DateTimeFormatter.ISO_LOCAL_DATE)</span><br><span class="line">        .appendLiteral(&#39;T&#39;)</span><br><span class="line">        .append(new DateTimeFormatterBuilder()</span><br><span class="line">                .appendPattern(&quot;HH:mm:ss&quot;)</span><br><span class="line">                .appendFraction(ChronoField.NANO_OF_SECOND, 0, 9, true)</span><br><span class="line">                .appendPattern(&quot;&#39;Z&#39;&quot;)</span><br><span class="line">                .toFormatter())</span><br><span class="line">        .toFormatter();</span><br></pre></td></tr></table></figure>
+<p>用这个结构去格式化时间类型<br><a href="http://apache-flink.147419.n8.nabble.com/FlinkSQL-TIMESTAMPDIFF-E-g-td1257.html" target="_blank" rel="noopener">http://apache-flink.147419.n8.nabble.com/FlinkSQL-TIMESTAMPDIFF-E-g-td1257.html</a></p>
+<h3 id="Flink-Could-not-forward-element-to-next-operator"><a href="#Flink-Could-not-forward-element-to-next-operator" class="headerlink" title="Flink:Could not forward element to next operator"></a>Flink:Could not forward element to next operator</h3><p>报错原因：一般是代码里有脏数据，多翻翻日志可以真正的报错信息。<br>watermark中的eventTime为null或格式不对</p>
+<h3 id="No-Implicit-Value-for-Evidence-Parameter-Error"><a href="#No-Implicit-Value-for-Evidence-Parameter-Error" class="headerlink" title="No Implicit Value for Evidence Parameter Error"></a>No Implicit Value for Evidence Parameter Error</h3><p>import org.apache.flink.api.scala._<br><a href="https://blog.csdn.net/Dax1n/article/details/70211035" target="_blank" rel="noopener">https://blog.csdn.net/Dax1n/article/details/70211035</a></p>
+<h3 id="Watermark"><a href="#Watermark" class="headerlink" title="Watermark"></a>Watermark</h3><p>Watermark：算子通过Watermark推断当前的事件时间。Watermark用于通知算子没有比水位更小的时间戳的事件会发生了。<br><a href="https://blog.csdn.net/oTengYue/article/details/102689538?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1&amp;utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1" target="_blank" rel="noopener">https://blog.csdn.net/oTengYue/article/details/102689538?depth_1-utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1&amp;utm_source=distribute.pc_relevant.none-task-blog-BlogCommendFromBaidu-1</a></p>
+<h3 id="文档"><a href="#文档" class="headerlink" title="文档"></a>文档</h3><p>中文：<a href="https://flink-docs-cn.gitbook.io/project/05-ying-yong-kai-fa/04-table-api-and-sql/00-gai-shu" target="_blank" rel="noopener">https://flink-docs-cn.gitbook.io/project/05-ying-yong-kai-fa/04-table-api-and-sql/00-gai-shu</a><br>英文：<a href="https://ci.apache.org/projects/flink/flink-docs-release-1.8/dev/table/streaming/time_attributes.html" target="_blank" rel="noopener">https://ci.apache.org/projects/flink/flink-docs-release-1.8/dev/table/streaming/time_attributes.html</a><br>中文（非官方）：<a href="https://cloud.tencent.com/developer/article/1032586" target="_blank" rel="noopener">https://cloud.tencent.com/developer/article/1032586</a><br>demo-java：<a href="https://www.jianshu.com/p/43259ca7a9be" target="_blank" rel="noopener">https://www.jianshu.com/p/43259ca7a9be</a><br>demo-scala：<a href="https://blog.csdn.net/ddxygq/article/details/87887114" target="_blank" rel="noopener">https://blog.csdn.net/ddxygq/article/details/87887114</a><br><a href="https://developer.aliyun.com/article/746408?spm=a2c6h.14242504.J_8926434010.2.3fca361fvEl7PM&amp;groupCode=sc" target="_blank" rel="noopener">https://developer.aliyun.com/article/746408?spm=a2c6h.14242504.J_8926434010.2.3fca361fvEl7PM&amp;groupCode=sc</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2020/05/11/flink/" title="flink">/2020/05/11/flink/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2020/05/11/flink/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/flink/" rel="tag"># flink</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/04/13/subprocess/" rel="next" title="subprocess">
+                <i class="fa fa-chevron-left"></i> subprocess
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">118</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">75</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#执行计划"><span class="nav-number">1.</span> <span class="nav-text">执行计划</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#key的指定方法"><span class="nav-number">2.</span> <span class="nav-text">key的指定方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#operates"><span class="nav-number">3.</span> <span class="nav-text">operates</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#KeyedStream"><span class="nav-number">3.1.</span> <span class="nav-text">KeyedStream</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Window"><span class="nav-number">3.2.</span> <span class="nav-text">Window</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#WindowedStream"><span class="nav-number">3.2.1.</span> <span class="nav-text">WindowedStream</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#AllWindowedStream"><span class="nav-number">3.2.2.</span> <span class="nav-text">AllWindowedStream</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#timeWindow"><span class="nav-number">3.2.3.</span> <span class="nav-text">timeWindow</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#其他"><span class="nav-number">3.2.4.</span> <span class="nav-text">其他</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce"><span class="nav-number">3.3.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#fold"><span class="nav-number">3.4.</span> <span class="nav-text">fold</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#union-amp-connect-amp-split"><span class="nav-number">3.5.</span> <span class="nav-text">union &amp; connect &amp; split</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SideOutput"><span class="nav-number">3.6.</span> <span class="nav-text">SideOutput</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三种time类型"><span class="nav-number">4.</span> <span class="nav-text">三种time类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kafka默认分区FlinkFixedPartitioner"><span class="nav-number">5.</span> <span class="nav-text">kafka默认分区FlinkFixedPartitioner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flink消费Kafka数据时指定offset的五种方式"><span class="nav-number">6.</span> <span class="nav-text">Flink消费Kafka数据时指定offset的五种方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-Consumer-提交-Offset-的行为配置"><span class="nav-number">7.</span> <span class="nav-text">Kafka Consumer 提交 Offset 的行为配置</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Kafka-Consumer-lifeCycle"><span class="nav-number">8.</span> <span class="nav-text">Kafka Consumer lifeCycle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#savepoint-amp-uid"><span class="nav-number">9.</span> <span class="nav-text">savepoint &amp; uid</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#setMaxParallelism"><span class="nav-number">10.</span> <span class="nav-text">setMaxParallelism</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#重启策略机制"><span class="nav-number">11.</span> <span class="nav-text">重启策略机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#State"><span class="nav-number">12.</span> <span class="nav-text">State</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#state-ttl"><span class="nav-number">13.</span> <span class="nav-text">state ttl</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#去重方案"><span class="nav-number">14.</span> <span class="nav-text">去重方案</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Checkpoint"><span class="nav-number">15.</span> <span class="nav-text">Checkpoint</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#严格一次（Exactly-once）"><span class="nav-number">16.</span> <span class="nav-text">严格一次（Exactly-once）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流分区器"><span class="nav-number">17.</span> <span class="nav-text">流分区器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存调参"><span class="nav-number">18.</span> <span class="nav-text">内存调参</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#表转流-三种输出方式"><span class="nav-number">19.</span> <span class="nav-text">表转流 三种输出方式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#背压（backpressure）监控"><span class="nav-number">20.</span> <span class="nav-text">背压（backpressure）监控</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AsyncFunction"><span class="nav-number">21.</span> <span class="nav-text">AsyncFunction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#rmq"><span class="nav-number">22.</span> <span class="nav-text">rmq</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flink-web-ui展示有问题"><span class="nav-number">23.</span> <span class="nav-text">flink web ui展示有问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flink异常"><span class="nav-number">24.</span> <span class="nav-text">flink异常</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#java-lang-OutOfMemoryError-Metaspace"><span class="nav-number">25.</span> <span class="nav-text">java.lang.OutOfMemoryError: Metaspace</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flink-wordcount-error-No-implicits-found-for-parameter-evidence-11-TypeInformation-String"><span class="nav-number">26.</span> <span class="nav-text">flink wordcount error: No implicits found for parameter evidence$11: TypeInformation[String]</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Caused-by-java-lang-IllegalStateException-Unable-to-instantiate-java-compiler"><span class="nav-number">27.</span> <span class="nav-text">Caused by: java.lang.IllegalStateException: Unable to instantiate java compiler</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#kafka序列化"><span class="nav-number">28.</span> <span class="nav-text">kafka序列化</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#sql-提示org-apache-flink-table-api-TableException-An-input-of-GenericTypeInfo-cannot-be-converted-to-Table-Please-specify-the-type-of-the-input-with-a-RowTypeInfo"><span class="nav-number">29.</span> <span class="nav-text">sql 提示org.apache.flink.table.api.TableException: An input of GenericTypeInfo cannot be converted to Table. Please specify the type of the input with a RowTypeInfo.</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#table-amp-amp-sql"><span class="nav-number">30.</span> <span class="nav-text">table &amp;&amp; sql</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#特殊引入"><span class="nav-number">31.</span> <span class="nav-text">特殊引入</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#registerTypeWithKryoSerializer"><span class="nav-number">32.</span> <span class="nav-text">registerTypeWithKryoSerializer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Row"><span class="nav-number">33.</span> <span class="nav-text">Row</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#flink-数据类型"><span class="nav-number">34.</span> <span class="nav-text">flink 数据类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Error-28-10-ambiguous-reference-to-overloaded-definition-both-method-toJSONString-in-object-JSON"><span class="nav-number">35.</span> <span class="nav-text">Error:(28, 10) ambiguous reference to overloaded definition, both method toJSONString in object JSON</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transient"><span class="nav-number">36.</span> <span class="nav-text">transient</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#date"><span class="nav-number">37.</span> <span class="nav-text">date</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Flink-Could-not-forward-element-to-next-operator"><span class="nav-number">38.</span> <span class="nav-text">Flink:Could not forward element to next operator</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#No-Implicit-Value-for-Evidence-Parameter-Error"><span class="nav-number">39.</span> <span class="nav-text">No Implicit Value for Evidence Parameter Error</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Watermark"><span class="nav-number">40.</span> <span class="nav-text">Watermark</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#文档"><span class="nav-number">41.</span> <span class="nav-text">文档</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

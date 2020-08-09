@@ -320,7 +320,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -339,7 +339,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/" itemprop="url">faster rcnn源码解读（五）之layer（网络里的input-data）</a></h1>
+                <a class="post-title-link" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/" itemprop="url">faster rcnn源码解读（三）train_faster_rcnn_alt_opt.py</a></h1>
         
 
         <div class="post-meta">
@@ -417,171 +417,14 @@
         
         
           
-          faster rcnn用python版本的   https://github.com/rbgirshick/py-faster-rcnn
-layer源码地址：  https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/layer.py 
-源码1234567891011121314151617181920
+          faster用python版本的   https://github.com/rbgirshick/py-faster-rcnn
+train_faster_rcnn_alt_opt.py源码在  https://github.com/rbgirshick/py-faster-rcnn/blob/master/tools/train_faster_rcnn_alt_opt.py
+  
+faster r
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Lily">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="卖姑娘的小火柴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/" itemprop="url">faster rcnn源码解读（六）之minibatch</a></h1>
-        
-
-        <div class="post-meta">
-        
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/" itemprop="url" rel="index"><span itemprop="name">faster rcnn</span></a></span>
-
-                
-                
-                  >
-                
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/faster-cnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">faster cnn源码理解</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          faster rcnn用python版本的   https://github.com/rbgirshick/py-faster-rcnn
-minibatch源码：  https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/minibatch.py
-源码12345678910111213141516171
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/#more" rel="contents">
+            <a class="btn" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89train_faster_rcnn_alt_opt.py/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -946,6 +789,322 @@ imdb源码1234567891011121314151617181920212223
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/" itemprop="url">faster rcnn源码解读（六）之minibatch</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/" itemprop="url" rel="index"><span itemprop="name">faster rcnn</span></a></span>
+
+                
+                
+                  >
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/faster-cnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">faster cnn源码理解</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          faster rcnn用python版本的   https://github.com/rbgirshick/py-faster-rcnn
+minibatch源码：  https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/minibatch.py
+源码12345678910111213141516171
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E5%85%AD%EF%BC%89%E4%B9%8Bminibatch/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/" itemprop="url">faster rcnn源码解读（五）之layer（网络里的input-data）</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/" itemprop="url" rel="index"><span itemprop="name">faster rcnn</span></a></span>
+
+                
+                
+                  >
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/faster-rcnn/faster-cnn%E6%BA%90%E7%A0%81%E7%90%86%E8%A7%A3/" itemprop="url" rel="index"><span itemprop="name">faster cnn源码理解</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          faster rcnn用python版本的   https://github.com/rbgirshick/py-faster-rcnn
+layer源码地址：  https://github.com/rbgirshick/py-faster-rcnn/blob/master/lib/roi_data_layer/layer.py 
+源码1234567891011121314151617181920
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/08/faster%20rcnn%E6%BA%90%E7%A0%81%E8%A7%A3%E8%AF%BB%EF%BC%88%E4%BA%94%EF%BC%89%E4%B9%8Blayer%EF%BC%88%E7%BD%91%E7%BB%9C%E9%87%8C%E7%9A%84input-data%EF%BC%89/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/ignore-resource-not-found%E5%92%8Cignore-unresolvable/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1042,158 +1201,6 @@ imdb源码1234567891011121314151617181920212223
           <!--noindex-->
           <div class="post-button text-center">
             <a class="btn" href="/2018/04/08/ignore-resource-not-found%E5%92%8Cignore-unresolvable/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-      
-    </div>
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/python+caffe%E5%81%9A%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Lily">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="卖姑娘的小火柴">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/04/08/python+caffe%E5%81%9A%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95/" itemprop="url">python+caffe做图片处理可能会用到的方法</a></h1>
-        
-
-        <div class="post-meta">
-        
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-08T00:00:00+08:00">2018-04-08</time>
-            
-
-            
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/cnn%E5%9B%BE%E7%89%87%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E3%80%81%E6%98%BE%E7%A4%BA/" itemprop="url" rel="index"><span itemprop="name">cnn图片数据处理、显示</span></a></span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-        
-          
-          另外参考我的  这篇  和  这篇
- ，了解更多的图片处理。
-图片和numpy数据的转化12# 可以实现图片和numpy数据的转化。numpy.array(image)和Image.fromarray(np_data)
-随机123456#start到end间随机数。start=&lt;num&lt;=endrandom.randint(start, end)#list以行随机打乱，用于存入数据库时
-          ...
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/04/08/python+caffe%E5%81%9A%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1552,7 +1559,7 @@ imdb源码1234567891011121314151617181920212223
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/python%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E4%B9%8B%E5%88%97%E8%A1%A8%E3%80%81%E9%9B%86%E5%90%88%E3%80%81%E5%AD%97%E5%85%B8%E6%8E%A8%E5%AF%BC%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/04/08/python+caffe%E5%81%9A%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -1571,7 +1578,7 @@ imdb源码1234567891011121314151617181920212223
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2018/04/08/python%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E4%B9%8B%E5%88%97%E8%A1%A8%E3%80%81%E9%9B%86%E5%90%88%E3%80%81%E5%AD%97%E5%85%B8%E6%8E%A8%E5%AF%BC%E5%BC%8F/" itemprop="url">python数据处理之列表、集合、字典推导式</a></h1>
+                <a class="post-title-link" href="/2018/04/08/python+caffe%E5%81%9A%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95/" itemprop="url">python+caffe做图片处理可能会用到的方法</a></h1>
         
 
         <div class="post-meta">
@@ -1642,17 +1649,14 @@ imdb源码1234567891011121314151617181920212223
         
         
           
-          列表_ [expr for item in collection if condition] _
-举例：
-&gt;&gt;&gt; result = []
-&gt;&gt;&gt; [result.append(item) for item in fruit if len(item) &gt; 5]
-[None, None]
-&gt;&gt;&gt; result
-[&apos;banana&ap
+          另外参考我的  这篇  和  这篇
+ ，了解更多的图片处理。
+图片和numpy数据的转化12# 可以实现图片和numpy数据的转化。numpy.array(image)和Image.fromarray(np_data)
+随机123456#start到end间随机数。start=&lt;num&lt;=endrandom.randint(start, end)#list以行随机打乱，用于存入数据库时
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2018/04/08/python%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E4%B9%8B%E5%88%97%E8%A1%A8%E3%80%81%E9%9B%86%E5%90%88%E3%80%81%E5%AD%97%E5%85%B8%E6%8E%A8%E5%AF%BC%E5%BC%8F/#more" rel="contents">
+            <a class="btn" href="/2018/04/08/python+caffe%E5%81%9A%E5%9B%BE%E7%89%87%E5%A4%84%E7%90%86%E5%8F%AF%E8%83%BD%E4%BC%9A%E7%94%A8%E5%88%B0%E7%9A%84%E6%96%B9%E6%B3%95/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1896,7 +1900,7 @@ np.arangenp.arange([start,] end [, step])  #与list的range相似
                 
                   <a href="/archives/%7C%7Carchive">
                 
-                    <span class="site-state-item-count">117</span>
+                    <span class="site-state-item-count">118</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
@@ -2104,7 +2108,9 @@ np.arangenp.arange([start,] end [, step])  #与list的range相似
                     
                       
                     
-                    <span class="site-state-item-count">74</span>
+                      
+                    
+                    <span class="site-state-item-count">75</span>
                     <span class="site-state-item-name">标签</span>
                   </a>
                 </div>
