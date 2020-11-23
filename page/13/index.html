@@ -320,7 +320,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/19/map/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/flask%E7%BB%83%E4%B9%A0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -339,7 +339,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/19/map/" itemprop="url">map</a></h1>
+                <a class="post-title-link" href="/2017/05/11/flask%E7%BB%83%E4%B9%A0/" itemprop="url">flask练习</a></h1>
         
 
         <div class="post-meta">
@@ -352,7 +352,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T00:00:00+08:00">2017-10-19</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T00:00:00+08:00">2017-05-11</time>
             
 
             
@@ -373,7 +373,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
 
                 
                 
@@ -410,12 +410,12 @@
         
         
           
-          1.并不是所有对象都是可以做map的key的。如，我们平常自己实现的类，如果不重写hashCode和equals方法，是没有办法使用map的。hashCode一般使用自己实现类的不可变属性计算而得，equals则由自己的实现定义计算而得。在比较的过程中先比较hashCode再比较equals方法。如果hashCode一样，equals也是true，数据会被冲掉（丢失）。
-详细举例：譬如把一个自己定
+          templatehtml默认必须放在项目目录下的templates文件夹下。flask会默认自动去这个文件夹下找定义的html，使用html时不需要加templates这层目录。
+前后端传递参数：  参考：https://www.jianshu.com/p/4350065bdffe（1）直接取放在链接里的数据，如 http://localhost:5000/home/lili/  想直接取到字符串
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/10/19/map/#more" rel="contents">
+            <a class="btn" href="/2017/05/11/flask%E7%BB%83%E4%B9%A0/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -470,7 +470,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/10/19/%E6%8E%A5%E5%8F%A3comparable%E5%92%8Ccomparator%E7%9A%84%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/python%E7%AE%80%E5%8D%95%E5%B0%8F%E8%AE%B0/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -489,7 +489,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/10/19/%E6%8E%A5%E5%8F%A3comparable%E5%92%8Ccomparator%E7%9A%84%E5%8C%BA%E5%88%AB/" itemprop="url">接口comparable和comparator的区别</a></h1>
+                <a class="post-title-link" href="/2017/05/11/python%E7%AE%80%E5%8D%95%E5%B0%8F%E8%AE%B0/" itemprop="url">python简单小记</a></h1>
         
 
         <div class="post-meta">
@@ -502,7 +502,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-10-19T00:00:00+08:00">2017-10-19</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T00:00:00+08:00">2017-05-11</time>
             
 
             
@@ -523,7 +523,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/python/" itemprop="url" rel="index"><span itemprop="name">python</span></a></span>
 
                 
                 
@@ -560,11 +560,12 @@
         
         
           
-          comparable只提供了compareTo方法，可以当做是一个内比较器。comparator提供了compare和equals方法，外比较器。如果开发者add进入一个Collection的对象想要Collections的sort方法帮你自动进行排序的话，那么这个对象必须实现Comparable接口。下面通过讲解最常见的sort：对一个自己编写的对象ChatLog实现sort的步骤（以前都是套用
+          集合{} 字典、对象[ ]列表、数组()元组增加元素： list用append(obj)、insert(index, obj)，元组不可变，字典通过key直接添加，多次添加会覆盖上次数据减少： list用pop([index])，元组不可变，字典pop(key)是否存在：字典key in dict长度：list用len(list)
+# 元组和列表变成数组 字典变成对象json.dumps(obj)
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/10/19/%E6%8E%A5%E5%8F%A3comparable%E5%92%8Ccomparator%E7%9A%84%E5%8C%BA%E5%88%AB/#more" rel="contents">
+            <a class="btn" href="/2017/05/11/python%E7%AE%80%E5%8D%95%E5%B0%8F%E8%AE%B0/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -619,7 +620,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/25/catalina.base%E5%92%8Ccatalina.home%E5%8C%BA%E5%88%AB/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -638,7 +639,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/05/25/catalina.base%E5%92%8Ccatalina.home%E5%8C%BA%E5%88%AB/" itemprop="url">catalina.base和catalina.home区别</a></h1>
+                <a class="post-title-link" href="/2017/05/11/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/" itemprop="url">一个奇特的脚本输出日志方式-----记录时间方式</a></h1>
         
 
         <div class="post-meta">
@@ -651,7 +652,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-25T00:00:00+08:00">2017-05-25</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T00:00:00+08:00">2017-05-11</time>
             
 
             
@@ -672,7 +673,7 @@
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
 
                 
                 
@@ -709,13 +710,11 @@
         
         
           
-          参考：http://desert3.iteye.com/blog/1356006
-tomcat的目录：bin (运行脚本）conf (配置文件）lib (核心库文件）logs (日志目录)temp (临时目录)webapps (自动装载的应用程序的目录）work (JVM临时文件目录[java.io.tmpdir]) 
-上述目录中lib和bin是tomcat独有的，其他的目录有多少个实例就必须有多
+          我的python是野路子出身，平常会写一些脚本处理少量数据。当然处理数据的过程中，都要有一些输出记录脚本是否是在执行或者是程序中间出错卡死了，一般的办法是在处理完一个文件就做一个输出，但是当要处理的文件很小数量很多，这时每个文件的处理很快脚本的输出会占用很多时间（当输出时间大于处理时间时，嘻嘻嘻～）。我看过的源码一种解决方式是，记录处理个数，每1000个做一次输出。而今天说的是我前几日又看的一段开
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/05/25/catalina.base%E5%92%8Ccatalina.home%E5%8C%BA%E5%88%AB/#more" rel="contents">
+            <a class="btn" href="/2017/05/11/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -770,7 +769,7 @@ tomcat的目录：bin (运行脚本）conf (配置文件）lib (核心库文件�
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/25/log-appender/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -789,7 +788,7 @@ tomcat的目录：bin (运行脚本）conf (配置文件）lib (核心库文件�
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/05/25/log-appender/" itemprop="url">log-appender</a></h1>
+                <a class="post-title-link" href="/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" itemprop="url">程序员修炼之道----从小工到大家读书笔记（一）</a></h1>
         
 
         <div class="post-meta">
@@ -802,7 +801,7 @@ tomcat的目录：bin (运行脚本）conf (配置文件）lib (核心库文件�
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-25T00:00:00+08:00">2017-05-25</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T00:00:00+08:00">2017-05-11</time>
             
 
             
@@ -823,7 +822,7 @@ tomcat的目录：bin (运行脚本）conf (配置文件）lib (核心库文件�
                 <span class="post-meta-item-text">分类于</span>
               
               
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a></span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">读书笔记</span></a></span>
 
                 
                 
@@ -860,13 +859,164 @@ tomcat的目录：bin (运行脚本）conf (配置文件）lib (核心库文件�
         
         
           
-          &lt;appender&gt;是&lt;configuration&gt;的子节点。有name、class属性。
-注意点：appender下的file节点和rollingPolicy下fileNamePattern的区别。前者是活动文件，即当前日志存储的文件；后者是归档文件，即每天压缩的文件之后起的名字（假设policy是每天都把日志压缩一下的策略）。
-ConsoleAppender把日志输出到
+          以前一直不敢写读后感，担心会误人子弟。后来突然觉得，权当分享吧，大家还可以探讨自己的不同想法，读书就当如此吧。  
+5月6
+偶然看到这本书，以前去公司实习，上司就说起过这本书“你把这本书看完，工作就不用看其他书了”。一直感叹它的神奇，却未曾观看，今日有幸见到，真想对它说“我来晚了，幸会幸会”。只是如今我仍身在学校，做的项目也不多，实用性项目估计也就实习时那个了，这样的大家之书我不知是否能领悟一二。
           ...
           <!--noindex-->
           <div class="post-button text-center">
-            <a class="btn" href="/2017/05/25/log-appender/#more" rel="contents">
+            <a class="btn" href="/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/" itemprop="url">计算机视觉与图像新手的心酸胡扯</a></h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T00:00:00+08:00">2017-05-11</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/%E7%94%9F%E6%B4%BB%E6%9D%82%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">生活杂记</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+        
+          
+          我做计算机视觉有半年左右，也是现在现在很火的深度学习。有人说这个是“技术大爆炸”，突然冒出大批人来搞深度学习。但是我现在不想说深度学习，只想说说它的辅助工作-图片处理基础。
+我是因为读研才开始基础计算机视觉，之前什么都不懂，是真的什么都不懂。然后实验室还是新开设的这个项目，也就是说，实验室也不会有人来指导我如何做，那时只有老师说要什么东西，我就得自己各种的查找来完成，现在想想还是很苦逼。
+开始时连
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/05/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/#more" rel="contents">
               阅读全文 &raquo;
             </a>
           </div>
@@ -1263,7 +1413,7 @@ import url
                 
                   <a href="/archives/%7C%7Carchive">
                 
-                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-count">127</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>

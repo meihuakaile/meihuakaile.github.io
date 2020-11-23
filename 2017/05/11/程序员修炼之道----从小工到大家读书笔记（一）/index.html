@@ -107,15 +107,15 @@
   <meta name="keywords" content="Hexo, NexT" />
 
 
-<meta name="description" content="我的python是野路子出身，平常会写一些脚本处理少量数据。当然处理数据的过程中，都要有一些输出记录脚本是否是在执行或者是程序中间出错卡死了，一般的办法是在处理完一个文件就做一个输出，但是当要处理的文件很小数量很多，这时每个文件的处理很快脚本的输出会占用很多时间（当输出时间大于处理时间时，嘻嘻嘻～）。我看过的源码一种解决方式是，记录处理个数，每1000个做一次输出。而今天说的是我前几日又看的一段开">
+<meta name="description" content="以前一直不敢写读后感，担心会误人子弟。后来突然觉得，权当分享吧，大家还可以探讨自己的不同想法，读书就当如此吧。   5月6 偶然看到这本书，以前去公司实习，上司就说起过这本书“你把这本书看完，工作就不用看其他书了”。一直感叹它的神奇，却未曾观看，今日有幸见到，真想对它说“我来晚了，幸会幸会”。只是如今我仍身在学校，做的项目也不多，实用性项目估计也就实习时那个了，这样的大家之书我不知是否能领悟一二。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="一个奇特的脚本输出日志方式-----记录时间方式">
-<meta property="og:url" content="http://yoursite.com/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/index.html">
+<meta property="og:title" content="程序员修炼之道----从小工到大家读书笔记（一）">
+<meta property="og:url" content="http://yoursite.com/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/index.html">
 <meta property="og:site_name" content="卖姑娘的小火柴">
-<meta property="og:description" content="我的python是野路子出身，平常会写一些脚本处理少量数据。当然处理数据的过程中，都要有一些输出记录脚本是否是在执行或者是程序中间出错卡死了，一般的办法是在处理完一个文件就做一个输出，但是当要处理的文件很小数量很多，这时每个文件的处理很快脚本的输出会占用很多时间（当输出时间大于处理时间时，嘻嘻嘻～）。我看过的源码一种解决方式是，记录处理个数，每1000个做一次输出。而今天说的是我前几日又看的一段开">
+<meta property="og:description" content="以前一直不敢写读后感，担心会误人子弟。后来突然觉得，权当分享吧，大家还可以探讨自己的不同想法，读书就当如此吧。   5月6 偶然看到这本书，以前去公司实习，上司就说起过这本书“你把这本书看完，工作就不用看其他书了”。一直感叹它的神奇，却未曾观看，今日有幸见到，真想对它说“我来晚了，幸会幸会”。只是如今我仍身在学校，做的项目也不多，实用性项目估计也就实习时那个了，这样的大家之书我不知是否能领悟一二。">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-04-12T16:04:01.507Z">
-<meta property="article:modified_time" content="2020-04-12T16:04:01.507Z">
+<meta property="article:published_time" content="2017-05-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-23T14:33:34.296Z">
 <meta property="article:author" content="Lily">
 <meta name="twitter:card" content="summary">
 
@@ -124,7 +124,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2020/04/13/一个奇特的脚本输出日志方式-----记录时间方式/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/05/11/程序员修炼之道----从小工到大家读书笔记（一）/"/>
 
 
 
@@ -133,7 +133,7 @@
     sidebar: "",
   };
 </script>
-  <title>一个奇特的脚本输出日志方式-----记录时间方式 | 卖姑娘的小火柴</title>
+  <title>程序员修炼之道----从小工到大家读书笔记（一） | 卖姑娘的小火柴</title>
   
 
 
@@ -323,7 +323,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Lily">
@@ -340,7 +340,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">一个奇特的脚本输出日志方式-----记录时间方式</h1>
+          <h1 class="post-title" itemprop="name headline">程序员修炼之道----从小工到大家读书笔记（一）</h1>
         
 
         <div class="post-meta">
@@ -353,7 +353,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-04-13T00:04:01+08:00">2020-04-13</time>
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-11T00:00:00+08:00">2017-05-11</time>
             
 
             
@@ -408,24 +408,14 @@
       
 
       
-        <p>我的python是野路子出身，平常会写一些脚本处理少量数据。当然处理数据的过程中，都要有一些输出记录脚本是否是在执行或者是程序中间出错卡死了，一般的办法是在<br>处理完一个文件就做一个输出，但是当要处理的文件很小数量很多，这时每个文件的处理很快脚本的输出会占用很多时间（当输出时间大于处理时间时，嘻嘻嘻～）。我看过的源<br>码一种解决方式是，记录处理个数，每1000个做一次输出。而今天说的是我前几日又看的一段开源脚本的处理方式——-通过记录时间。如下伪代码：</p>
-<pre><code>时间开始
-
-for ...
-
-   for...
-
-       if 时间结束 - 时间开始 &gt; 某值：
-
-            输出日志
-
-            时间开始
-
-       ...</code></pre><p>伪代码很好理解，第二个“时间开始”和“输出日志”在一层。</p>
-<p>但是这样的方式有一个缺点，这也是我去看源码的原因。如果你的输出日志记录的是“当前处理到的文件”，那么如果长时间不看代码或者编码者之外的人运行这个脚本就会奇怪<br>“这个日志输出文件名不是有序的也没有规律可循，是不是我理解错了还是脚本写的有问题？”，毕竟每个文件的处理时间有差别，输出就不是规律的了。解决方法是在脚本的执<br>行初始就对这样的输出方式解释一遍，或者readme。</p>
-<p>至于它的优点，First，不用一直输出，节省时间，输出少一些输出日志也会干净一些；Second，不用记录处理个数，没有做过尝试，但是记录个数在有多个循环时要<br>不停的计算，浪费时间。</p>
-<p>另外很多输出日志也利用循环的下标，当下标可以整除1000时输出日志。和时间记录的方式相比，缺点很明显，当循环有多层时，使用下标方法无法再使用。而且以C语言中<br>一直强调的“能用加减就不要用乘除”的原则，记录时间方法是更加节省时间的。</p>
-<p>总之，输出日志是必须的，但是不能影响时间效率。  </p>
+        <p>以前一直不敢写读后感，担心会误人子弟。后来突然觉得，权当分享吧，大家还可以探讨自己的不同想法，读书就当如此吧。  </p>
+<p>5月6</p>
+<p>偶然看到这本书，以前去公司实习，上司就说起过这本书“你把这本书看完，工作就不用看其他书了”。一直感叹它的神奇，却未曾观看，今日有幸见到，真想对它说“我来晚了<br>，幸会幸会”。只是如今我仍身在学校，做的项目也不多，实用性项目估计也就实习时那个了，这样的大家之书我不知是否能领悟一二。</p>
+<p>但其实可能是我想多了，读这样的书，学到何止是编程之道。今天，我先谈谈编程的哲学之道。</p>
+<p>1.如果在项目中，你有一个新奇想法，但是直接提出，会遇到各个部门的问题，经费和人力的“刁难”。我们可以采取“引诱”策略，即自己先小做一点东西出来，勾起其他人<br>的兴趣，一点一点的告诉别人需要添加的东西，整个的点子慢慢就成型了。这点我觉得就算是在别的工作生活上也是很有帮助的，通俗点讲就是，如果你有一个事情，希望其他人<br>也可以加入进来，但是如果直接让他们来参加你的工作，可能大家会觉得没有兴趣或者“有这点时间我还不如做点别的”，这时候我们就需要采取迂回策略，自己先做出一些成就<br>来吸引他人加入。</p>
+<p>2.做产品要把握好度，不能不顾时间的精益求精。我曾经参加一个培训，最后要求在不到几天的时间里用所教技术做出一个网站。我本人是一个完美主义者，在做那个网站工作<br>时，当然又是什么都要求做到完美，什么功能都相加，什么地方都想做到完美，需求被设计的很精细，然而，到最后时间当然不够，连最后的提前演练都没来得及。还好那个项目<br>只是个培训，如果是要给客户，我想我死定了。所以呢，我们其实都明白软件是不可能完美的，时间很紧迫，你应当选出重要的完成，让你的客户参与你的工作，也许有些需求是<br>不必要的。</p>
+<p>3.你的资产。行业内一直流传“程序员是吃青春饭的”。我还是个年轻的家伙，还不知道老了以后的情况。额。。。青春饭这个书中并没有提到，只是我自己突然想到了。好吧<br>，我是常常容易跑神。回到正题，我身边有个姑娘跟我抱怨多次“我怎么选了这么个行业啊，这么多知识和技术，学了又过时了，讨厌死了”，我的回答挺欠揍“这才是计算机的<br>迷人所在啊”。你的知识代表了你的价值，它们就是你的资产。计算机的技术日新月异的变化，可能你今天才决定要学一下这门语言，明天媒体就大肆宣扬此语言已无出路可循将<br>被互联网淘汰。新语言层出不穷，如果你拒绝接受新的解决方法，固步自封，这是否也是“青春饭”的一个原因呢。</p>
+<p>书中建议，一年学一门新的语言，一月读一本新书。也不要只读技术书，人之所以强大，是因为有自己的思想。用批判的眼光看待一切，媒体宣传的不一定是好的，网页搜到的前<br>几也不一定是好的，书店里显眼地方摆放的书也不一定是最好的，一切都有可能是故意的。所以，要有自己的想法。多参加一些技术分享，找到与自己至趣相投的，与自己项目相<br>关的人士聊聊技术。另外还可以了解别人所用的技术，不要把自己封起来，要多尝试。</p>
 
       
     </div>
@@ -443,8 +433,8 @@ for ...
   <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
   <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
   <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
-  <p><span>原始链接:</span><a href="/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/" title="一个奇特的脚本输出日志方式-----记录时间方式">/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/</a>
-    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2020/04/13/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/"  aria-label="复制成功！"></i></span>
+  <p><span>原始链接:</span><a href="/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/" title="程序员修炼之道----从小工到大家读书笔记（一）">/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2017/05/11/%E7%A8%8B%E5%BA%8F%E5%91%98%E4%BF%AE%E7%82%BC%E4%B9%8B%E9%81%93----%E4%BB%8E%E5%B0%8F%E5%B7%A5%E5%88%B0%E5%A4%A7%E5%AE%B6%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0%EF%BC%88%E4%B8%80%EF%BC%89/"  aria-label="复制成功！"></i></span>
   </p>
   <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
 </div>
@@ -483,7 +473,7 @@ for ...
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2020/04/13/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/" rel="next" title="计算机视觉与图像新手的心酸胡扯">
+              <a href="/2017/05/11/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E4%B8%8E%E5%9B%BE%E5%83%8F%E6%96%B0%E6%89%8B%E7%9A%84%E5%BF%83%E9%85%B8%E8%83%A1%E6%89%AF/" rel="next" title="计算机视觉与图像新手的心酸胡扯">
                 <i class="fa fa-chevron-left"></i> 计算机视觉与图像新手的心酸胡扯
               </a>
             
@@ -493,8 +483,8 @@ for ...
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2020/04/13/python+crontab%EF%BC%88os%EF%BC%89/" rel="prev" title="python+crontab（os）">
-                python+crontab（os） <i class="fa fa-chevron-right"></i>
+              <a href="/2017/05/11/%E4%B8%80%E4%B8%AA%E5%A5%87%E7%89%B9%E7%9A%84%E8%84%9A%E6%9C%AC%E8%BE%93%E5%87%BA%E6%97%A5%E5%BF%97%E6%96%B9%E5%BC%8F-----%E8%AE%B0%E5%BD%95%E6%97%B6%E9%97%B4%E6%96%B9%E5%BC%8F/" rel="prev" title="一个奇特的脚本输出日志方式-----记录时间方式">
+                一个奇特的脚本输出日志方式-----记录时间方式 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -566,7 +556,7 @@ for ...
                 
                   <a href="/archives/%7C%7Carchive">
                 
-                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-count">127</span>
                     <span class="site-state-item-name">日志</span>
                   </a>
                 </div>
