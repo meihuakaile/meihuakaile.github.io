@@ -1,0 +1,1361 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="flink," />
+
+
+<meta name="description" content="简介flink自带的DateTimeBucket按照process time执行时间来落分区目录。但有很多缺点：1、数据延迟很常见 2、或者任务出问题暂停后再启动如果恰好跨分区，数据出问题的会更多。因此很多时候我们希望的是 event time，本文的办法是flink自带的DateTimeBucketAssigner定义了数据保存的hdfs时间路径,选用的是currentProcessingTim">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink-StreamingFileSink自定义Watermark+DateTimeBucket实现精准落仓">
+<meta property="og:url" content="http://yoursite.com/2020/09/11/Flink-StreamingFileSink%E8%87%AA%E5%AE%9A%E4%B9%89DateTimeBucket/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="简介flink自带的DateTimeBucket按照process time执行时间来落分区目录。但有很多缺点：1、数据延迟很常见 2、或者任务出问题暂停后再启动如果恰好跨分区，数据出问题的会更多。因此很多时候我们希望的是 event time，本文的办法是flink自带的DateTimeBucketAssigner定义了数据保存的hdfs时间路径,选用的是currentProcessingTim">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-10T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-13T06:05:34.532Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="flink">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/09/11/Flink-StreamingFileSink自定义DateTimeBucket/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>Flink-StreamingFileSink自定义Watermark+DateTimeBucket实现精准落仓 | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/11/Flink-StreamingFileSink%E8%87%AA%E5%AE%9A%E4%B9%89DateTimeBucket/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Flink-StreamingFileSink自定义Watermark+DateTimeBucket实现精准落仓</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-11T00:00:00+08:00">2020-09-11</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>flink自带的DateTimeBucket按照process time执行时间来落分区目录。<br>但有很多缺点：<br>1、数据延迟很常见 2、或者任务出问题暂停后再启动如果恰好跨分区，数据出问题的会更多。<br>因此很多时候我们希望的是 event time，本文的办法是<br>flink自带的<code>DateTimeBucketAssigner</code>定义了数据保存的hdfs时间路径,选用的是<code>currentProcessingTime</code>，重要的代码在方法中<code>getBucketId</code>。<br>因此，本文的重点是重新定义<code>getBucketId</code>方法。</p>
+<p>另外，我们还要生成done（又称succed）文件来通知下游任务，上游数据已经好了。</p>
+<h3 id="如何生成done"><a href="#如何生成done" class="headerlink" title="如何生成done"></a>如何生成done</h3><p>判断当前目录下是否还有progress文件</p>
+<h3 id="直接使用event-time"><a href="#直接使用event-time" class="headerlink" title="直接使用event time"></a>直接使用event time</h3><p>但是日志中的脏数据本来就很多，如果单纯的使用event time，前面的分区将永远无法完成。<br>因此在代码里用了<code>BehaviorHistoryMergeUtils.minutesLater(0L, -60)</code>判断小于当前时间60的时间不再进入正确的分区，落入错误分区。<br>但是实时落仓本来的优势就是快，现在要等60min，不符合原意。如果改的更小如5min还是会有如果代码暂停了超过5分钟，还是会有很多问题。</p>
+<p>Tips: StreamingFileSink的实例1.10.0有bug可以选择用java写，up版本已修复。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;*</span><br><span class="line"> * Licensed to the Apache Software Foundation (ASF) under one</span><br><span class="line"> * or more contributor license agreements.  See the NOTICE file</span><br><span class="line"> * distributed with this work for additional information</span><br><span class="line"> * regarding copyright ownership.  The ASF licenses this file</span><br><span class="line"> * to you under the Apache License, Version 2.0 (the</span><br><span class="line"> * &quot;License&quot;); you may not use this file except in compliance</span><br><span class="line"> * with the License.  You may obtain a copy of the License at</span><br><span class="line"> *</span><br><span class="line"> * http:&#x2F;&#x2F;www.apache.org&#x2F;licenses&#x2F;LICENSE-2.0</span><br><span class="line"> *</span><br><span class="line"> * Unless required by applicable law or agreed to in writing, software</span><br><span class="line"> * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</span><br><span class="line"> * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</span><br><span class="line"> * See the License for the specific language governing permissions and</span><br><span class="line"> * limitations under the License.</span><br><span class="line"> *&#x2F;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">import org.apache.flink.annotation.PublicEvolving;</span><br><span class="line">import org.apache.flink.core.io.SimpleVersionedSerializer;</span><br><span class="line">import org.apache.flink.streaming.api.functions.sink.filesystem.BucketAssigner;</span><br><span class="line">import org.apache.flink.streaming.api.functions.sink.filesystem.bucketassigners.SimpleVersionedStringSerializer;</span><br><span class="line">import org.apache.flink.util.Preconditions;</span><br><span class="line"></span><br><span class="line">import java.time.Instant;</span><br><span class="line">import java.time.ZoneId;</span><br><span class="line">import java.time.format.DateTimeFormatter;</span><br><span class="line"></span><br><span class="line">&#x2F;**</span><br><span class="line"> * A &#123;@link BucketAssigner&#125; that assigns to buckets based on current system time.</span><br><span class="line"> *</span><br><span class="line"> *</span><br><span class="line"> * &lt;p&gt;The &#123;@code DateTimeBucketer&#125; will create directories of the following form:</span><br><span class="line"> * &#123;@code &#x2F;&#123;basePath&#125;&#x2F;&#123;dateTimePath&#125;&#x2F;&#125;. The &#123;@code basePath&#125; is the path</span><br><span class="line"> * that was specified as a base path when creating the</span><br><span class="line"> * &#123;@link org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink&#125;.</span><br><span class="line"> * The &#123;@code dateTimePath&#125; is determined based on the current system time and the</span><br><span class="line"> * user provided format string.</span><br><span class="line"> *</span><br><span class="line"> *</span><br><span class="line"> * &lt;p&gt;&#123;@link DateTimeFormatter&#125; is used to derive a date string from the current system time and</span><br><span class="line"> * the date format string. The default format string is &#123;@code &quot;yyyy-MM-dd--HH&quot;&#125; so the rolling</span><br><span class="line"> * files will have a granularity of hours.</span><br><span class="line"> *</span><br><span class="line"> * &lt;p&gt;Example:</span><br><span class="line"> *</span><br><span class="line"> * &lt;pre&gt;&#123;@code</span><br><span class="line"> *     BucketAssigner bucketAssigner &#x3D; new DateTimeBucketAssigner(&quot;yyyy-MM-dd--HH&quot;);</span><br><span class="line"> * &#125;&lt;&#x2F;pre&gt;</span><br><span class="line"> *</span><br><span class="line"> * &lt;p&gt;This will create for example the following bucket path:</span><br><span class="line"> * &#123;@code &#x2F;base&#x2F;1976-12-31-14&#x2F;&#125;</span><br><span class="line"> *</span><br><span class="line"> *&#x2F;</span><br><span class="line">@PublicEvolving</span><br><span class="line">public class DateTimeBucketWithEventAssigner&lt;IN&gt; implements BucketAssigner&lt;IN, String&gt; &#123;</span><br><span class="line"></span><br><span class="line">    private static final long serialVersionUID &#x3D; 1L;</span><br><span class="line"></span><br><span class="line">    private static final String DEFAULT_FORMAT_STRING &#x3D; &quot;yyyy-MM-dd--HH&quot;;</span><br><span class="line"></span><br><span class="line">    private final String formatString;</span><br><span class="line"></span><br><span class="line">    private final ZoneId zoneId;</span><br><span class="line"></span><br><span class="line">    private transient DateTimeFormatter dateTimeFormatter;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * Creates a new &#123;@code DateTimeBucketAssigner&#125; with format string &#123;@code &quot;yyyy-MM-dd--HH&quot;&#125;.</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public DateTimeBucketWithEventAssigner() &#123;</span><br><span class="line">        this(DEFAULT_FORMAT_STRING);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * Creates a new &#123;@code DateTimeBucketAssigner&#125; with the given date&#x2F;time format string.</span><br><span class="line">     *</span><br><span class="line">     * @param formatString The format string that will be given to &#123;@code SimpleDateFormat&#125; to determine</span><br><span class="line">     *                     the bucket id.</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public DateTimeBucketWithEventAssigner(String formatString) &#123;</span><br><span class="line">        this(formatString, ZoneId.systemDefault());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * Creates a new &#123;@code DateTimeBucketAssigner&#125; with format string &#123;@code &quot;yyyy-MM-dd--HH&quot;&#125; using the given timezone.</span><br><span class="line">     *</span><br><span class="line">     * @param zoneId The timezone used to format &#123;@code DateTimeFormatter&#125; for bucket id.</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public DateTimeBucketWithEventAssigner(ZoneId zoneId) &#123;</span><br><span class="line">        this(DEFAULT_FORMAT_STRING, zoneId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    &#x2F;**</span><br><span class="line">     * Creates a new &#123;@code DateTimeBucketAssigner&#125; with the given date&#x2F;time format string using the given timezone.</span><br><span class="line">     *</span><br><span class="line">     * @param formatString The format string that will be given to &#123;@code DateTimeFormatter&#125; to determine</span><br><span class="line">     *                     the bucket path.</span><br><span class="line">     * @param zoneId The timezone used to format &#123;@code DateTimeFormatter&#125; for bucket id.</span><br><span class="line">     *&#x2F;</span><br><span class="line">    public DateTimeBucketWithEventAssigner(String formatString, ZoneId zoneId) &#123;</span><br><span class="line">        this.formatString &#x3D; Preconditions.checkNotNull(formatString);</span><br><span class="line">        this.zoneId &#x3D; Preconditions.checkNotNull(zoneId);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String getBucketId(IN element, BucketAssigner.Context context) &#123;</span><br><span class="line">        if (dateTimeFormatter &#x3D;&#x3D; null) &#123;</span><br><span class="line">            dateTimeFormatter &#x3D; DateTimeFormatter.ofPattern(formatString).withZone(zoneId);</span><br><span class="line">        &#125;</span><br><span class="line">        if (element instanceof SearchEtl) &#123;</span><br><span class="line">            long minutesAgo &#x3D; BehaviorHistoryMergeUtils.minutesLater(0L, -60);</span><br><span class="line">            Long pingbackTime &#x3D; ((SearchEtl) element).getStime();</span><br><span class="line">            if (pingbackTime &lt; minutesAgo)&#123;</span><br><span class="line">                return &quot;error_time&quot;;</span><br><span class="line">            &#125;</span><br><span class="line">            return dateTimeFormatter.format(Instant.ofEpochMilli(pingbackTime));</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            return &quot;error_time&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public SimpleVersionedSerializer&lt;String&gt; getSerializer() &#123;</span><br><span class="line">        return SimpleVersionedStringSerializer.INSTANCE;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public String toString() &#123;</span><br><span class="line">        return &quot;DateTimeBucketAssigner&#123;&quot; +</span><br><span class="line">                &quot;formatString&#x3D;&#39;&quot; + formatString + &#39;\&#39;&#39; +</span><br><span class="line">                &quot;, zoneId&#x3D;&quot; + zoneId +</span><br><span class="line">                &#39;&#125;&#39;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其他：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">def minutesLater(nowDate: Long, plus: Int): Long &#x3D; &#123;</span><br><span class="line">    if (nowDate &lt;&#x3D; 0) &#123;</span><br><span class="line">      new DateTime().plusMinutes(plus).getMillis</span><br><span class="line">    &#125; else &#123;</span><br><span class="line">      new DateTime(nowDate).plusMinutes(plus).getMillis</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>使用：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">StreamingFileSink build &#x3D; StreamingFileSink</span><br><span class="line">        .forBulkFormat(new Path(hdfs), ParquetAvroWriters.forSpecificRecord(SearchEtl.class))</span><br><span class="line">        .withBucketAssigner(new DateTimeBucketWithEventAssigner())</span><br><span class="line">        .withRollingPolicy(OnCheckpointRollingPolicy.build())</span><br><span class="line">        .build();</span><br></pre></td></tr></table></figure>
+<h3 id="改进-使用watermark"><a href="#改进-使用watermark" class="headerlink" title="改进 使用watermark"></a>改进 使用watermark</h3><p>在sink之前定义watermark。<br>不同的日志不同的定义方式，如果日志里还会有很多超过当前时间的日志，就可以参考这里的办法。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">source.map(...).uid(...)</span><br><span class="line">.assignTimestampsAndWatermarks(new BoundedOutOfOrdernessTimestampExtractor[SearchEtl](Time.minutes(3)) &#123;</span><br><span class="line">  override def extractTimestamp(element: SearchEtl): Long &#x3D; &#123;</span><br><span class="line">    math.min(element.getStime, System.currentTimeMillis())</span><br><span class="line">  &#125;</span><br><span class="line">&#125;)</span><br><span class="line">.addSink(FlinkConfig.getParquetHdfsSink(hdfs)).uid(&quot;sink&quot;)</span><br></pre></td></tr></table></figure>
+<p><code>getBucketId</code>方法的定义。watermark使用的时候需要注意，任务刚刚启动的时候watermark可能是个默认值。<br>watermark的生成是每200ms，而且不是任务启动就会调用<code>extractTimestamp</code>再调用<code>getCurrentWatermark</code>.具体可以看另一个讲解watermark的文章。<br>（pingbackTime &lt; watermark &amp;&amp; pingbackTime &lt; 前一小时的零点）||（pingbackTime &gt; 下一小时的零点）时进入错误分区</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">@Override</span><br><span class="line">public String getBucketId(IN element, BucketAssigner.Context context) &#123;</span><br><span class="line">   if (dateTimeFormatter &#x3D;&#x3D; null) &#123;</span><br><span class="line">       dateTimeFormatter &#x3D; DateTimeFormatter.ofPattern(formatString).withZone(zoneId);</span><br><span class="line">   &#125;</span><br><span class="line">   if (element instanceof SearchEtl) &#123;</span><br><span class="line">       long watermark &#x3D; context.currentWatermark();</span><br><span class="line">       if (watermark &lt; 0)&#123;</span><br><span class="line">           watermark &#x3D; context.currentProcessingTime();</span><br><span class="line">       &#125;</span><br><span class="line">       Long pingbackTime &#x3D; ((SearchEtl) element).getStime();</span><br><span class="line">       if ((pingbackTime &lt; watermark &amp;&amp; pingbackTime &lt; BehaviorHistoryMergeUtils.getCurrentHourZeroTime())</span><br><span class="line">               || pingbackTime &gt; BehaviorHistoryMergeUtils.getNextHourZeroTime()) &#123;</span><br><span class="line">           return dateTimeFormatter.format(Instant.ofEpochMilli(context.currentProcessingTime())) + &quot;error_time&quot;;</span><br><span class="line">       &#125;</span><br><span class="line">       return dateTimeFormatter.format(Instant.ofEpochMilli(pingbackTime));</span><br><span class="line">   &#125; else &#123;</span><br><span class="line">       return &quot;error_time&quot;;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def getNextHourZeroTime: Long &#x3D; &#123;</span><br><span class="line">  getHourZeroTime(1)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def getCurrentHourZeroTime: Long &#x3D; &#123;</span><br><span class="line">  getHourZeroTime(0)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">def getHourZeroTime(plus: Int): Long &#x3D; &#123;</span><br><span class="line">  val calendar &#x3D; Calendar.getInstance()</span><br><span class="line">  calendar.add(Calendar.HOUR, plus)</span><br><span class="line">  calendar.set(Calendar.MINUTE, 0)</span><br><span class="line">  calendar.set(Calendar.SECOND, 0)</span><br><span class="line">  calendar.set(Calendar.MILLISECOND, 0)</span><br><span class="line">  calendar.getTimeInMillis</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h3><p>1、当程序突然停止时，文件仍处于inprogress状态。<br>2、默认桶下的文件名是 part-{parallel-task}-{count}。当程序重启时，选用上次所有subtask最大的编号值count加1继续开始。<br>3、写入HDFS时，会产生大量的小文件。此问题比较轻微可简单解决。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+<div class="my_post_copyright">
+  <script src="//cdn.bootcss.com/clipboard.js/1.5.10/clipboard.min.js"></script>
+  <!-- JS库 sweetalert 可修改路径 -->
+  <script type="text/javascript" src="http://jslibs.wuxubj.cn/sweetalert_mini/jquery-1.7.1.min.js"></script>
+  <script src="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="http://jslibs.wuxubj.cn/sweetalert_mini/sweetalert.mini.css">
+  <p><span>文章作者:</span><a href="/" title="访问 Lily 的个人博客">Lily</a></p>
+  <p><span>原始链接:</span><a href="/2020/09/11/Flink-StreamingFileSink%E8%87%AA%E5%AE%9A%E4%B9%89DateTimeBucket/" title="Flink-StreamingFileSink自定义Watermark+DateTimeBucket实现精准落仓">/2020/09/11/Flink-StreamingFileSink%E8%87%AA%E5%AE%9A%E4%B9%89DateTimeBucket/</a>
+    <span class="copy-path"  title="点击复制文章链接"><i class="fa fa-clipboard" data-clipboard-text="http://yoursite.com/2020/09/11/Flink-StreamingFileSink%E8%87%AA%E5%AE%9A%E4%B9%89DateTimeBucket/"  aria-label="复制成功！"></i></span>
+  </p>
+  <p><span>版权说明:</span><a>转载请保留原文链接及作者。</a></p>
+</div>
+<script>
+    var clipboard = new Clipboard('.fa-clipboard');
+    clipboard.on('success', $(function(){
+      $(".fa-clipboard").click(function(){
+        swal({
+          title: "",
+          text: '复制成功',
+          html: false,
+          timer: 500,
+          showConfirmButton: false
+        });
+      });
+    }));
+</script>
+
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/flink/" rel="tag"># flink</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/09/09/Flink%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0ReduceFunction%E3%80%81AggregateFunction%E3%80%81ProcessWindowFunction/" rel="next" title="Flink窗口函数ReduceFunction、AggregateFunction、ProcessWindowFunction">
+                <i class="fa fa-chevron-left"></i> Flink窗口函数ReduceFunction、AggregateFunction、ProcessWindowFunction
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">75</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何生成done"><span class="nav-number">2.</span> <span class="nav-text">如何生成done</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#直接使用event-time"><span class="nav-number">3.</span> <span class="nav-text">直接使用event time</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#改进-使用watermark"><span class="nav-number">4.</span> <span class="nav-text">改进 使用watermark</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#问题"><span class="nav-number">5.</span> <span class="nav-text">问题</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>

@@ -1,0 +1,1335 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.0.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.0.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.0.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.0.3" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '6.0.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  
+  <meta name="keywords" content="flink," />
+
+
+<meta name="description" content="全文转自：https:&#x2F;&#x2F;blog.csdn.net&#x2F;wangpei1949&#x2F;article&#x2F;details&#x2F;102986845 Window Function在窗口触发后，负责对窗口内的元素进行计算。Window Function分为两类: 增量聚合和全量聚合。 增量聚合: 窗口不维护原始数据，只维护中间结果，每次基于中间结果和增量数据进行聚合。如: ReduceFunction、Aggrega">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Flink窗口函数ReduceFunction、AggregateFunction、ProcessWindowFunction">
+<meta property="og:url" content="http://yoursite.com/2020/09/09/Flink%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0ReduceFunction%E3%80%81AggregateFunction%E3%80%81ProcessWindowFunction/index.html">
+<meta property="og:site_name" content="卖姑娘的小火柴">
+<meta property="og:description" content="全文转自：https:&#x2F;&#x2F;blog.csdn.net&#x2F;wangpei1949&#x2F;article&#x2F;details&#x2F;102986845 Window Function在窗口触发后，负责对窗口内的元素进行计算。Window Function分为两类: 增量聚合和全量聚合。 增量聚合: 窗口不维护原始数据，只维护中间结果，每次基于中间结果和增量数据进行聚合。如: ReduceFunction、Aggrega">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-09-08T16:00:00.000Z">
+<meta property="article:modified_time" content="2020-11-08T15:37:59.253Z">
+<meta property="article:author" content="Lily">
+<meta property="article:tag" content="flink">
+<meta name="twitter:card" content="summary">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/09/09/Flink窗口函数ReduceFunction、AggregateFunction、ProcessWindowFunction/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+  <title>Flink窗口函数ReduceFunction、AggregateFunction、ProcessWindowFunction | 卖姑娘的小火柴</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> <div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">卖姑娘的小火柴</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-user"></i> <br />关于</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />标签</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-th"></i> <br />分类</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-commonweal">
+          <a href="/404.html" rel="section">
+            <i class="menu-item-icon fa fa-fw fa-heartbeat"></i> <br />公益</a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />搜索</a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/09/09/Flink%E7%AA%97%E5%8F%A3%E5%87%BD%E6%95%B0ReduceFunction%E3%80%81AggregateFunction%E3%80%81ProcessWindowFunction/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Lily">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="卖姑娘的小火柴">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Flink窗口函数ReduceFunction、AggregateFunction、ProcessWindowFunction</h1>
+        
+
+        <div class="post-meta">
+        
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-09-09T00:00:00+08:00">2020-09-09</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/hadoop/" itemprop="url" rel="index"><span itemprop="name">hadoop</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>全文转自：<a href="https://blog.csdn.net/wangpei1949/article/details/102986845" target="_blank" rel="noopener">https://blog.csdn.net/wangpei1949/article/details/102986845</a></p>
+<p>Window Function在窗口触发后，负责对窗口内的元素进行计算。Window Function分为两类: 增量聚合和全量聚合。</p>
+<p>增量聚合: 窗口不维护原始数据，只维护中间结果，每次基于中间结果和增量数据进行聚合。如: ReduceFunction、AggregateFunction。<br>全量聚合: 窗口需要维护全部原始数据，窗口触发进行全量聚合。如:ProcessWindowFunction。<br>本文总结增量聚合函数(ReduceFunction、AggregateFunction)和全量聚合函数(ProcessWindowFunction)的使用。</p>
+<p>注意:<br>FoldFunction也是增量聚合函数，但在Flink 1.9.0中已被标为过时(可用AggregateFunction代替)，这里不做总结。<br>WindowFunction也是全量聚合函数，已被更高级的ProcessWindowFunction逐渐代替，这里也不做总结。<br>ReduceFunction输入输出元素类型相同。</p>
+<h3 id="增量聚合"><a href="#增量聚合" class="headerlink" title="增量聚合"></a>增量聚合</h3><h4 id="ReduceFunction"><a href="#ReduceFunction" class="headerlink" title="ReduceFunction"></a>ReduceFunction</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 测试数据: 某个用户在某个时刻浏览了某个商品，以及商品的价值</span><br><span class="line">&#x2F;&#x2F; &#123;&quot;userID&quot;: &quot;user_4&quot;, &quot;eventTime&quot;: &quot;2019-11-09 10:41:32&quot;, &quot;eventType&quot;: &quot;browse&quot;, &quot;productID&quot;: &quot;product_1&quot;, &quot;productPrice&quot;: 10&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; API</span><br><span class="line">&#x2F;&#x2F; T: 输入输出元素类型</span><br><span class="line">public interface ReduceFunction&lt;T&gt; extends Function, Serializable &#123;</span><br><span class="line">	T reduce(T value1, T value2) throws Exception;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 示例: 获取一段时间内(Window Size)每个用户(KeyBy)浏览的商品的最大价值的那条记录(ReduceFunction)</span><br><span class="line">kafkaStream</span><br><span class="line">    &#x2F;&#x2F; 将从Kafka获取的JSON数据解析成Java Bean</span><br><span class="line">    .process(new KafkaProcessFunction())</span><br><span class="line">    &#x2F;&#x2F; 提取时间戳生成水印</span><br><span class="line">    .assignTimestampsAndWatermarks(new MyCustomBoundedOutOfOrdernessTimestampExtractor(Time.seconds(maxOutOfOrdernessSeconds)))</span><br><span class="line">    &#x2F;&#x2F; 按用户分组</span><br><span class="line">    .keyBy((KeySelector&lt;UserActionLog, String&gt;) UserActionLog::getUserID)</span><br><span class="line">    &#x2F;&#x2F; 构造TimeWindow</span><br><span class="line">    .timeWindow(Time.seconds(windowLengthSeconds))</span><br><span class="line">    &#x2F;&#x2F; 窗口函数: 获取这段窗口时间内每个用户浏览的商品的最大价值对应的那条记录</span><br><span class="line">    .reduce(new ReduceFunction&lt;UserActionLog&gt;() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public UserActionLog reduce(UserActionLog value1, UserActionLog value2) throws Exception &#123;</span><br><span class="line">            return value1.getProductPrice() &gt; value2.getProductPrice() ? value1 : value2;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .print();</span><br><span class="line"></span><br><span class="line"># 结果</span><br><span class="line">UserActionLog&#123;userID&#x3D;&#39;user_4&#39;, eventTime&#x3D;&#39;2019-11-09 12:51:25&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_3&#39;, productPrice&#x3D;30&#125;</span><br><span class="line">UserActionLog&#123;userID&#x3D;&#39;user_2&#39;, eventTime&#x3D;&#39;2019-11-09 12:51:29&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_2&#39;, productPrice&#x3D;20&#125;</span><br><span class="line">UserActionLog&#123;userID&#x3D;&#39;user_1&#39;, eventTime&#x3D;&#39;2019-11-09 12:51:22&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_3&#39;, productPrice&#x3D;30&#125;</span><br><span class="line">UserActionLog&#123;userID&#x3D;&#39;user_5&#39;, eventTime&#x3D;&#39;2019-11-09 12:51:21&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_3&#39;, productPrice&#x3D;30&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="AggregateFunction"><a href="#AggregateFunction" class="headerlink" title="AggregateFunction"></a>AggregateFunction</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 测试数据: 某个用户在某个时刻浏览了某个商品，以及商品的价值</span><br><span class="line">&#x2F;&#x2F; &#123;&quot;userID&quot;: &quot;user_4&quot;, &quot;eventTime&quot;: &quot;2019-11-09 10:41:32&quot;, &quot;eventType&quot;: &quot;browse&quot;, &quot;productID&quot;: &quot;product_1&quot;, &quot;productPrice&quot;: 10&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; API</span><br><span class="line">&#x2F;&#x2F; IN:  输入元素类型</span><br><span class="line">&#x2F;&#x2F; ACC: 累加器类型</span><br><span class="line">&#x2F;&#x2F; OUT: 输出元素类型</span><br><span class="line">public interface AggregateFunction&lt;IN, ACC, OUT&gt; extends Function, Serializable &#123;</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 初始化累加器</span><br><span class="line">	ACC createAccumulator();</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 累加</span><br><span class="line">	ACC add(IN value, ACC accumulator);</span><br><span class="line"></span><br><span class="line">    &#x2F;&#x2F; 累加器合并</span><br><span class="line">	ACC merge(ACC a, ACC b);</span><br><span class="line"></span><br><span class="line">	&#x2F;&#x2F; 输出</span><br><span class="line">	OUT getResult(ACC accumulator);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 示例: 获取一段时间内(Window Size)每个用户(KeyBy)浏览的平均价值(AggregateFunction)</span><br><span class="line">kafkaStream</span><br><span class="line">   &#x2F;&#x2F; 将从Kafka获取的JSON数据解析成Java Bean</span><br><span class="line">   .process(new KafkaProcessFunction())</span><br><span class="line">   &#x2F;&#x2F; 提取时间戳生成水印</span><br><span class="line">   .assignTimestampsAndWatermarks(new MyCustomBoundedOutOfOrdernessTimestampExtractor(Time.seconds(maxOutOfOrdernessSeconds)))</span><br><span class="line">   &#x2F;&#x2F; 按用户分组</span><br><span class="line">   .keyBy((KeySelector&lt;UserActionLog, String&gt;) UserActionLog::getUserID)</span><br><span class="line">   &#x2F;&#x2F; 构造TimeWindow</span><br><span class="line">   .timeWindow(Time.seconds(windowLengthSeconds))</span><br><span class="line">   &#x2F;&#x2F; 窗口函数: 获取这段窗口时间内，每个用户浏览的平均价值</span><br><span class="line">   .aggregate(new AggregateFunction&lt;UserActionLog, Tuple2&lt;Long,Long&gt;, Double&gt;() &#123;</span><br><span class="line"></span><br><span class="line">       &#x2F;&#x2F; 1、初始值</span><br><span class="line">       &#x2F;&#x2F; 定义累加器初始值</span><br><span class="line">       @Override</span><br><span class="line">       public Tuple2&lt;Long, Long&gt; createAccumulator() &#123;</span><br><span class="line">           return new Tuple2&lt;&gt;(0L,0L);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       &#x2F;&#x2F; 2、累加</span><br><span class="line">       &#x2F;&#x2F; 定义累加器如何基于输入数据进行累加</span><br><span class="line">       @Override</span><br><span class="line">       public Tuple2&lt;Long, Long&gt; add(UserActionLog value, Tuple2&lt;Long, Long&gt; accumulator) &#123;</span><br><span class="line">           accumulator.f0 +&#x3D; 1;</span><br><span class="line">           accumulator.f1 +&#x3D; value.getProductPrice();</span><br><span class="line">           return accumulator;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       &#x2F;&#x2F; 3、合并</span><br><span class="line">       &#x2F;&#x2F; 定义累加器如何和State中的累加器进行合并</span><br><span class="line">       @Override</span><br><span class="line">       public Tuple2&lt;Long, Long&gt; merge(Tuple2&lt;Long, Long&gt; acc1, Tuple2&lt;Long, Long&gt; acc2) &#123;</span><br><span class="line">           acc1.f0+&#x3D;acc2.f0;</span><br><span class="line">           acc1.f1+&#x3D;acc2.f1;</span><br><span class="line">           return acc1;</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">       &#x2F;&#x2F; 4、输出</span><br><span class="line">       &#x2F;&#x2F; 定义如何输出数据</span><br><span class="line">       @Override</span><br><span class="line">       public Double getResult(Tuple2&lt;Long, Long&gt; accumulator) &#123;</span><br><span class="line">           return accumulator.f1 &#x2F; (accumulator.f0 * 1.0);</span><br><span class="line">       &#125;</span><br><span class="line"></span><br><span class="line">   &#125;)</span><br><span class="line">   .print();</span><br><span class="line"></span><br><span class="line">#结果</span><br><span class="line">20.0</span><br><span class="line">10.0</span><br><span class="line">30.0</span><br><span class="line">25.0</span><br><span class="line">20.0</span><br></pre></td></tr></table></figure>
+<h4 id="全量聚合"><a href="#全量聚合" class="headerlink" title="全量聚合"></a>全量聚合</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 测试数据: 某个用户在某个时刻浏览了某个商品，以及商品的价值</span><br><span class="line">&#x2F;&#x2F; &#123;&quot;userID&quot;: &quot;user_4&quot;, &quot;eventTime&quot;: &quot;2019-11-09 10:41:32&quot;, &quot;eventType&quot;: &quot;browse&quot;, &quot;productID&quot;: &quot;product_1&quot;, &quot;productPrice&quot;: 10&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; API</span><br><span class="line">&#x2F;&#x2F; IN:  输入元素类型</span><br><span class="line">&#x2F;&#x2F; OUT: 输出元素类型</span><br><span class="line">&#x2F;&#x2F; KEY: Key类型</span><br><span class="line">&#x2F;&#x2F; W: Window类型</span><br><span class="line">public abstract class ProcessWindowFunction&lt;IN, OUT, KEY, W extends Window&gt; extends AbstractRichFunction &#123;</span><br><span class="line">    ......</span><br><span class="line"></span><br><span class="line">	public abstract void process(KEY key, Context context, Iterable&lt;IN&gt; elements, Collector&lt;OUT&gt; out) throws Exception;</span><br><span class="line"></span><br><span class="line">    ........</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 示例: 获取一段时间内(Window Size)每个用户(KeyBy)浏览的商品总价值(ProcessWindowFunction)</span><br><span class="line">kafkaStream</span><br><span class="line">    &#x2F;&#x2F; 将从Kafka获取的JSON数据解析成Java Bean</span><br><span class="line">    .process(new KafkaProcessFunction())</span><br><span class="line">    &#x2F;&#x2F; 提取时间戳生成水印</span><br><span class="line">    .assignTimestampsAndWatermarks(new MyCustomBoundedOutOfOrdernessTimestampExtractor(Time.seconds(maxOutOfOrdernessSeconds)))</span><br><span class="line">    &#x2F;&#x2F; 按用户分组</span><br><span class="line">    .keyBy((KeySelector&lt;UserActionLog, String&gt;) UserActionLog::getUserID)</span><br><span class="line">    &#x2F;&#x2F; 构造TimeWindow</span><br><span class="line">    .timeWindow(Time.seconds(windowLengthSeconds))</span><br><span class="line">    &#x2F;&#x2F; 窗口函数: 用ProcessWindowFunction计算这段时间内每个用户浏览的商品总价值</span><br><span class="line">    .process(new ProcessWindowFunction&lt;UserActionLog, String, String, TimeWindow&gt;() &#123;</span><br><span class="line">        @Override</span><br><span class="line">        public void process(String key, Context context, Iterable&lt;UserActionLog&gt; elements, Collector&lt;String&gt; out) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">            int sum&#x3D;0;</span><br><span class="line">            for (UserActionLog element : elements) &#123;</span><br><span class="line">                sum +&#x3D; element.getProductPrice();</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            String windowStart&#x3D;new DateTime(context.window().getStart(), DateTimeZone.forID(&quot;+08:00&quot;)).toString(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line">            String windowEnd&#x3D;new DateTime(context.window().getEnd(), DateTimeZone.forID(&quot;+08:00&quot;)).toString(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line"></span><br><span class="line">            String record&#x3D;&quot;Key: &quot;+key+&quot; 窗口开始时间: &quot;+windowStart+&quot; 窗口结束时间: &quot;+windowEnd+&quot; 浏览的商品总价值: &quot;+sum;</span><br><span class="line">            out.collect(record);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">    .print();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 结果</span><br><span class="line">Key: user_1 窗口开始时间: 2019-11-09 13:32:00 窗口结束时间: 2019-11-09 13:32:10 浏览的商品总价值: 60</span><br><span class="line">Key: user_5 窗口开始时间: 2019-11-09 13:32:00 窗口结束时间: 2019-11-09 13:32:10 浏览的商品总价值: 30</span><br><span class="line">Key: user_5 窗口开始时间: 2019-11-09 13:32:10 窗口结束时间: 2019-11-09 13:32:20 浏览的商品总价值: 80</span><br><span class="line">Key: user_3 窗口开始时间: 2019-11-09 13:32:10 窗口结束时间: 2019-11-09 13:32:20 浏览的商品总价值: 40</span><br><span class="line">Key: user_4 窗口开始时间: 2019-11-09 13:32:10 窗口结束时间: 2019-11-09 13:32:20 浏览的商品总价值: 70</span><br></pre></td></tr></table></figure>
+<h3 id="ProcessWindowFunction与增量聚合结合"><a href="#ProcessWindowFunction与增量聚合结合" class="headerlink" title="ProcessWindowFunction与增量聚合结合"></a>ProcessWindowFunction与增量聚合结合</h3><p>1、可将ProcessWindowFunction与增量聚合函数ReduceFunction、AggregateFunction结合。<br>2、元素到达窗口时增量聚合，当窗口关闭时对增量聚合的结果用ProcessWindowFunction再进行全量聚合。<br>3、既可以增量聚合，也可以访问窗口的元数据信息(如开始结束时间、状态等)。</p>
+<h4 id="ProcessWindowFunction与ReduceFunction结合"><a href="#ProcessWindowFunction与ReduceFunction结合" class="headerlink" title="ProcessWindowFunction与ReduceFunction结合"></a>ProcessWindowFunction与ReduceFunction结合</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 测试数据: 某个用户在某个时刻浏览了某个商品，以及商品的价值</span><br><span class="line">&#x2F;&#x2F; &#123;&quot;userID&quot;: &quot;user_4&quot;, &quot;eventTime&quot;: &quot;2019-11-09 10:41:32&quot;, &quot;eventType&quot;: &quot;browse&quot;, &quot;productID&quot;: &quot;product_1&quot;, &quot;productPrice&quot;: 10&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; API: 如上ReduceFunction与ProcessWindowFunction</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 示例: 获取一段时间内(Window Size)每个用户(KeyBy)浏览的商品的最大价值的那条记录(ReduceFunction),并获得Key和Window信息。</span><br><span class="line">kafkaStream</span><br><span class="line">    &#x2F;&#x2F; 将从Kafka获取的JSON数据解析成Java Bean</span><br><span class="line">    .process(new KafkaProcessFunction())</span><br><span class="line">    &#x2F;&#x2F; 提取时间戳生成水印</span><br><span class="line">    .assignTimestampsAndWatermarks(new MyCustomBoundedOutOfOrdernessTimestampExtractor(Time.seconds(maxOutOfOrdernessSeconds)))</span><br><span class="line">    &#x2F;&#x2F; 按用户分组</span><br><span class="line">    .keyBy((KeySelector&lt;UserActionLog, String&gt;) UserActionLog::getUserID)</span><br><span class="line">    &#x2F;&#x2F; 构造TimeWindow</span><br><span class="line">    .timeWindow(Time.seconds(windowLengthSeconds))</span><br><span class="line">    &#x2F;&#x2F; 窗口函数: 获取这段窗口时间内每个用户浏览的商品的最大价值对应的那条记录</span><br><span class="line">    .reduce(</span><br><span class="line">            new ReduceFunction&lt;UserActionLog&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public UserActionLog reduce(UserActionLog value1, UserActionLog value2) throws Exception &#123;</span><br><span class="line">                    return value1.getProductPrice() &gt; value2.getProductPrice() ? value1 : value2;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,</span><br><span class="line">            new ProcessWindowFunction&lt;UserActionLog, String, String, TimeWindow&gt;() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void process(String key, Context context, Iterable&lt;UserActionLog&gt; elements, Collector&lt;String&gt; out) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">                    UserActionLog max &#x3D; elements.iterator().next();</span><br><span class="line"></span><br><span class="line">                    String windowStart&#x3D;new DateTime(context.window().getStart(), DateTimeZone.forID(&quot;+08:00&quot;)).toString(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line">                    String windowEnd&#x3D;new DateTime(context.window().getEnd(), DateTimeZone.forID(&quot;+08:00&quot;)).toString(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line"></span><br><span class="line">                    String record&#x3D;&quot;Key: &quot;+key+&quot; 窗口开始时间: &quot;+windowStart+&quot; 窗口结束时间: &quot;+windowEnd+&quot; 浏览的商品的最大价值对应的那条记录: &quot;+max;</span><br><span class="line">                    out.collect(record);</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">    )</span><br><span class="line">    .print();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 结果</span><br><span class="line">Key: user_2 窗口开始时间: 2019-11-09 13:54:10 窗口结束时间: 2019-11-09 13:54:20 浏览的商品的最大价值对应的那条记录: UserActionLog&#123;userID&#x3D;&#39;user_2&#39;, eventTime&#x3D;&#39;2019-11-09 13:54:10&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_3&#39;, productPrice&#x3D;30&#125;</span><br><span class="line">Key: user_4 窗口开始时间: 2019-11-09 13:54:10 窗口结束时间: 2019-11-09 13:54:20 浏览的商品的最大价值对应的那条记录: UserActionLog&#123;userID&#x3D;&#39;user_4&#39;, eventTime&#x3D;&#39;2019-11-09 13:54:15&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_3&#39;, productPrice&#x3D;30&#125;</span><br><span class="line">Key: user_3 窗口开始时间: 2019-11-09 13:54:10 窗口结束时间: 2019-11-09 13:54:20 浏览的商品的最大价值对应的那条记录: UserActionLog&#123;userID&#x3D;&#39;user_3&#39;, eventTime&#x3D;&#39;2019-11-09 13:54:12&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_2&#39;, productPrice&#x3D;20&#125;</span><br><span class="line">Key: user_5 窗口开始时间: 2019-11-09 13:54:10 窗口结束时间: 2019-11-09 13:54:20 浏览的商品的最大价值对应的那条记录: UserActionLog&#123;userID&#x3D;&#39;user_5&#39;, eventTime&#x3D;&#39;2019-11-09 13:54:17&#39;, eventType&#x3D;&#39;browse&#39;, productID&#x3D;&#39;product_2&#39;, productPrice&#x3D;20&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ProcessWindowFunction与AggregateFunction结合"><a href="#ProcessWindowFunction与AggregateFunction结合" class="headerlink" title="ProcessWindowFunction与AggregateFunction结合"></a>ProcessWindowFunction与AggregateFunction结合</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F; 测试数据: 某个用户在某个时刻浏览了某个商品，以及商品的价值</span><br><span class="line">&#x2F;&#x2F; &#123;&quot;userID&quot;: &quot;user_4&quot;, &quot;eventTime&quot;: &quot;2019-11-09 10:41:32&quot;, &quot;eventType&quot;: &quot;browse&quot;, &quot;productID&quot;: &quot;product_1&quot;, &quot;productPrice&quot;: 10&#125;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; API: 如上AggregateFunction与ProcessWindowFunction</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F; 示例: 获取一段时间内(Window Size)每个用户(KeyBy)浏览的平均价值(AggregateFunction),并获得Key和Window信息。</span><br><span class="line">kafkaStream</span><br><span class="line">    &#x2F;&#x2F; 将从Kafka获取的JSON数据解析成Java Bean</span><br><span class="line">    .process(new KafkaProcessFunction())</span><br><span class="line">    &#x2F;&#x2F; 提取时间戳生成水印</span><br><span class="line">    .assignTimestampsAndWatermarks(new MyCustomBoundedOutOfOrdernessTimestampExtractor(Time.seconds(maxOutOfOrdernessSeconds)))</span><br><span class="line">    &#x2F;&#x2F; 按用户分组</span><br><span class="line">    .keyBy((KeySelector&lt;UserActionLog, String&gt;) UserActionLog::getUserID)</span><br><span class="line">    &#x2F;&#x2F; 构造TimeWindow</span><br><span class="line">    .timeWindow(Time.seconds(windowLengthSeconds))</span><br><span class="line">    &#x2F;&#x2F; 窗口函数: 获取这段窗口时间内，每个用户浏览的商品的平均价值，并发出Key和Window信息</span><br><span class="line">    .aggregate(</span><br><span class="line">         new AggregateFunction&lt;UserActionLog, Tuple2&lt;Long, Long&gt;, Double&gt;() &#123;</span><br><span class="line"></span><br><span class="line">             &#x2F;&#x2F; 1、初始值</span><br><span class="line">             &#x2F;&#x2F; 定义累加器初始值</span><br><span class="line">             @Override</span><br><span class="line">             public Tuple2&lt;Long, Long&gt; createAccumulator() &#123;</span><br><span class="line">                 return new Tuple2&lt;&gt;(0L, 0L);</span><br><span class="line">             &#125;</span><br><span class="line"></span><br><span class="line">             &#x2F;&#x2F; 2、累加</span><br><span class="line">             &#x2F;&#x2F; 定义累加器如何基于输入数据进行累加</span><br><span class="line">             @Override</span><br><span class="line">             public Tuple2&lt;Long, Long&gt; add(UserActionLog value, Tuple2&lt;Long, Long&gt; accumulator) &#123;</span><br><span class="line">                 accumulator.f0 +&#x3D; 1;</span><br><span class="line">                 accumulator.f1 +&#x3D; value.getProductPrice();</span><br><span class="line">                 return accumulator;</span><br><span class="line">             &#125;</span><br><span class="line"></span><br><span class="line">             &#x2F;&#x2F; 3、合并</span><br><span class="line">             &#x2F;&#x2F; 定义累加器如何和State中的累加器进行合并</span><br><span class="line">             @Override</span><br><span class="line">             public Tuple2&lt;Long, Long&gt; merge(Tuple2&lt;Long, Long&gt; acc1, Tuple2&lt;Long, Long&gt; acc2) &#123;</span><br><span class="line">                 acc1.f0 +&#x3D; acc2.f0;</span><br><span class="line">                 acc1.f1 +&#x3D; acc2.f1;</span><br><span class="line">                 return acc1;</span><br><span class="line">             &#125;</span><br><span class="line"></span><br><span class="line">             &#x2F;&#x2F; 4、输出</span><br><span class="line">             &#x2F;&#x2F; 定义如何输出数据</span><br><span class="line">             @Override</span><br><span class="line">             public Double getResult(Tuple2&lt;Long, Long&gt; accumulator) &#123;</span><br><span class="line">                 return accumulator.f1 &#x2F; (accumulator.f0 * 1.0);</span><br><span class="line">             &#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         new ProcessWindowFunction&lt;Double, String, String, TimeWindow&gt;() &#123;</span><br><span class="line">             @Override</span><br><span class="line">             public void process(String key, Context context, Iterable&lt;Double&gt; elements, Collector&lt;String&gt; out) throws Exception &#123;</span><br><span class="line"></span><br><span class="line">                 Double avg &#x3D; elements.iterator().next();</span><br><span class="line"></span><br><span class="line">                 String windowStart&#x3D;new DateTime(context.window().getStart(), DateTimeZone.forID(&quot;+08:00&quot;)).toString(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line">                 String windowEnd&#x3D;new DateTime(context.window().getEnd(), DateTimeZone.forID(&quot;+08:00&quot;)).toString(&quot;yyyy-MM-dd HH:mm:ss&quot;);</span><br><span class="line"></span><br><span class="line">                 String record&#x3D;&quot;Key: &quot;+key+&quot; 窗口开始时间: &quot;+windowStart+&quot; 窗口结束时间: &quot;+windowEnd+&quot; 浏览的商品的平均价值: &quot;+String.format(&quot;%.2f&quot;,avg);</span><br><span class="line">                 out.collect(record);</span><br><span class="line"></span><br><span class="line">             &#125;</span><br><span class="line">         &#125;</span><br><span class="line"></span><br><span class="line">    )</span><br><span class="line">    .print();</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;结果</span><br><span class="line">Key: user_2 窗口开始时间: 2019-11-09 14:05:40 窗口结束时间: 2019-11-09 14:05:50 浏览的商品的平均价值: 13.33</span><br><span class="line">Key: user_3 窗口开始时间: 2019-11-09 14:05:50 窗口结束时间: 2019-11-09 14:06:00 浏览的商品的平均价值: 25.00</span><br><span class="line">Key: user_4 窗口开始时间: 2019-11-09 14:05:50 窗口结束时间: 2019-11-09 14:06:00 浏览的商品的平均价值: 20.00</span><br><span class="line">Key: user_2 窗口开始时间: 2019-11-09 14:05:50 窗口结束时间: 2019-11-09 14:06:00 浏览的商品的平均价值: 30.00</span><br><span class="line">Key: user_5 窗口开始时间: 2019-11-09 14:05:50 窗口结束时间: 2019-11-09 14:06:00 浏览的商品的平均价值: 20.00</span><br><span class="line">Key: user_1 窗口开始时间: 2019-11-09 14:05:50 窗口结束时间: 2019-11-09 14:06:00 浏览的商品的平均价值: 23.33</span><br></pre></td></tr></table></figure>
+
+<h4 id="ProcessWindowFunction与AggregateFunction结合-—为了好看"><a href="#ProcessWindowFunction与AggregateFunction结合-—为了好看" class="headerlink" title="ProcessWindowFunction与AggregateFunction结合 —为了好看"></a>ProcessWindowFunction与AggregateFunction结合 —为了好看</h4><p><a href="https://www.cnblogs.com/bjwu/p/10393146.html" target="_blank" rel="noopener">https://www.cnblogs.com/bjwu/p/10393146.html</a></p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+      
+        
+
+      
+    </div>
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/flink/" rel="tag"># flink</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2020/05/11/Flink-Watermark/" rel="next" title="Flink-Watermark">
+                <i class="fa fa-chevron-left"></i> Flink-Watermark
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/09/11/Flink-StreamingFileSink%E8%87%AA%E5%AE%9A%E4%B9%89DateTimeBucket/" rel="prev" title="Flink-StreamingFileSink自定义Watermark+DateTimeBucket实现精准落仓">
+                Flink-StreamingFileSink自定义Watermark+DateTimeBucket实现精准落仓 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+  
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.gif"
+                alt="Lily" />
+            
+              <p class="site-author-name" itemprop="name">Lily</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/%7C%7Carchive">
+                
+                    <span class="site-state-item-count">126</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  <a href="/categories/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">17</span>
+                    <span class="site-state-item-name">分类</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  <a href="/tags/index.html">
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">75</span>
+                    <span class="site-state-item-name">标签</span>
+                  </a>
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友情链接
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://wisewong.github.io/" title="wise wong" target="_blank">wise wong</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://lifei128.github.io" title="li fei" target="_blank">li fei</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#增量聚合"><span class="nav-number">1.</span> <span class="nav-text">增量聚合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ReduceFunction"><span class="nav-number">1.1.</span> <span class="nav-text">ReduceFunction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AggregateFunction"><span class="nav-number">1.2.</span> <span class="nav-text">AggregateFunction</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#全量聚合"><span class="nav-number">1.3.</span> <span class="nav-text">全量聚合</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ProcessWindowFunction与增量聚合结合"><span class="nav-number">2.</span> <span class="nav-text">ProcessWindowFunction与增量聚合结合</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ProcessWindowFunction与ReduceFunction结合"><span class="nav-number">2.1.</span> <span class="nav-text">ProcessWindowFunction与ReduceFunction结合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ProcessWindowFunction与AggregateFunction结合"><span class="nav-number">2.2.</span> <span class="nav-text">ProcessWindowFunction与AggregateFunction结合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ProcessWindowFunction与AggregateFunction结合-—为了好看"><span class="nav-number">2.3.</span> <span class="nav-text">ProcessWindowFunction与AggregateFunction结合 —为了好看</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lily</span>
+
+  
+
+  
+</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.0.3"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=6.0.3"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=6.0.3"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.0.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.0.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.0.3"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "search.xml";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
+<script type="text/javascript" src="/js/src/love.js"></script>
